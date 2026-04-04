@@ -1,454 +1,510 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>BrainTrust Brief</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', system-ui, sans-serif; background: #030712; color: #f9fafb; min-height: 100vh; }
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',system-ui,sans-serif;background:#030712;color:#f9fafb;min-height:100vh}
 
-/* ── CONFERENCE ROOM HERO BG ──────────────────────── */
-.room-bg {
-  position: relative;
-  background:
-    linear-gradient(180deg, rgba(3,7,18,0) 0%, #030712 100%),
-    linear-gradient(135deg, #0a1628 0%, #0d1f3c 30%, #111827 60%, #030712 100%);
-  overflow: hidden;
-}
-.room-bg::before {
-  content: '';
-  position: absolute; inset: 0;
-  background-image:
-    repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 80px),
-    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 80px);
-  pointer-events: none;
-}
-.room-bg::after {
-  content: '';
-  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
-  width: 800px; height: 300px;
-  background: radial-gradient(ellipse at center top, rgba(245,158,11,0.08) 0%, transparent 70%);
-  pointer-events: none;
-}
-.room-table {
-  position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 160px;
-  background: linear-gradient(180deg, #1a1208 0%, #0d0b06 100%);
-  border-radius: 50%;
-  border-top: 3px solid rgba(251,191,36,0.2);
-  box-shadow: 0 -20px 60px rgba(0,0,0,0.8), inset 0 2px 8px rgba(251,191,36,0.05);
-  pointer-events: none;
-}
+/* NAV */
+nav{position:sticky;top:0;z-index:50;background:rgba(3,7,18,0.95);backdrop-filter:blur(12px);
+  border-bottom:1px solid #1f2937;padding:0 24px;height:60px;display:flex;align-items:center;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;margin-right:auto}
+.logo-icon{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,#f59e0b,#ea580c);
+  display:flex;align-items:center;justify-content:center;font-size:16px}
+.logo-text{font-size:18px;font-weight:900;letter-spacing:-0.02em}
+.logo-text span{color:#fbbf24}
+.step-pill{padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;
+  border:1px solid #374151;color:#6b7280;cursor:default;white-space:nowrap}
+.step-pill.active{background:#fbbf24;color:#111827;border-color:#fbbf24}
+.step-pill.done{background:rgba(251,191,36,0.1);color:#fbbf24;border-color:rgba(251,191,36,0.3)}
 
-/* ── SUBMIT SECTION (post-assembly) ───────────────── */
-.submit-section {
-  margin-top: 32px; padding: 28px; background: #111827;
-  border: 1px solid #1f2937; border-radius: 20px;
-  border-top: 3px solid #fbbf24;
-}
-.submit-section h3 { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
-.submit-section p { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
-.submit-textarea { width: 100%; min-height: 100px; padding: 14px 16px;
-  background: #1f2937; border: 1px solid #374151; border-radius: 12px;
-  color: #f9fafb; font-size: 14px; font-family: inherit; resize: vertical;
-  outline: none; line-height: 1.5; margin-bottom: 14px; }
-.submit-textarea:focus { border-color: #fbbf24; }
-.submit-textarea::placeholder { color: #4b5563; }
-.submit-btn { padding: 14px 32px; background: linear-gradient(135deg,#f59e0b,#ea580c);
-  color: #fff; font-size: 16px; font-weight: 900; border: none; border-radius: 14px;
-  cursor: pointer; box-shadow: 0 6px 20px rgba(245,158,11,0.3); transition: all 0.2s; }
-.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(245,158,11,0.4); }
+/* MAIN */
+.page{max-width:960px;margin:0 auto;padding:40px 24px 120px}
 
-/* ── SPORTS CARD FLIP ────────────────────────────── */
-.sc-wrapper { perspective: 1000px; }
-.sc-inner { position: relative; width: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
-.sc-wrapper.flipped .sc-inner { transform: rotateY(180deg); }
-.sc-front, .sc-back {
-  backface-visibility: hidden; -webkit-backface-visibility: hidden;
-  border-radius: 20px; overflow: hidden;
-}
-.sc-back { position: absolute; inset: 0; transform: rotateY(180deg);
-  background: #0d1117; border: 1px solid #374151; border-radius: 20px;
-  padding: 16px; display: flex; flex-direction: column; gap: 8px; }
-.sc-back-title { font-size: 14px; font-weight: 900; color: #fbbf24; margin-bottom: 4px; text-align: center; }
-.sc-stat-row { display: flex; justify-content: space-between; align-items: center;
-  padding: 5px 8px; background: #111827; border-radius: 8px; }
-.sc-stat-label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
-.sc-stat-val { font-size: 13px; font-weight: 900; color: #f9fafb; }
-.sc-stat-val.gold { color: #fbbf24; }
-.sc-flip-hint { font-size: 10px; color: #374151; text-align: center; margin-top: auto; padding-top: 8px; }
-.card-img-area { width: 100%; height: 160px; background: #1f2937; position: relative; overflow: hidden; }
-.card-img-area img { width: 100%; height: 100%; object-fit: cover; }
-.card-img-area .img-loading { position: absolute; inset: 0; display: flex; align-items: center;
-  justify-content: center; flex-direction: column; gap: 8px; }
-.img-spinner { width: 28px; height: 28px; border: 3px solid #374151; border-top-color: #fbbf24;
-  border-radius: 50%; animation: spin 0.8s linear infinite; }
-.card-img-area .img-emoji { font-size: 48px; position: absolute; top: 50%; left: 50%;
-  transform: translate(-50%,-50%); }
-.card-img-area .gen-btn { position: absolute; bottom: 8px; right: 8px; padding: 5px 10px;
-  background: rgba(245,158,11,0.9); color: #111; font-size: 10px; font-weight: 800;
-  border: none; border-radius: 6px; cursor: pointer; }
-.flip-btn { position: absolute; top: 8px; left: 8px; padding: 4px 10px;
-  background: rgba(0,0,0,0.6); color: #fbbf24; font-size: 10px; font-weight: 700;
-  border: none; border-radius: 6px; cursor: pointer; z-index: 5; }
+/* STEP HEADERS */
+.step-header{margin-bottom:28px}
+.step-label{font-size:11px;font-weight:800;color:#f59e0b;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
+.step-title{font-size:28px;font-weight:900;letter-spacing:-0.03em;margin-bottom:6px}
+.step-sub{font-size:14px;color:#6b7280;line-height:1.5}
 
-/* ── FUNNY LOADING SCREEN ────────────────────────── */
-.loading-overlay {
-  position: fixed; inset: 0; background: rgba(3,7,18,0.95); z-index: 300;
-  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px;
-}
-.loading-overlay.hidden { display: none; }
-.loading-scene { max-width: 420px; text-align: center; padding: 32px;
-  background: #111827; border: 1px solid #1f2937; border-radius: 24px; }
-.loading-scene-icon { font-size: 64px; margin-bottom: 16px; animation: float 2s ease-in-out infinite; }
-.loading-scene-text { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 8px; }
-.loading-scene-sub { font-size: 13px; color: #6b7280; line-height: 1.5; }
-.loading-bar { width: 300px; height: 4px; background: #1f2937; border-radius: 999px; overflow: hidden; }
-.loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg,#f59e0b,#ea580c);
-  border-radius: 999px; transition: width 0.5s ease; animation: loading-pulse 2s ease-in-out infinite; }
-@keyframes loading-pulse { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
-@keyframes spin { to { transform: rotate(360deg); } }
-@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
-@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+/* ── ASSEMBLY ─────────────────────────────── */
 
-/* ── NAV ─────────────────────────────────────────── */
-nav { position: sticky; top: 0; z-index: 50; background: rgba(3,7,18,0.94); backdrop-filter: blur(12px);
-  border-bottom: 1px solid #1f2937; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
-.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
-.logo-icon { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #ea580c);
-  display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 16px rgba(245,158,11,0.25); }
-.logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
-.logo-text span { color: #fbbf24; }
-.trust-counter { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #1f2937;
-  border-radius: 12px; border: 1px solid #374151; font-size: 13px; font-weight: 700; color: #d1d5db; }
-.trust-counter .count { color: #fbbf24; font-size: 18px; font-weight: 900; }
+/* Simple mode */
+.simple-panel{background:#111827;border:2px solid #374151;border-radius:20px;
+  padding:32px;text-align:center;margin-bottom:20px;transition:border-color 0.2s}
+.simple-panel.active{border-color:#fbbf24}
+.simple-panel h3{font-size:18px;font-weight:900;margin-bottom:6px}
+.simple-panel p{font-size:13px;color:#6b7280;margin-bottom:24px}
+.go-row{display:flex;align-items:center;justify-content:center;gap:20px;flex-wrap:wrap}
+.go-btn{padding:16px 48px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;
+  font-size:20px;font-weight:900;border:none;border-radius:16px;cursor:pointer;
+  box-shadow:0 8px 24px rgba(245,158,11,0.35);transition:all 0.2s;letter-spacing:-0.01em}
+.go-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(245,158,11,0.45)}
+.comedian-toggle{display:flex;align-items:center;gap:10px;padding:10px 18px;
+  background:#1f2937;border:1px solid #374151;border-radius:12px;cursor:pointer;user-select:none}
+.toggle-track{width:40px;height:22px;border-radius:999px;background:#374151;position:relative;
+  transition:background 0.2s;flex-shrink:0}
+.toggle-track.on{background:#d97706}
+.toggle-thumb{position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+  background:#fff;transition:transform 0.2s;box-shadow:0 1px 4px rgba(0,0,0,0.4)}
+.toggle-track.on .toggle-thumb{transform:translateX(18px)}
+.toggle-label{font-size:13px;font-weight:700;color:#9ca3af}
+.toggle-label strong{color:#fbbf24}
 
-/* ── TABS ─────────────────────────────────────────── */
-.tab-bar { display: flex; gap: 4px; padding: 12px 24px; background: #030712; border-bottom: 1px solid #1f2937; }
-.tab-btn { padding: 8px 18px; border-radius: 10px; border: none; background: transparent; color: #6b7280;
-  font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-.tab-btn.active { background: #fbbf24; color: #111827; }
-.tab-btn:not(.active):hover { background: #1f2937; color: #d1d5db; }
+/* Custom mode toggle */
+.custom-toggle{display:flex;align-items:center;gap:8px;color:#6b7280;font-size:13px;
+  font-weight:700;cursor:pointer;margin-bottom:20px;width:fit-content}
+.custom-toggle:hover{color:#d1d5db}
+.custom-arrow{transition:transform 0.2s;display:inline-block}
+.custom-arrow.open{transform:rotate(90deg)}
+.custom-panel{display:none}
+.custom-panel.open{display:block}
 
-/* ── WORKSHOP (Assemble tab) ─────────────────────── */
-.workshop { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
-.section-title { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 6px; }
-.section-sub { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+/* Table size selector */
+.size-row{display:flex;gap:12px;margin-bottom:28px;flex-wrap:wrap}
+.size-card{background:#111827;border:2px solid #374151;border-radius:14px;
+  padding:14px 18px;cursor:pointer;transition:all 0.15s;text-align:center;min-width:100px}
+.size-card:hover{border-color:#6b7280}
+.size-card.active{border-color:#fbbf24;background:rgba(251,191,36,0.06)}
+.size-card-label{font-size:13px;font-weight:800;color:#9ca3af;margin-top:8px}
+.size-card.active .size-card-label{color:#fbbf24}
 
-/* Size selector */
-.size-selector { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
-.size-btn { padding: 10px 24px; border-radius: 12px; border: 2px solid #374151; background: #111827;
-  color: #9ca3af; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
-.size-btn.active { border-color: #fbbf24; background: rgba(251,191,36,0.1); color: #fbbf24; }
-.size-btn:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
+/* Table SVG area */
+.table-area{background:#0d1117;border:1px solid #1f2937;border-radius:20px;
+  padding:24px;margin-bottom:24px;display:flex;align-items:center;justify-content:center;
+  min-height:260px;position:relative}
+#table-svg{width:100%;max-width:500px}
+.seat-circle{cursor:pointer;transition:all 0.15s}
+.seat-circle:hover .seat-ring{stroke:#fbbf24;stroke-width:3}
+.seat-ring{fill:#1f2937;stroke:#374151;stroke-width:2;transition:all 0.2s}
+.seat-ring.filled{fill:#111827;stroke:#fbbf24;stroke-width:2.5}
+.seat-ring.comedian{stroke:#ea580c}
+.seat-emoji{font-size:18px;dominant-baseline:central;text-anchor:middle;pointer-events:none}
+.seat-label{font-size:8px;fill:#6b7280;text-anchor:middle;dominant-baseline:central;
+  font-family:'Inter',sans-serif;font-weight:700;pointer-events:none;text-transform:uppercase;letter-spacing:0.04em}
+.seat-name{font-size:7px;fill:#9ca3af;text-anchor:middle;font-family:'Inter',sans-serif;
+  font-weight:700;pointer-events:none}
+.table-rect{fill:#0d1117;stroke:#1f2937;stroke-width:1.5;rx:20}
+.table-grain{fill:rgba(251,191,36,0.03)}
 
-/* Focus pills */
-.focus-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
-.focus-label { font-size: 13px; font-weight: 700; color: #6b7280; margin-right: 4px; }
-.focus-pill { padding: 6px 14px; border-radius: 999px; border: 1px solid #374151; background: #111827;
-  color: #9ca3af; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
-.focus-pill.active { border-color: #fbbf24; background: rgba(251,191,36,0.12); color: #fbbf24; }
-.focus-pill:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
+/* Role picker modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.hidden{display:none}
+.modal-box{background:#111827;border:1px solid #374151;border-radius:20px;
+  width:100%;max-width:680px;max-height:85vh;display:flex;flex-direction:column;overflow:hidden}
+.modal-header{padding:18px 22px;border-bottom:1px solid #1f2937;display:flex;align-items:center;justify-content:space-between}
+.modal-header h3{font-size:16px;font-weight:900}
+.modal-close{width:30px;height:30px;border-radius:8px;background:#1f2937;border:none;
+  color:#9ca3af;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.modal-close:hover{background:#374151;color:#fff}
+.modal-body{padding:16px;overflow-y:auto;display:flex;flex-direction:column;gap:8px}
+.modal-section-title{font-size:11px;font-weight:800;color:#6b7280;text-transform:uppercase;
+  letter-spacing:0.08em;margin:8px 0 4px}
 
-/* Comedian toggle */
-.comedian-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding: 14px 18px;
-  background: #111827; border: 1px solid #374151; border-radius: 14px; width: fit-content; }
-.toggle-track { width: 44px; height: 24px; border-radius: 999px; background: #374151; cursor: pointer;
-  position: relative; transition: background 0.2s; flex-shrink: 0; }
-.toggle-track.on { background: #d97706; }
-.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
-  background: #fff; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
-.toggle-track.on .toggle-thumb { transform: translateX(20px); }
-.toggle-label { font-size: 13px; font-weight: 700; color: #9ca3af; }
-.toggle-label strong { color: #fbbf24; }
+/* Role option in modal */
+.role-option{display:flex;align-items:center;gap:12px;padding:12px 14px;
+  background:#1f2937;border:1px solid #374151;border-radius:12px;cursor:pointer;transition:all 0.15s}
+.role-option:hover{border-color:#fbbf24;background:rgba(251,191,36,0.05)}
+.role-option.selected{border-color:#fbbf24;background:rgba(251,191,36,0.1)}
+.role-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;
+  justify-content:center;font-size:18px;flex-shrink:0}
+.role-info{flex:1}
+.role-name{font-size:14px;font-weight:800;margin-bottom:2px}
+.role-desc{font-size:12px;color:#6b7280}
 
-/* GO button */
-.go-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: linear-gradient(135deg,#f59e0b,#ea580c);
-  color: #fff; font-size: 18px; font-weight: 900; border: none; border-radius: 16px; cursor: pointer;
-  box-shadow: 0 8px 24px rgba(245,158,11,0.3); transition: all 0.2s; letter-spacing: -0.01em; margin-bottom: 32px; }
-.go-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,158,11,0.4); }
-.go-btn .go-icon { font-size: 22px; }
+/* Member grid in modal */
+.member-mini-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
+.member-mini{display:flex;align-items:center;gap:8px;padding:8px 10px;
+  background:#1f2937;border:1px solid #374151;border-radius:10px;cursor:pointer;transition:all 0.15s}
+.member-mini:hover{border-color:#fbbf24}
+.member-mini.used{opacity:0.4;cursor:not-allowed}
+.member-mini-avatar{font-size:20px;flex-shrink:0}
+.member-mini-name{font-size:11px;font-weight:700;line-height:1.2}
+.modal-search{padding:12px 16px;border-bottom:1px solid #1f2937}
+.modal-search input{width:100%;padding:9px 12px;background:#1f2937;border:1px solid #374151;
+  border-radius:8px;color:#f9fafb;font-size:13px;outline:none}
+.modal-search input:focus{border-color:#fbbf24}
 
-/* Assembled board */
-.board-grid { display: grid; gap: 16px; }
-.board-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
-.board-grid.size-5 { grid-template-columns: repeat(3, 1fr); }
-.board-grid.size-7 { grid-template-columns: repeat(4, 1fr); }
-.board-grid.size-9 { grid-template-columns: repeat(5, 1fr); }
-@media(max-width:700px){ .board-grid { grid-template-columns: 1fr 1fr !important; } }
+/* ── QUESTION STEP ────────────────────────── */
+.assembled-strip{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:24px;padding:16px;
+  background:#111827;border:1px solid #1f2937;border-radius:16px}
+.assembled-member{display:flex;flex-direction:column;align-items:center;gap:4px;min-width:60px}
+.assembled-avatar{font-size:28px}
+.assembled-role{font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em}
+.assembled-name{font-size:10px;font-weight:700;color:#9ca3af;text-align:center;line-height:1.2;max-width:64px}
+.question-box{width:100%;min-height:120px;padding:16px;background:#111827;border:2px solid #374151;
+  border-radius:14px;color:#f9fafb;font-size:15px;font-family:inherit;resize:vertical;outline:none;
+  line-height:1.6;margin-bottom:16px;transition:border-color 0.2s}
+.question-box:focus{border-color:#fbbf24}
+.question-box::placeholder{color:#374151}
+.launch-btn{padding:15px 36px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;
+  font-size:17px;font-weight:900;border:none;border-radius:14px;cursor:pointer;
+  box-shadow:0 6px 20px rgba(245,158,11,0.3);transition:all 0.2s}
+.launch-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,0.4)}
+.launch-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
-/* Slot card */
-.slot-card { border-radius: 20px; border: 2px solid #1f2937; background: #111827; overflow: hidden;
-  position: relative; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
-.slot-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
-.slot-card.empty { border-style: dashed; border-color: #374151; background: #0d1117; display: flex;
-  align-items: center; justify-content: center; min-height: 200px; flex-direction: column; gap: 8px;
-  color: #374151; font-size: 13px; font-weight: 700; cursor: default; }
-.slot-banner { height: 8px; width: 100%; }
-.slot-role-tag { position: absolute; top: 16px; left: 12px; font-size: 10px; font-weight: 800;
-  padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
-.slot-avatar { font-size: 42px; text-align: center; padding: 28px 12px 8px; }
-.slot-name { font-size: 14px; font-weight: 900; text-align: center; padding: 0 12px; line-height: 1.2; }
-.slot-tagline { font-size: 11px; color: #6b7280; text-align: center; padding: 4px 12px 12px; line-height: 1.4; }
-.slot-swap-btn { width: 100%; padding: 10px; background: #1f2937; border: none; border-top: 1px solid #374151;
-  color: #9ca3af; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
-.slot-swap-btn:hover { background: #374151; color: #fff; }
+/* ── ARENA ────────────────────────────────── */
+.arena-phase{margin-bottom:36px}
+.arena-phase-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.phase-badge{padding:3px 10px;background:#1f2937;border-radius:6px;font-size:11px;
+  font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.05em}
+.phase-badge.active{background:rgba(251,191,36,0.15);color:#fbbf24}
+
+/* Opening statement cards */
+.statements-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.statement-card{background:#111827;border:1px solid #1f2937;border-radius:16px;overflow:hidden;
+  opacity:0;transform:translateY(12px);transition:opacity 0.4s,transform 0.4s}
+.statement-card.visible{opacity:1;transform:translateY(0)}
+.statement-card.loading{border-color:#374151}
+.statement-header{padding:14px 16px 10px;display:flex;align-items:center;gap:10px;border-bottom:1px solid #1f2937}
+.statement-avatar{font-size:24px}
+.statement-meta{flex:1}
+.statement-name{font-size:14px;font-weight:900}
+.statement-role{font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px}
+.statement-body{padding:14px 16px;font-size:13px;color:#d1d5db;line-height:1.7;min-height:80px}
+.statement-body .typing-cursor{display:inline-block;width:2px;height:14px;background:#fbbf24;
+  margin-left:2px;animation:blink 0.7s infinite;vertical-align:middle}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.statement-loading{display:flex;align-items:center;gap:8px;color:#6b7280;font-size:12px;padding:14px 16px}
+.dot-pulse{display:flex;gap:4px}
+.dot-pulse span{width:6px;height:6px;background:#374151;border-radius:50%;animation:dot 1.2s ease-in-out infinite}
+.dot-pulse span:nth-child(2){animation-delay:0.2s}
+.dot-pulse span:nth-child(3){animation-delay:0.4s}
+@keyframes dot{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+
+/* Round robin bracket */
+.match-list{display:flex;flex-direction:column;gap:12px}
+.match-card{background:#111827;border:1px solid #1f2937;border-radius:14px;overflow:hidden;
+  transition:border-color 0.2s}
+.match-card.current{border-color:#fbbf24}
+.match-card.done-win .match-header{background:rgba(5,150,105,0.08)}
+.match-header{padding:12px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background 0.15s}
+.match-header:hover{background:rgba(255,255,255,0.02)}
+.match-num{font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;min-width:52px}
+.match-fighters{display:flex;align-items:center;gap:8px;flex:1;flex-wrap:wrap}
+.fighter-chip{display:flex;align-items:center;gap:6px;padding:4px 10px;
+  background:#1f2937;border-radius:8px;font-size:12px;font-weight:700}
+.fighter-chip.winner{background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3)}
+.fighter-chip.loser{opacity:0.4}
+.vs-label{font-size:10px;color:#374151;font-weight:800}
+.match-status{font-size:11px;font-weight:700;color:#6b7280;margin-left:auto;white-space:nowrap}
+.match-status.pending{color:#374151}
+.match-status.judging{color:#f59e0b}
+.match-status.done{color:#10b981}
+.match-expand{background:none;border:none;color:#6b7280;font-size:18px;cursor:pointer;
+  padding:0 4px;transition:transform 0.2s;flex-shrink:0}
+.match-detail{display:none;border-top:1px solid #1f2937;padding:16px}
+.match-detail.open{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.match-detail.open{grid-template-columns:1fr}}
+.fighter-arg{background:#1f2937;border-radius:10px;padding:12px}
+.fighter-arg-name{font-size:11px;font-weight:800;color:#6b7280;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.05em}
+.fighter-arg-text{font-size:12px;color:#d1d5db;line-height:1.6}
+.match-verdict{grid-column:1/-1;background:#0d1117;border-radius:10px;padding:12px;
+  font-size:12px;color:#9ca3af;line-height:1.6;border-left:3px solid #fbbf24}
+.match-verdict strong{color:#fbbf24}
+
+/* Arena action bar */
+.arena-bar{position:fixed;bottom:0;left:0;right:0;background:rgba(17,24,39,0.97);
+  backdrop-filter:blur(12px);border-top:1px solid #374151;padding:14px 24px;z-index:40;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.arena-bar.hidden{display:none}
+.arena-status{flex:1}
+.arena-status-title{font-size:14px;font-weight:800}
+.arena-status-sub{font-size:11px;color:#6b7280}
+.arena-next-btn{padding:12px 28px;background:#fbbf24;color:#111827;font-size:14px;font-weight:900;
+  border:none;border-radius:12px;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.arena-next-btn:hover{background:#fde68a}
+.arena-next-btn:disabled{opacity:0.4;cursor:not-allowed}
+.arena-back-btn{padding:10px 18px;background:#1f2937;color:#9ca3af;font-size:13px;font-weight:700;
+  border:none;border-radius:12px;cursor:pointer}
+.arena-back-btn:hover{background:#374151;color:#fff}
+
+/* Standings */
+.standings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-top:16px}
+.standing-card{background:#111827;border:1px solid #1f2937;border-radius:12px;padding:12px;text-align:center}
+.standing-card.advancing{border-color:#fbbf24}
+.standing-rank{font-size:20px;font-weight:900;color:#fbbf24;margin-bottom:4px}
+.standing-avatar{font-size:24px;margin-bottom:4px}
+.standing-name{font-size:11px;font-weight:700;line-height:1.2}
+.standing-record{font-size:10px;color:#6b7280;margin-top:3px}
+
+/* Champion reveal */
+.champion-card{background:linear-gradient(135deg,#1a1208 0%,#111827 100%);
+  border:2px solid #fbbf24;border-radius:24px;padding:36px;text-align:center;
+  box-shadow:0 0 60px rgba(251,191,36,0.15)}
+.champion-trophy{font-size:64px;margin-bottom:16px}
+.champion-name{font-size:32px;font-weight:900;color:#fbbf24;margin-bottom:8px}
+.champion-label{font-size:13px;color:#6b7280;margin-bottom:24px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em}
+.champion-argument{background:#0d1117;border-radius:14px;padding:20px;font-size:14px;
+  color:#d1d5db;line-height:1.7;text-align:left;margin-bottom:20px;border-left:3px solid #fbbf24}
+
+/* Roster */
+.roster-wrap{max-width:1100px;margin:0 auto;padding:32px 24px 100px}
+.controls{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.search-box input{width:100%;padding:11px 14px;background:#111827;border:1px solid #374151;
+  border-radius:10px;color:#f9fafb;font-size:14px;outline:none;min-width:200px}
+.search-box input:focus{border-color:#fbbf24}
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{padding:7px 14px;border-radius:999px;border:1px solid #374151;background:#111827;
+  color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.pill.active{border-color:#fbbf24;background:rgba(251,191,36,0.1);color:#fbbf24}
+.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.member-card{background:#111827;border:1px solid #1f2937;border-radius:18px;overflow:hidden;
+  transition:transform 0.2s,box-shadow 0.2s}
+.member-card:hover{transform:translateY(-3px);box-shadow:0 14px 36px rgba(0,0,0,0.5)}
+.card-banner{height:72px;display:flex;align-items:flex-end;padding:0 14px 10px;position:relative}
+.card-avatar{font-size:32px;position:absolute;right:14px;bottom:-16px;width:46px;height:46px;
+  background:#030712;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  border:2px solid #1f2937}
+.cat-business{background:linear-gradient(135deg,#1e3a5f,#0d2137)}
+.cat-historical{background:linear-gradient(135deg,#3b1a0a,#1a0c05)}
+.cat-philosopher{background:linear-gradient(135deg,#1a1048,#0d0922)}
+.cat-scientist{background:linear-gradient(135deg,#0d3320,#071a10)}
+.cat-fictional{background:linear-gradient(135deg,#2d1045,#160824)}
+.cat-comedian{background:linear-gradient(135deg,#3d1500,#1c0900)}
+.card-body{padding:26px 14px 14px}
+.card-name{font-size:16px;font-weight:900;margin-bottom:2px}
+.card-era{font-size:11px;color:#6b7280;margin-bottom:8px}
+.card-quote{font-size:11px;font-style:italic;color:#9ca3af;background:#1f2937;border-radius:8px;
+  padding:8px 10px;margin-bottom:10px;line-height:1.5;border-left:3px solid #374151}
+.role-chips{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.role-chip{font-size:9px;font-weight:800;padding:2px 6px;border-radius:4px;text-transform:uppercase;letter-spacing:0.05em}
+.power-box{background:#1f2937;border-radius:8px;padding:8px 10px;margin-bottom:8px}
+.power-title{font-size:9px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px}
+.power-text{font-size:11px;color:#d1d5db;font-weight:600}
+.card-tags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.card-tag{font-size:10px;color:#6b7280;background:#1f2937;padding:2px 7px;border-radius:5px}
 
 /* Role colors */
-.role-visionary   { background: linear-gradient(135deg,#7c3aed,#4c1d95); }
-.role-strategist  { background: linear-gradient(135deg,#1d4ed8,#1e3a8a); }
-.role-marketer    { background: linear-gradient(135deg,#db2777,#9d174d); }
-.role-finance     { background: linear-gradient(135deg,#059669,#064e3b); }
-.role-innovator   { background: linear-gradient(135deg,#0891b2,#164e63); }
-.role-operator    { background: linear-gradient(135deg,#d97706,#92400e); }
-.role-product     { background: linear-gradient(135deg,#dc2626,#7f1d1d); }
-.role-people      { background: linear-gradient(135deg,#0d9488,#134e4a); }
-.role-conscience  { background: linear-gradient(135deg,#4f46e5,#312e81); }
-.role-devil       { background: linear-gradient(135deg,#b91c1c,#450a0a); }
-.role-comedian    { background: linear-gradient(135deg,#ea580c,#7c2d12); }
+.role-visionary{background:linear-gradient(135deg,#7c3aed,#4c1d95)}
+.role-strategist{background:linear-gradient(135deg,#1d4ed8,#1e3a8a)}
+.role-marketer{background:linear-gradient(135deg,#db2777,#9d174d)}
+.role-finance{background:linear-gradient(135deg,#059669,#064e3b)}
+.role-innovator{background:linear-gradient(135deg,#0891b2,#164e63)}
+.role-operator{background:linear-gradient(135deg,#d97706,#92400e)}
+.role-product{background:linear-gradient(135deg,#dc2626,#7f1d1d)}
+.role-people{background:linear-gradient(135deg,#0d9488,#134e4a)}
+.role-conscience{background:linear-gradient(135deg,#4f46e5,#312e81)}
+.role-devil{background:linear-gradient(135deg,#b91c1c,#450a0a)}
+.role-comedian{background:linear-gradient(135deg,#ea580c,#7c2d12)}
+.tag-visionary{background:rgba(124,58,237,0.2);color:#a78bfa}
+.tag-strategist{background:rgba(29,78,216,0.2);color:#93c5fd}
+.tag-marketer{background:rgba(219,39,119,0.2);color:#f9a8d4}
+.tag-finance{background:rgba(5,150,105,0.2);color:#6ee7b7}
+.tag-innovator{background:rgba(8,145,178,0.2);color:#67e8f9}
+.tag-operator{background:rgba(217,119,6,0.2);color:#fcd34d}
+.tag-product{background:rgba(220,38,38,0.2);color:#fca5a5}
+.tag-people{background:rgba(13,148,136,0.2);color:#5eead4}
+.tag-conscience{background:rgba(79,70,229,0.2);color:#c4b5fd}
+.tag-devil{background:rgba(185,28,28,0.2);color:#fca5a5}
+.tag-comedian{background:rgba(234,88,12,0.2);color:#fdba74}
 
-.tag-visionary   { background: rgba(124,58,237,0.2); color: #a78bfa; }
-.tag-strategist  { background: rgba(29,78,216,0.2); color: #93c5fd; }
-.tag-marketer    { background: rgba(219,39,119,0.2); color: #f9a8d4; }
-.tag-finance     { background: rgba(5,150,105,0.2); color: #6ee7b7; }
-.tag-innovator   { background: rgba(8,145,178,0.2); color: #67e8f9; }
-.tag-operator    { background: rgba(217,119,6,0.2); color: #fcd34d; }
-.tag-product     { background: rgba(220,38,38,0.2); color: #fca5a5; }
-.tag-people      { background: rgba(13,148,136,0.2); color: #5eead4; }
-.tag-conscience  { background: rgba(79,70,229,0.2); color: #c4b5fd; }
-.tag-devil       { background: rgba(185,28,28,0.2); color: #fca5a5; }
-.tag-comedian    { background: rgba(234,88,12,0.2); color: #fdba74; }
+/* Loading overlay */
+.loading-overlay{position:fixed;inset:0;background:rgba(3,7,18,0.97);z-index:300;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px}
+.loading-overlay.hidden{display:none}
+.loading-scene{max-width:400px;text-align:center;padding:28px;
+  background:#111827;border:1px solid #1f2937;border-radius:20px}
+.loading-icon{font-size:56px;margin-bottom:12px;animation:float 2s ease-in-out infinite}
+.loading-text{font-size:15px;font-weight:700;margin-bottom:6px}
+.loading-sub{font-size:12px;color:#6b7280;line-height:1.5}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-/* ── SWAP MODAL ──────────────────────────────────── */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex;
-  align-items: center; justify-content: center; padding: 24px; }
-.modal-box { background: #111827; border: 1px solid #374151; border-radius: 24px; width: 100%; max-width: 720px;
-  max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
-.modal-header { padding: 20px 24px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; justify-content: space-between; }
-.modal-header h3 { font-size: 18px; font-weight: 900; }
-.modal-close { width: 32px; height: 32px; border-radius: 8px; background: #1f2937; border: none;
-  color: #9ca3af; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.modal-close:hover { background: #374151; color: #fff; }
-.modal-search { padding: 16px 24px; border-bottom: 1px solid #1f2937; }
-.modal-search input { width: 100%; padding: 10px 14px; background: #1f2937; border: 1px solid #374151;
-  border-radius: 10px; color: #f9fafb; font-size: 14px; outline: none; }
-.modal-search input::placeholder { color: #6b7280; }
-.modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
-  padding: 16px 24px; overflow-y: auto; }
-.swap-card { background: #1f2937; border: 2px solid #374151; border-radius: 14px; padding: 14px 10px;
-  cursor: pointer; text-align: center; transition: all 0.15s; }
-.swap-card:hover { border-color: #fbbf24; background: rgba(251,191,36,0.05); }
-.swap-card.current { border-color: #4b5563; opacity: 0.5; cursor: default; }
-.swap-card .sw-avatar { font-size: 28px; margin-bottom: 6px; }
-.swap-card .sw-name { font-size: 12px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
-.swap-card .sw-role { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+.hidden{display:none!important}
 
-/* ── ROSTER TAB ──────────────────────────────────── */
-.roster-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
-.controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
-.search-box { flex: 1; min-width: 200px; position: relative; }
-.search-box input { width: 100%; padding: 12px 16px; background: #111827; border: 1px solid #374151;
-  border-radius: 12px; color: #f9fafb; font-size: 14px; outline: none; }
-.search-box input:focus { border-color: #fbbf24; }
-.filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
-.pill { padding: 8px 16px; border-radius: 999px; border: 1px solid #374151; background: #111827;
-  color: #9ca3af; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.pill.active { border-color: #fbbf24; background: rgba(251,191,36,0.1); color: #fbbf24; }
-.pill:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
-.roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-
-/* ── MEMBER CARD ─────────────────────────────────── */
-.member-card { background: #111827; border: 1px solid #1f2937; border-radius: 20px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
-.member-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
-.card-banner { height: 80px; display: flex; align-items: flex-end; padding: 0 16px 10px; position: relative; }
-.card-avatar { font-size: 36px; position: absolute; right: 16px; bottom: -18px; width: 52px; height: 52px;
-  background: #030712; border-radius: 14px; display: flex; align-items: center; justify-content: center;
-  border: 2px solid #1f2937; }
-.cat-business  { background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); }
-.cat-historical{ background: linear-gradient(135deg, #3b1a0a 0%, #1a0c05 100%); }
-.cat-philosopher{ background: linear-gradient(135deg, #1a1048 0%, #0d0922 100%); }
-.cat-scientist { background: linear-gradient(135deg, #0d3320 0%, #071a10 100%); }
-.cat-fictional { background: linear-gradient(135deg, #2d1045 0%, #160824 100%); }
-.cat-comedian  { background: linear-gradient(135deg, #3d1500 0%, #1c0900 100%); }
-.card-cat-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 6px; }
-.card-body { padding: 28px 16px 16px; }
-.card-name { font-size: 18px; font-weight: 900; margin-bottom: 2px; }
-.card-era { font-size: 12px; color: #6b7280; margin-bottom: 10px; }
-.card-quote { font-size: 12px; font-style: italic; color: #9ca3af; background: #1f2937; border-radius: 10px;
-  padding: 10px 12px; margin-bottom: 12px; line-height: 1.5; border-left: 3px solid #374151; }
-.card-stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.card-stat-label { font-size: 11px; font-weight: 700; color: #6b7280; }
-.card-stat-val { font-size: 11px; font-weight: 700; color: #fbbf24; }
-.power-box { background: #1f2937; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
-.power-title { font-size: 10px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
-.power-text { font-size: 12px; color: #d1d5db; font-weight: 600; }
-.traits-toggle { background: none; border: none; color: #6b7280; font-size: 11px; font-weight: 700;
-  cursor: pointer; padding: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
-.traits-toggle:hover { color: #fbbf24; }
-.traits-panel { display: none; }
-.traits-panel.open { display: block; }
-.trait-row { margin-bottom: 6px; }
-.trait-name { font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 2px; }
-.trait-bar { height: 5px; background: #1f2937; border-radius: 999px; overflow: hidden; }
-.trait-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-.role-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
-.role-chip { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
-.card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
-.card-tag { font-size: 11px; color: #6b7280; background: #1f2937; padding: 3px 8px; border-radius: 6px; }
-.card-add-btn { width: 100%; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 800;
-  cursor: pointer; transition: all 0.15s; }
-.card-add-btn.add { background: #fbbf24; color: #111827; }
-.card-add-btn.add:hover { background: #fde68a; }
-.card-add-btn.remove { background: #1f2937; color: #ef4444; border: 1px solid #374151; }
-.card-add-btn.remove:hover { background: #7f1d1d; color: #fff; }
-
-/* ── HERO ─────────────────────────────────────────── */
-.hero { position: relative; text-align: center; padding: 64px 24px 48px; overflow: hidden; }
-.hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
-  width: 600px; height: 400px; border-radius: 50%; background: radial-gradient(ellipse, rgba(245,158,11,0.12) 0%, transparent 70%); pointer-events: none; }
-.hero h1 { font-size: clamp(36px,7vw,64px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 14px; }
-.hero h1 .gold { color: #fbbf24; }
-.hero p { font-size: 17px; color: #9ca3af; max-width: 580px; margin: 0 auto 28px; line-height: 1.6; }
-.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 800px; margin: 0 auto; padding: 0 24px; }
-.stat-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 20px; text-align: center; }
-.stat-val { font-size: 32px; font-weight: 900; color: #fbbf24; }
-.stat-lbl { font-size: 11px; color: #6b7280; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
-
-/* ── BOTTOM PANEL ─────────────────────────────────── */
-.bottom-panel { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17,24,39,0.97);
-  backdrop-filter: blur(12px); border-top: 1px solid #374151; padding: 12px 24px; z-index: 40;
-  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.panel-avatars { display: flex; gap: -4px; }
-.panel-avatar { width: 36px; height: 36px; background: #1f2937; border-radius: 10px; display: flex;
-  align-items: center; justify-content: center; font-size: 18px; border: 2px solid #030712; margin-left: -6px; }
-.panel-avatar:first-child { margin-left: 0; }
-.panel-info { flex: 1; }
-.panel-title { font-size: 13px; font-weight: 800; color: #f9fafb; }
-.panel-sub { font-size: 11px; color: #6b7280; }
-.panel-go { padding: 10px 20px; background: #fbbf24; color: #111827; font-weight: 900; font-size: 14px;
-  border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-.panel-go:hover { background: #fde68a; }
-.panel-clear { padding: 10px 16px; background: #1f2937; color: #9ca3af; font-weight: 700; font-size: 13px;
-  border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; }
-.panel-clear:hover { background: #374151; color: #fff; }
-
-.hidden { display: none !important; }
+/* ── JUDGE PANEL ──────────────────────────────────── */
+.judge-panel-wrap{margin-top:14px;border-top:1px solid #1f2937;padding-top:12px}
+.judge-panel-label{font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;
+  letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.judge-count-badge{background:#1f2937;padding:2px 8px;border-radius:6px;color:#9ca3af}
+.judge-chips-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.judge-chip{width:36px;height:36px;border-radius:8px;border:1.5px solid;display:flex;
+  flex-direction:column;align-items:center;justify-content:center;cursor:help;
+  position:relative;transition:transform 0.15s,box-shadow 0.15s;font-size:9px}
+.judge-chip:hover{transform:scale(1.15);box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:5}
+/* Compact chips for large panels (49 or 99 judges) */
+.judge-chips-row.compact{gap:3px}
+.judge-chips-row.compact .judge-chip{width:24px;height:24px;border-radius:5px;border-width:1px}
+.judge-chips-row.compact .judge-initials{font-size:7px}
+.judge-chips-row.compact .judge-vote{font-size:6px;margin-top:0}
+.judge-chips-row.compact .judge-changed-dot{width:9px;height:9px;font-size:5px;top:-2px;right:-2px}
+.judge-initials{font-size:9px;font-weight:900;line-height:1}
+.judge-vote{font-size:8px;font-weight:900;margin-top:1px}
+.judge-changed-dot{position:absolute;top:-3px;right:-3px;background:#f59e0b;color:#111;
+  font-size:7px;font-weight:900;border-radius:50%;width:12px;height:12px;
+  display:flex;align-items:center;justify-content:center}
+.judge-chip.judged{animation:popIn 0.3s ease}
+.judge-chip.changed{animation:popIn 0.3s ease, glow 1s ease}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(245,158,11,0.6)}}
+.panel-summary{background:#0d1117;border-radius:10px;padding:10px 12px;margin-top:6px}
+.panel-vote-bar{display:flex;border-radius:8px;overflow:hidden;margin-bottom:8px;min-height:28px}
+.panel-vote-seg{display:flex;align-items:center;justify-content:center;gap:4px;
+  padding:4px 8px;min-width:28px;transition:width 0.6s ease;font-size:13px}
+.panel-meta{font-size:11px;color:#6b7280;line-height:1.6}
+.floater-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;
+  background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;
+  font-size:11px;font-weight:700;color:#fbbf24;margin-top:8px}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <nav>
   <div class="logo">
     <div class="logo-icon">🧠</div>
     <div class="logo-text">Brain<span>Trust</span> Brief</div>
   </div>
-  <div class="trust-counter">
-    Your BrainTrust: <span class="count" id="nav-count">0</span>
+  <div id="nav-steps" style="display:flex;gap:6px;flex-wrap:wrap">
+    <div class="step-pill active" id="nav-step-1" onclick="goToStep(1)">1 · Assemble</div>
+    <div class="step-pill" id="nav-step-2" onclick="goToStep(2)">2 · Question</div>
+    <div class="step-pill" id="nav-step-3" onclick="goToStep(3)">3 · Opening Statements</div>
+    <div class="step-pill" id="nav-step-4" onclick="goToStep(4)">4 · Battle</div>
+    <div class="step-pill" id="nav-step-5" onclick="goToStep(5)">5 · Champion</div>
+    <div class="step-pill" id="nav-roster" onclick="goToStep('roster')" style="margin-left:8px;border-color:#1f2937">👥 Roster</div>
   </div>
 </nav>
 
-<!-- TAB BAR -->
-<div class="tab-bar">
-  <button class="tab-btn active" onclick="switchTab('assemble')">⚡ Assemble</button>
-  <button class="tab-btn" onclick="switchTab('roster')">👥 Roster</button>
-  <button class="tab-btn" onclick="switchTab('home')">🏠 How It Works</button>
-</div>
-
-<!-- ══════════════════════════════════════════════════ -->
-<!--  ASSEMBLE TAB                                      -->
-<!-- ══════════════════════════════════════════════════ -->
-<div id="tab-assemble" class="workshop">
-  <div class="section-title">⚡ Assemble Your BrainTrust</div>
-  <div class="section-sub">Choose a size, set your focus, hit GO — or hand-pick from the Roster.</div>
-
-  <!-- Size selector -->
-  <div style="font-size:13px;font-weight:700;color:#6b7280;margin-bottom:10px;">TRUST SIZE</div>
-  <div class="size-selector">
-    <button class="size-btn" onclick="setSize(3)">3 Minds</button>
-    <button class="size-btn active" onclick="setSize(5)">5 Minds</button>
-    <button class="size-btn" onclick="setSize(7)">7 Minds</button>
-    <button class="size-btn" onclick="setSize(9)">9 Minds</button>
+<!-- ══ STEP 1: ASSEMBLE ══════════════════════════════════ -->
+<div id="step-1" class="page">
+  <div class="step-header">
+    <div class="step-label">Step 1 of 5</div>
+    <div class="step-title">Assemble Your BrainTrust</div>
+    <div class="step-sub">The fastest way: just hit GO. Or customize every seat.</div>
   </div>
 
-  <!-- Focus pills -->
-  <div class="focus-row">
-    <span class="focus-label">FOCUS</span>
-    <button class="focus-pill active" onclick="setFocus('any')">Any Mix</button>
-    <button class="focus-pill" onclick="setFocus('marketing')">📣 Marketing</button>
-    <button class="focus-pill" onclick="setFocus('finance')">💰 Finance</button>
-    <button class="focus-pill" onclick="setFocus('tech')">⚙️ Tech</button>
-    <button class="focus-pill" onclick="setFocus('strategy')">♟️ Strategy</button>
-    <button class="focus-pill" onclick="setFocus('creative')">🎨 Creative</button>
-    <button class="focus-pill" onclick="setFocus('operations')">🏭 Operations</button>
-    <button class="focus-pill" onclick="setFocus('people')">🤝 People</button>
-    <button class="focus-pill" onclick="setFocus('comedians')">😂 Comedians Only</button>
-  </div>
-
-  <!-- Comedian toggle -->
-  <div class="comedian-row" id="comedian-toggle-row">
-    <div class="toggle-track" id="comedian-toggle" onclick="toggleComedian()">
-      <div class="toggle-thumb"></div>
+  <!-- Simple mode -->
+  <div class="simple-panel active" id="simple-panel">
+    <h3>🎲 Quick Assemble</h3>
+    <p>We'll auto-pick the best mix of thinkers. Only one decision to make:</p>
+    <div class="go-row">
+      <div class="comedian-toggle" onclick="toggleComedian()" id="comedian-toggle-wrap">
+        <div class="toggle-track" id="comedian-track">
+          <div class="toggle-thumb"></div>
+        </div>
+        <div class="toggle-label">Include a <strong>Comedian</strong> 😂</div>
+      </div>
+      <button class="go-btn" onclick="quickAssemble()">⚡ GO</button>
     </div>
-    <div class="toggle-label">Include a <strong>Comedian</strong> on your team <span style="color:#6b7280;font-size:11px;">(takes one slot)</span></div>
-  </div>
-
-  <!-- Auto-Assemble button -->
-  <button class="go-btn" onclick="autoAssemble()">
-    <span class="go-icon">🎲</span> Auto-Assemble My BrainTrust
-  </button>
-
-  <!-- Role legend -->
-  <div id="role-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" class="hidden"></div>
-
-  <!-- Assembled board -->
-  <div id="board" class="board-grid size-5"></div>
-
-  <!-- Submit section — shown after assembly -->
-  <div class="submit-section hidden" id="submit-section">
-    <h3>🎯 Your BrainTrust is Assembled — Now Ask Them Something</h3>
-    <p>Pose any business challenge, strategic dilemma, or decision you're wrestling with. Be specific for better results.</p>
-    <textarea class="submit-textarea" id="question-input" placeholder="Example: Should I raise a Series A now or wait 12 months and grow revenue first? We're at $800K ARR growing 15% MoM but burning $120K/month…"></textarea>
-    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
-      <button class="submit-btn" onclick="launchArena()">
-        ⚔️ Submit to the BrainTrust →
-      </button>
-      <button onclick="clearAssembly()" style="padding:12px 20px;background:#1f2937;color:#9ca3af;font-weight:700;font-size:13px;border:none;border-radius:12px;cursor:pointer;">
-        ↺ Reassemble
-      </button>
-      <span style="font-size:12px;color:#4b5563;margin-left:auto;">
-        <span id="assembled-names" style="color:#6b7280;"></span>
-      </span>
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button onclick="quickAssemble(3)" style="padding:7px 16px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer">3 Minds</button>
+      <button onclick="quickAssemble(5)" style="padding:7px 16px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer">5 Minds</button>
+      <button onclick="quickAssemble(7)" style="padding:7px 16px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer">7 Minds</button>
+      <button onclick="quickAssemble(9)" style="padding:7px 16px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#9ca3af;font-size:12px;font-weight:700;cursor:pointer">9 Minds</button>
     </div>
   </div>
-</div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  LOADING OVERLAY                                   -->
-<!-- ══════════════════════════════════════════════════ -->
-<div class="loading-overlay hidden" id="loading-overlay">
-  <div class="loading-scene" id="loading-scene">
-    <div class="loading-scene-icon" id="loading-icon">🎤</div>
-    <div class="loading-scene-text" id="loading-text">Napoleon is warming up the microphone...</div>
-    <div class="loading-scene-sub" id="loading-sub">He requested "My Way" by Sinatra. The DJ is terrified.</div>
+  <!-- Custom mode -->
+  <div class="custom-toggle" onclick="toggleCustom()" id="custom-toggle-btn">
+    <span class="custom-arrow" id="custom-arrow">▶</span>
+    Customize your seats — choose size &amp; assign roles
   </div>
-  <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
-  <div style="font-size:12px;color:#374151;margin-top:8px;">Convening your BrainTrust…</div>
+  <div class="custom-panel" id="custom-panel">
+    <div style="font-size:12px;font-weight:700;color:#6b7280;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.06em">Pick Table Size</div>
+    <div class="size-row" id="size-row">
+      <div class="size-card" onclick="setSize(3)">
+        <svg width="60" height="40" viewBox="0 0 60 40"><ellipse cx="30" cy="22" rx="18" ry="10" fill="#1f2937" stroke="#374151" stroke-width="1"/><circle cx="30" cy="8" r="5" fill="#374151"/><circle cx="10" cy="28" r="5" fill="#374151"/><circle cx="50" cy="28" r="5" fill="#374151"/></svg>
+        <div class="size-card-label">3 Minds</div>
+      </div>
+      <div class="size-card" onclick="setSize(5)">
+        <svg width="60" height="40" viewBox="0 0 60 40"><ellipse cx="30" cy="22" rx="18" ry="10" fill="#1f2937" stroke="#374151" stroke-width="1"/><circle cx="30" cy="8" r="4" fill="#374151"/><circle cx="10" cy="18" r="4" fill="#374151"/><circle cx="50" cy="18" r="4" fill="#374151"/><circle cx="10" cy="30" r="4" fill="#374151"/><circle cx="50" cy="30" r="4" fill="#374151"/></svg>
+        <div class="size-card-label">5 Minds</div>
+      </div>
+      <div class="size-card" onclick="setSize(7)">
+        <svg width="60" height="40" viewBox="0 0 60 40"><ellipse cx="30" cy="22" rx="18" ry="10" fill="#1f2937" stroke="#374151" stroke-width="1"/><circle cx="30" cy="7" r="4" fill="#374151"/><circle cx="8" cy="16" r="4" fill="#374151"/><circle cx="52" cy="16" r="4" fill="#374151"/><circle cx="8" cy="26" r="4" fill="#374151"/><circle cx="52" cy="26" r="4" fill="#374151"/><circle cx="14" cy="35" r="4" fill="#374151"/><circle cx="46" cy="35" r="4" fill="#374151"/></svg>
+        <div class="size-card-label">7 Minds</div>
+      </div>
+      <div class="size-card" onclick="setSize(9)">
+        <svg width="60" height="40" viewBox="0 0 60 40"><ellipse cx="30" cy="22" rx="18" ry="10" fill="#1f2937" stroke="#374151" stroke-width="1"/><circle cx="30" cy="6" r="3.5" fill="#374151"/><circle cx="8" cy="13" r="3.5" fill="#374151"/><circle cx="52" cy="13" r="3.5" fill="#374151"/><circle cx="6" cy="22" r="3.5" fill="#374151"/><circle cx="54" cy="22" r="3.5" fill="#374151"/><circle cx="8" cy="31" r="3.5" fill="#374151"/><circle cx="52" cy="31" r="3.5" fill="#374151"/><circle cx="16" cy="37" r="3.5" fill="#374151"/><circle cx="44" cy="37" r="3.5" fill="#374151"/></svg>
+        <div class="size-card-label">9 Minds</div>
+      </div>
+    </div>
+
+    <!-- Big table diagram -->
+    <div class="table-area" id="table-area">
+      <svg id="table-svg" viewBox="0 0 480 220" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="tableGlow" cx="50%" cy="50%"><stop offset="0%" stop-color="#fbbf24" stop-opacity="0.06"/><stop offset="100%" stop-color="#fbbf24" stop-opacity="0"/></radialGradient>
+        </defs>
+        <rect id="table-body" x="110" y="70" width="260" height="80" rx="22" fill="#0d1117" stroke="#1f2937" stroke-width="1.5"/>
+        <rect x="110" y="70" width="260" height="80" rx="22" fill="url(#tableGlow)"/>
+        <text x="240" y="115" text-anchor="middle" dominant-baseline="central" font-family="Inter,sans-serif" font-size="10" fill="#1f2937" font-weight="700" letter-spacing="2">CONFERENCE TABLE</text>
+        <g id="seats-group"></g>
+      </svg>
+    </div>
+
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+      <button onclick="autoFillSeats()" style="padding:10px 20px;background:#1f2937;border:1px solid #374151;border-radius:10px;color:#d1d5db;font-size:13px;font-weight:700;cursor:pointer">🎲 Auto-Fill Roles</button>
+      <button onclick="proceedFromCustom()" id="custom-go-btn" style="padding:10px 24px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font-size:14px;font-weight:900;border:none;border-radius:10px;cursor:pointer;opacity:0.5" disabled>Go with This Team →</button>
+      <span id="custom-status" style="font-size:12px;color:#6b7280"></span>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  ROSTER TAB                                        -->
-<!-- ══════════════════════════════════════════════════ -->
-<div id="tab-roster" class="roster-wrap hidden">
-  <div class="section-title">👥 Full Roster</div>
-  <div class="section-sub">Browse all 62 minds. Click a card to add/remove from your BrainTrust.</div>
+<!-- ══ STEP 2: QUESTION ══════════════════════════════════ -->
+<div id="step-2" class="page hidden">
+  <div class="step-header">
+    <div class="step-label">Step 2 of 5</div>
+    <div class="step-title">What's Your Challenge?</div>
+    <div class="step-sub">These minds will debate it. Be specific — context produces better arguments.</div>
+  </div>
+  <div class="assembled-strip" id="assembled-strip"></div>
+  <textarea class="question-box" id="question-input" placeholder="Example: Should we pivot our B2B SaaS to serve SMBs instead of enterprise? We're at $1.2M ARR but our enterprise sales cycles are 9 months and killing us…"></textarea>
+  <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
+    <button class="launch-btn" id="launch-btn" onclick="launchArena()">⚔️ Take It to the BrainTrust →</button>
+    <button onclick="goToStep(1)" style="padding:12px 18px;background:#1f2937;color:#9ca3af;font-size:13px;font-weight:700;border:none;border-radius:10px;cursor:pointer">← Change Team</button>
+    <div id="question-tip" style="font-size:12px;color:#374151;margin-left:auto"></div>
+  </div>
+</div>
+
+<!-- ══ STEP 3: OPENING STATEMENTS ═══════════════════════ -->
+<div id="step-3" class="page hidden">
+  <div class="step-header">
+    <div class="step-label">Step 3 of 5</div>
+    <div class="step-title">Opening Statements</div>
+    <div class="step-sub" id="statements-sub">Your BrainTrust is reading the question…</div>
+  </div>
+  <div class="arena-phase">
+    <div style="background:#0d1117;border:1px solid #1f2937;border-radius:12px;padding:14px 16px;
+      margin-bottom:20px;font-size:13px;color:#d1d5db;line-height:1.6;font-style:italic;border-left:3px solid #374151" id="question-display"></div>
+    <div class="statements-grid" id="statements-grid"></div>
+  </div>
+</div>
+
+<!-- ══ STEP 4: BATTLE ════════════════════════════════════ -->
+<div id="step-4" class="page hidden">
+  <div class="step-header">
+    <div class="step-label">Step 4 of 5</div>
+    <div class="step-title" id="battle-title">Round Robin</div>
+    <div class="step-sub" id="battle-sub">Every mind faces every other. Click a match to judge it.</div>
+  </div>
+  <div id="battle-content"></div>
+</div>
+
+<!-- ══ STEP 5: CHAMPION ══════════════════════════════════ -->
+<div id="step-5" class="page hidden">
+  <div class="step-header">
+    <div class="step-label">Step 5 of 5</div>
+    <div class="step-title">🏆 The Champion Has Spoken</div>
+    <div class="step-sub">One argument rose above all others.</div>
+  </div>
+  <div id="champion-content"></div>
+</div>
+
+<!-- ══ ROSTER ════════════════════════════════════════════ -->
+<div id="step-roster" class="roster-wrap hidden">
+  <div class="step-header">
+    <div class="step-title">👥 The Full Roster</div>
+    <div class="step-sub">62 minds available for your BrainTrust.</div>
+  </div>
   <div class="controls">
-    <div class="search-box">
-      <input type="text" id="search-input" placeholder="Search by name, trait, tag…" oninput="filterRoster()" />
-    </div>
+    <div class="search-box"><input type="text" id="roster-search" placeholder="Search by name, trait, tag…" oninput="filterRoster()"/></div>
     <div class="filter-pills">
       <button class="pill active" onclick="setCat('all',this)">All</button>
       <button class="pill" onclick="setCat('BUSINESS',this)">💼 Business</button>
@@ -462,111 +518,43 @@ nav { position: sticky; top: 0; z-index: 50; background: rgba(3,7,18,0.94); back
   <div class="roster-grid" id="roster-grid"></div>
 </div>
 
-<!-- ══════════════════════════════════════════════════ -->
-<!--  HOME TAB                                          -->
-<!-- ══════════════════════════════════════════════════ -->
-<div id="tab-home" class="hidden">
-  <div class="room-bg" style="padding: 72px 24px 120px; text-align:center; position:relative; min-height:360px;">
-    <div class="room-table"></div>
-    <div style="position:relative;z-index:2;">
-      <div style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;">The Boardroom is Open</div>
-      <h1 style="font-size:clamp(32px,6vw,58px);font-weight:900;letter-spacing:-0.04em;line-height:1.05;margin-bottom:16px;">
-        Your Personal <span style="color:#fbbf24;">Dream Team</span><br>of Advisors
-      </h1>
-      <p style="font-size:16px;color:#9ca3af;max-width:560px;margin:0 auto 28px;line-height:1.6;">
-        Assemble history's greatest minds. Submit any challenge.<br>Watch them debate, refine, and compete until one answer rises to the top.
-      </p>
-      <button onclick="switchTab('assemble')" style="padding:14px 32px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font-size:16px;font-weight:900;border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 20px rgba(245,158,11,0.3);">
-        ⚡ Assemble Your BrainTrust →
-      </button>
-    </div>
-  </div>
-  <div style="max-width:800px;margin:0 auto;padding:40px 24px 80px;">
-  <div class="stats" style="margin-bottom:40px;">
-    <div class="stat-card"><div class="stat-val">62</div><div class="stat-lbl">Minds</div></div>
-    <div class="stat-card"><div class="stat-val">8</div><div class="stat-lbl">Answers Generated</div></div>
-    <div class="stat-card"><div class="stat-val">28</div><div class="stat-lbl">Battles</div></div>
-    <div class="stat-card"><div class="stat-val">1</div><div class="stat-lbl">Champion</div></div>
-  </div>
-  <div style="display:grid;gap:16px;">
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
-      <div style="font-size:28px;flex-shrink:0;">⚡</div>
-      <div><div style="font-weight:900;margin-bottom:4px;">1. Assemble Your BrainTrust</div><div style="font-size:13px;color:#9ca3af;">Pick 3–9 members by role, focus, or hand-select from 62 legends.</div></div>
-    </div>
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
-      <div style="font-size:28px;flex-shrink:0;">🎯</div>
-      <div><div style="font-weight:900;margin-bottom:4px;">2. Submit Your Question</div><div style="font-size:13px;color:#9ca3af;">Any business challenge, strategic dilemma, or career decision. Add context.</div></div>
-    </div>
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
-      <div style="font-size:28px;flex-shrink:0;">⚔️</div>
-      <div><div style="font-weight:900;margin-bottom:4px;">3. 28 Round-Robin Battles</div><div style="font-size:13px;color:#9ca3af;">8 answers compete head-to-head. No ties. Top 4 advance to playoffs.</div></div>
-    </div>
-    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
-      <div style="font-size:28px;flex-shrink:0;">🏆</div>
-      <div><div style="font-weight:900;margin-bottom:4px;">4. Championship + Full Report</div><div style="font-size:13px;color:#9ca3af;">Best of 7 finals. Winner gets a full writeup + a dissenting opinion.</div></div>
-    </div>
-  </div>
-  </div><!-- /inner padding div -->
-</div><!-- /tab-home -->
-
-<!-- ══════════════════════════════════════════════════ -->
-<!--  BOTTOM PANEL (manual picks)                       -->
-<!-- ══════════════════════════════════════════════════ -->
-<div class="bottom-panel hidden" id="bottom-panel">
-  <div class="panel-avatars" id="panel-avatars"></div>
-  <div class="panel-info">
-    <div class="panel-title" id="panel-title">BrainTrust Ready</div>
-    <div class="panel-sub" id="panel-sub">0 members selected</div>
-  </div>
-  <button class="panel-clear" onclick="clearAll()">Clear All</button>
-  <button class="panel-go" onclick="goToArena()">Submit Question →</button>
-</div>
-
-<!-- ══════════════════════════════════════════════════ -->
-<!--  SWAP MODAL                                        -->
-<!-- ══════════════════════════════════════════════════ -->
-<div class="modal-overlay hidden" id="swap-modal">
+<!-- MODALS -->
+<div class="modal-overlay hidden" id="seat-modal">
   <div class="modal-box">
     <div class="modal-header">
-      <h3 id="swap-modal-title">Swap Member</h3>
-      <button class="modal-close" onclick="closeSwapModal()">✕</button>
+      <h3 id="seat-modal-title">Assign Seat</h3>
+      <button class="modal-close" onclick="closeSeatModal()">✕</button>
     </div>
-    <div class="modal-search">
-      <input type="text" id="swap-search" placeholder="Search by name…" oninput="renderSwapGrid(this.value)" />
-    </div>
-    <div class="modal-grid" id="swap-grid"></div>
+    <div class="modal-body" id="seat-modal-body"></div>
   </div>
+</div>
+
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-scene">
+    <div class="loading-icon" id="loading-icon">🎤</div>
+    <div class="loading-text" id="loading-text">Napoleon is warming up…</div>
+    <div class="loading-sub" id="loading-sub">He requested "My Way." The DJ is terrified.</div>
+  </div>
+  <div style="font-size:11px;color:#374151;margin-top:12px" id="loading-progress"></div>
+</div>
+
+<!-- ARENA ACTION BAR -->
+<div class="arena-bar hidden" id="arena-bar">
+  <div class="arena-status">
+    <div class="arena-status-title" id="arena-bar-title">Round Robin</div>
+    <div class="arena-status-sub" id="arena-bar-sub"></div>
+  </div>
+  <button class="arena-back-btn" onclick="arenaBack()">← Back</button>
+  <button class="arena-next-btn" id="arena-next-btn" onclick="arenaNext()">Next →</button>
 </div>
 
 <script>
-// ════════════════════════════════════════════════════
-//  ROLE DEFINITIONS
-// ════════════════════════════════════════════════════
-const ROLE_DEFS = {
-  visionary:  { label:'Visionary',   icon:'🔮', desc:'Sees the future' },
-  strategist: { label:'Strategist',  icon:'♟️',  desc:'Designs the plan' },
-  marketer:   { label:'Marketer',    icon:'📣', desc:'Wins hearts & minds' },
-  finance:    { label:'Finance',     icon:'💰', desc:'Controls the numbers' },
-  innovator:  { label:'Innovator',   icon:'⚙️', desc:'Builds the new thing' },
-  operator:   { label:'Operator',    icon:'🏭', desc:'Executes flawlessly' },
-  product:    { label:'Product',     icon:'📦', desc:'Shapes the offering' },
-  people:     { label:'People',      icon:'🤝', desc:'Leads & inspires' },
-  conscience: { label:'Conscience',  icon:'⚖️', desc:'Moral compass' },
-  devil:      { label:"Devil's Adv", icon:'😈', desc:'Challenges everything' },
-  comedian:   { label:'Comedian',    icon:'😂', desc:'Cuts through BS' },
-};
+// ═══════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════
+const OPENROUTER_KEY = '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';
+const OPENROUTER_MODEL = 'anthropic/claude-3-5-sonnet';
 
-// Role templates for trust sizes
-const TRUST_ROLES = {
-  3: ['visionary','strategist','devil'],
-  5: ['visionary','strategist','marketer','finance','devil'],
-  7: ['visionary','strategist','marketer','finance','innovator','operator','devil'],
-  9: ['visionary','strategist','marketer','finance','innovator','operator','product','people','devil'],
-};
-
-// ════════════════════════════════════════════════════
-//  MEMBER DATA (62 members)
-// ════════════════════════════════════════════════════
 const MEMBERS = [
   // ── BUSINESS TITANS ──
   { id:1,  name:'Steve Jobs',        avatar:'🍎', category:'BUSINESS',   era:'20th–21st c.', origin:'USA',
@@ -1133,90 +1121,255 @@ const MEMBERS = [
     tags:['irreverence','empathy','survival','crisis','humanity'] },
 ];
 
-// ════════════════════════════════════════════════════
-//  STATE
-// ════════════════════════════════════════════════════
-let trustSize = 5;
-let focusMode = 'any';
-let comedianEnabled = false;
-let assembled = [];   // array of {slotRole, member} or null
-let manualSelected = new Set();
-let currentCat = 'all';
-let swapSlotIdx = -1;
 
-// ════════════════════════════════════════════════════
-//  TAB SWITCHING
-// ════════════════════════════════════════════════════
-function switchTab(tab) {
-  document.getElementById('tab-assemble').classList.toggle('hidden', tab !== 'assemble');
-  document.getElementById('tab-roster').classList.toggle('hidden', tab !== 'roster');
-  document.getElementById('tab-home').classList.toggle('hidden', tab !== 'home');
-  document.querySelectorAll('.tab-btn').forEach((b,i) => {
-    const tabs = ['assemble','roster','home'];
-    b.classList.toggle('active', tabs[i] === tab);
-  });
-  if (tab === 'roster') renderRoster();
-}
+const ROLE_DEFS = {
+  visionary:  {label:'Visionary',  icon:'🔮',color:'#7c3aed',desc:'Big picture future thinking'},
+  strategist: {label:'Strategist', icon:'♟️', color:'#1d4ed8',desc:'Long-game planning & positioning'},
+  marketer:   {label:'Marketer',   icon:'📣',color:'#db2777',desc:'Messaging, brand & persuasion'},
+  finance:    {label:'Finance',    icon:'💰',color:'#059669',desc:'Numbers, risk & capital allocation'},
+  innovator:  {label:'Innovator',  icon:'⚙️',color:'#0891b2',desc:'Tech, disruption & new models'},
+  operator:   {label:'Operator',   icon:'🏭',color:'#d97706',desc:'Execution, systems & scale'},
+  product:    {label:'Product',    icon:'📦',color:'#dc2626',desc:'Customer value & roadmap'},
+  people:     {label:'People',     icon:'🤝',color:'#0d9488',desc:'Culture, leadership & talent'},
+  conscience: {label:'Conscience', icon:'⚖️',color:'#4f46e5',desc:'Ethics, values & long-term impact'},
+  devil:      {label:"Devil's Adv",icon:'😈',color:'#b91c1c',desc:'Challenges every assumption'},
+  comedian:   {label:'Comedian',   icon:'😂',color:'#ea580c',desc:'Cuts through BS with humor'},
+};
 
-// ════════════════════════════════════════════════════
-//  ASSEMBLY CONTROLS
-// ════════════════════════════════════════════════════
-function setSize(n) {
-  trustSize = n;
-  document.querySelectorAll('.size-btn').forEach(b => {
-    b.classList.toggle('active', b.textContent.trim().startsWith(n));
-  });
-  // Update board grid class
-  const board = document.getElementById('board');
-  board.className = `board-grid size-${n}`;
-  // If already assembled, re-render placeholders
-  if (assembled.length > 0) renderBoard();
-}
+const TRUST_ROLES = {
+  3:['visionary','strategist','devil'],
+  5:['visionary','strategist','marketer','finance','devil'],
+  7:['visionary','strategist','marketer','finance','innovator','operator','devil'],
+  9:['visionary','strategist','marketer','finance','innovator','operator','product','people','devil'],
+};
 
-function setFocus(f) {
-  focusMode = f;
-  document.querySelectorAll('.focus-pill').forEach(p => {
-    const fval = p.getAttribute('onclick').match(/setFocus\('(.+?)'\)/)[1];
-    p.classList.toggle('active', fval === f);
-  });
-  // Auto-enable comedian toggle if comedians-only
-  if (f === 'comedians') {
-    comedianEnabled = true;
-    updateComédianToggle();
+// Seat positions [cx, cy] for each table size in 480x220 viewBox
+const SEAT_POSITIONS = {
+  3:[[240,28],[78,110],[402,110]],
+  5:[[240,28],[90,72],[390,72],[90,148],[390,148]],
+  7:[[240,22],[72,62],[408,62],[55,110],[425,110],[72,158],[408,158]],
+  9:[[240,20],[92,52],[388,52],[58,90],[422,90],[58,130],[422,130],[92,168],[388,168]],
+};
+
+const LOADING_SCENES = [
+  {icon:'🎤',text:'Napoleon is warming up the mic…',sub:'He requested "My Way." The DJ is terrified.'},
+  {icon:'🏷️',text:'Cleopatra is haggling at a garage sale…',sub:'"I ruled an empire. $4 for this lamp? Absolutely not."'},
+  {icon:'🚭',text:'Churchill is staring at the no-smoking sign…',sub:'He\'s read it 12 times. He refuses to believe it applies to him.'},
+  {icon:'📱',text:'Darwin is scrolling Instagram…',sub:'"Survival of the most followed. This changes everything."'},
+  {icon:'📋',text:'Sun Tzu is filling out TPS reports…',sub:'"Know your enemy. Know your manager. Know the cover sheet format."'},
+  {icon:'📞',text:'Socrates is on hold with customer service…',sub:'"I only know one thing — this hold music is eternal."'},
+  {icon:'🎫',text:'Caesar just got a parking ticket…',sub:'"Et tu, meter maid?"'},
+  {icon:'🛒',text:'Steve Jobs is at Costco…',sub:'"I want ONE product. Why is everything in a 48-pack?"'},
+];
+
+// ═══════════════════════════════════════
+//  99 JUDGES
+//  bias: analytical|visionary|humanitarian|strategic|pragmatic|ethical|systemic|creative
+//  persuasion 1-10 (10 = hardest to change)
+// ═══════════════════════════════════════
+const JUDGES = [
+  // ── BUSINESS & FINANCE (15) ─────────────────────────────────────
+  {id:1,  name:'Dr. Elena Vasquez',    title:'Behavioral Economist',      origin:'Mexico',      focus:'Incentive structures & human behavior',        bias:'analytical',   persuasion:7},
+  {id:2,  name:'James Wei',            title:'Venture Capitalist',         origin:'Singapore',   focus:'Market timing & scalability signals',           bias:'strategic',    persuasion:6},
+  {id:3,  name:'Sofia Marchetti',      title:'CFO turned Entrepreneur',    origin:'Italy',       focus:'Capital efficiency & unit economics',           bias:'pragmatic',    persuasion:7},
+  {id:4,  name:'Kwame Asante',         title:'Development Economist',      origin:'Ghana',       focus:'Long-term societal ROI & equity',               bias:'humanitarian', persuasion:5},
+  {id:5,  name:'Hannah Eriksson',      title:'ESG Investment Director',    origin:'Sweden',      focus:'Stakeholder impact & sustainability',           bias:'ethical',      persuasion:6},
+  {id:6,  name:'Raj Patel',            title:'Private Equity Partner',     origin:'India/UK',    focus:'Competitive moats & exit dynamics',             bias:'strategic',    persuasion:8},
+  {id:7,  name:'Yuki Tanaka',          title:'Corporate Strategist',       origin:'Japan',       focus:'Long-term positioning & kaizen principles',     bias:'systemic',     persuasion:7},
+  {id:8,  name:'Marcus Williams',      title:'Investment Banker',          origin:'USA',         focus:'Deal structure & financial risk',               bias:'analytical',   persuasion:8},
+  {id:9,  name:'Isabella Torres',      title:'Startup Ecosystem Builder',  origin:'Brazil',      focus:'Network effects & ecosystem thinking',          bias:'visionary',    persuasion:4},
+  {id:10, name:'Henrik Larsson',       title:'Pension Fund Manager',       origin:'Denmark',     focus:'Risk-adjusted returns over decades',            bias:'pragmatic',    persuasion:8},
+  {id:11, name:'Amara Osei',           title:'Microfinance Pioneer',       origin:'Nigeria',     focus:'Grassroots economic empowerment',               bias:'humanitarian', persuasion:5},
+  {id:12, name:'Victor Chen',          title:'Hedge Fund Quant',           origin:'China/USA',   focus:'Data patterns & probabilistic outcomes',        bias:'analytical',   persuasion:9},
+  {id:13, name:'Priya Nair',           title:'Chief Risk Officer',         origin:'India',       focus:'Downside scenarios & tail risk',                bias:'analytical',   persuasion:7},
+  {id:14, name:'Claude Beaumont',      title:'Luxury Brand CEO',           origin:'France',      focus:'Perception, exclusivity & brand equity',        bias:'creative',     persuasion:6},
+  {id:15, name:'Svetlana Morozova',    title:'Energy Market Analyst',      origin:'Russia',      focus:'Geopolitical risk & resource dynamics',         bias:'systemic',     persuasion:7},
+  // ── ACADEMIA & PHILOSOPHY (15) ──────────────────────────────────
+  {id:16, name:'Prof. Theodore Marsh', title:'Philosophy of Mind',         origin:'UK',          focus:'Epistemology & cognitive bias in decisions',    bias:'analytical',   persuasion:8},
+  {id:17, name:'Dr. Aiko Yamamoto',    title:'Ethics & AI Scholar',        origin:'Japan',       focus:'Responsible technology & dual-use risks',       bias:'ethical',      persuasion:6},
+  {id:18, name:'Prof. Gabriel Santos', title:'Political Philosopher',      origin:'Portugal',    focus:'Justice, legitimacy & democratic values',       bias:'ethical',      persuasion:6},
+  {id:19, name:'Dr. Fatima Al-Rashid', title:'Islamic Scholar & Jurist',   origin:'Jordan',      focus:'Moral economy & long-term community welfare',   bias:'humanitarian', persuasion:7},
+  {id:20, name:'Prof. David Okafor',   title:'African Philosophy',         origin:'Nigeria',     focus:'Ubuntu — collective over individual gain',      bias:'humanitarian', persuasion:6},
+  {id:21, name:'Dr. Mei Lin Zhao',     title:'Confucian Ethics Scholar',   origin:'China',       focus:'Harmony, hierarchy & long-horizon thinking',    bias:'systemic',     persuasion:7},
+  {id:22, name:'Prof. Olga Petrov',    title:'Epistemologist',             origin:'Ukraine',     focus:'Quality of evidence & reasoning rigor',         bias:'analytical',   persuasion:9},
+  {id:23, name:'Dr. Samuel Biggs',     title:'Pragmatist Philosopher',     origin:'USA',         focus:'What actually produces results in practice',    bias:'pragmatic',    persuasion:5},
+  {id:24, name:'Prof. Amelia Rodriguez',title:'Feminist Theorist',         origin:'Argentina',   focus:'Power dynamics & overlooked stakeholders',      bias:'humanitarian', persuasion:5},
+  {id:25, name:'Dr. Lars Nygaard',     title:'Existentialist Philosopher', origin:'Norway',      focus:'Individual agency & authentic choice',          bias:'ethical',      persuasion:5},
+  {id:26, name:'Prof. Ravi Sharma',    title:'Vedic Philosophy',           origin:'India',       focus:'Dharmic responsibility & cyclical thinking',    bias:'systemic',     persuasion:6},
+  {id:27, name:'Dr. Ingrid Hoffmann',  title:'Continental Philosopher',    origin:'Germany',     focus:'Structural critique & hidden assumptions',      bias:'analytical',   persuasion:7},
+  {id:28, name:'Prof. Marcus Chen',    title:'Logic & Argumentation',      origin:'Taiwan',      focus:'Validity of reasoning structure',               bias:'analytical',   persuasion:9},
+  {id:29, name:'Dr. Zainab Hassan',    title:'Islamic Jurisprudence',      origin:'Egypt',       focus:'Maqasid — purposes & consequences of law',      bias:'ethical',      persuasion:7},
+  {id:30, name:'Prof. Thomas Osei',    title:'Ubuntu Philosophy',          origin:'Ghana',       focus:'Collective flourishing & relational ethics',    bias:'humanitarian', persuasion:5},
+  // ── TECHNOLOGY & SCIENCE (12) ───────────────────────────────────
+  {id:31, name:'Dr. Sarah Blackwood',  title:'AI Researcher',              origin:'Canada',      focus:'Emergent systems & unintended consequences',    bias:'systemic',     persuasion:6},
+  {id:32, name:'Dr. Tae-Yang Kim',     title:'Complexity Scientist',       origin:'S. Korea',    focus:'Non-linear dynamics & tipping points',          bias:'systemic',     persuasion:7},
+  {id:33, name:'Prof. Alejandro Cruz', title:'Quantum Physicist',          origin:'Mexico',      focus:'Uncertainty, probability & first principles',   bias:'analytical',   persuasion:8},
+  {id:34, name:'Dr. Nadia Petrov',     title:'Neuroscientist',             origin:'Russia',      focus:'Decision-making under uncertainty in the brain',bias:'analytical',   persuasion:7},
+  {id:35, name:'Prof. Liam O\'Brien',  title:'Climate Scientist',          origin:'Ireland',     focus:'Long-term planetary systems & feedback loops',  bias:'systemic',     persuasion:6},
+  {id:36, name:'Dr. Yaw Asante',       title:'Biotechnologist',            origin:'Ghana',       focus:'Technology adoption & access equity',           bias:'humanitarian', persuasion:5},
+  {id:37, name:'Prof. Mina Nakamura',  title:'Systems Biologist',          origin:'Japan',       focus:'Feedback loops & homeostasis in complex systems',bias:'systemic',    persuasion:7},
+  {id:38, name:'Dr. Antoine Dubois',   title:'Computer Scientist',         origin:'France',      focus:'Algorithmic thinking & scalable architecture',  bias:'analytical',   persuasion:8},
+  {id:39, name:'Prof. Preethi Menon',  title:'Data Scientist',             origin:'India',       focus:'Statistical reasoning & evidence quality',      bias:'analytical',   persuasion:7},
+  {id:40, name:'Dr. Maya Rodriguez',   title:'Aerospace Engineer',         origin:'Colombia',    focus:'Systems integration & mission-critical thinking',bias:'pragmatic',   persuasion:8},
+  {id:41, name:'Prof. Erik Björk',     title:'Environmental Systems',      origin:'Sweden',      focus:'Planetary boundaries & regenerative models',    bias:'systemic',     persuasion:6},
+  {id:42, name:'Dr. Tanya Fletcher',   title:'Cognitive Scientist',        origin:'Australia',   focus:'Mental models, biases & heuristics',            bias:'analytical',   persuasion:6},
+  // ── GOVERNMENT & POLICY (10) ────────────────────────────────────
+  {id:43, name:'Ambassador Maria da Silva',title:'Diplomat',               origin:'Brazil',      focus:'Coalition-building & multi-stakeholder consensus',bias:'strategic',  persuasion:5},
+  {id:44, name:'Dr. Omar Abdullah',    title:'Public Policy Expert',       origin:'Pakistan',    focus:'Institutional design & governance failures',    bias:'systemic',     persuasion:7},
+  {id:45, name:'Grace Kimani',         title:'Former Senator',             origin:'Kenya',       focus:'Constituent impact & political feasibility',    bias:'humanitarian', persuasion:5},
+  {id:46, name:'Dr. Ivan Kovalenko',   title:'Geopolitical Analyst',       origin:'Ukraine',     focus:'State power dynamics & security trade-offs',    bias:'strategic',    persuasion:8},
+  {id:47, name:'Prof. Catherine Leroy',title:'EU Policy Expert',           origin:'France',      focus:'Regulatory frameworks & supranational governance',bias:'systemic',   persuasion:7},
+  {id:48, name:'Dr. Hiroshi Yamada',   title:'Constitutional Scholar',     origin:'Japan',       focus:'Rule of law & institutional legitimacy',        bias:'ethical',      persuasion:8},
+  {id:49, name:'James Adeyemi',        title:'Former State Governor',      origin:'Nigeria',     focus:'Practical governance & constituency management',bias:'pragmatic',   persuasion:6},
+  {id:50, name:'Dr. Astrid Lindqvist', title:'International Law',          origin:'Sweden',      focus:'Treaty obligations & global norms',             bias:'ethical',      persuasion:7},
+  {id:51, name:'Prof. Wei Zhang',      title:'Comparative Politics',       origin:'China',       focus:'State capacity & developmental models',         bias:'strategic',    persuasion:8},
+  {id:52, name:'Dr. Elena Popescu',    title:'Human Rights Law',           origin:'Romania',     focus:'Minority rights & rule-of-law safeguards',      bias:'humanitarian', persuasion:6},
+  // ── CREATIVE & ARTS (10) ────────────────────────────────────────
+  {id:53, name:'Marco Bellini',        title:'Film Director',              origin:'Italy',       focus:'Narrative arc, emotional truth & human stories',bias:'creative',    persuasion:4},
+  {id:54, name:'Dr. Yolanda James',    title:'Cultural Anthropologist',    origin:'Jamaica',     focus:'Cultural context & lived human experience',     bias:'humanitarian', persuasion:5},
+  {id:55, name:'Ryo Tanaka',           title:'Game Designer',              origin:'Japan',       focus:'User agency, feedback loops & engagement',      bias:'creative',     persuasion:5},
+  {id:56, name:'Dr. Lucia Hernandez',  title:'Musicologist',               origin:'Spain',       focus:'Pattern recognition across disparate domains',  bias:'creative',     persuasion:6},
+  {id:57, name:'Jordan Osei',          title:'Architect & Urban Planner',  origin:'Ghana/UK',    focus:'Built environment & long-term space use',       bias:'systemic',     persuasion:6},
+  {id:58, name:'Dr. Sophia Kwan',      title:'Art Historian',              origin:'Hong Kong',   focus:'Historical parallels & cyclical patterns',      bias:'visionary',    persuasion:5},
+  {id:59, name:'Miguel Reyes',         title:'Documentary Filmmaker',      origin:'Mexico',      focus:'Ground-truth storytelling & unheard voices',    bias:'humanitarian', persuasion:4},
+  {id:60, name:'Dr. Anna Kowalski',    title:'Literature Scholar',         origin:'Poland',      focus:'Narrative framing & language as power',         bias:'analytical',   persuasion:6},
+  {id:61, name:'Amir Hassan',          title:'Visual Artist',              origin:'Lebanon',     focus:'Cross-cultural symbol & meaning-making',        bias:'creative',     persuasion:4},
+  {id:62, name:'Dr. Valerie Moreau',   title:'Performing Arts Scholar',    origin:'France',      focus:'Embodied cognition & performance under pressure',bias:'creative',    persuasion:5},
+  // ── MILITARY & STRATEGY (8) ─────────────────────────────────────
+  {id:63, name:'Gen. Robert Hayes',    title:'Ret. Military Strategist',   origin:'USA',         focus:'Force structure, logistics & second-order effects',bias:'strategic', persuasion:9},
+  {id:64, name:'Dr. Olumide Adeyemi',  title:'Conflict Resolution',        origin:'Nigeria',     focus:'De-escalation & negotiated settlement dynamics',bias:'humanitarian', persuasion:5},
+  {id:65, name:'Cmd. Ingrid Svensson', title:'Ret. Naval Strategist',      origin:'Sweden',      focus:'Long supply chains & systemic vulnerabilities', bias:'systemic',     persuasion:8},
+  {id:66, name:'Prof. Chen Wei',       title:'Sun Tzu Scholar',            origin:'China',       focus:'Information asymmetry & winning without fighting',bias:'strategic',  persuasion:7},
+  {id:67, name:'Dr. Fatima Malik',     title:'Peacekeeping Expert',        origin:'Pakistan',    focus:'Multilateral coordination & conflict prevention',bias:'humanitarian', persuasion:5},
+  {id:68, name:'Col. Eduardo Vargas',  title:'Ret. Counterinsurgency',     origin:'Brazil',      focus:'Adaptive tactics & ground-level realities',     bias:'pragmatic',    persuasion:7},
+  {id:69, name:'Dr. Magnus Christensen',title:'Defense Policy',            origin:'Denmark',     focus:'Deterrence theory & alliance dynamics',         bias:'strategic',    persuasion:8},
+  {id:70, name:'Prof. Miriam Cohen',   title:'Intelligence Analyst',       origin:'Israel',      focus:'Signal vs noise & adversarial thinking',        bias:'analytical',   persuasion:8},
+  // ── MEDICINE & PSYCHOLOGY (10) ──────────────────────────────────
+  {id:71, name:'Dr. Alexander Grant',  title:'Neuropsychiatrist',          origin:'UK',          focus:'Cognitive load, stress & decision quality',     bias:'analytical',   persuasion:7},
+  {id:72, name:'Dr. Yuki Sato',        title:'Public Health Expert',       origin:'Japan',       focus:'Population-level outcomes & prevention',        bias:'systemic',     persuasion:6},
+  {id:73, name:'Prof. Nina Okafor',    title:'Health Economist',           origin:'Nigeria',     focus:'Resource allocation under scarcity',            bias:'pragmatic',    persuasion:7},
+  {id:74, name:'Dr. Carlos Mendez',    title:'Sports Psychologist',        origin:'Argentina',   focus:'Peak performance, pressure & team dynamics',    bias:'pragmatic',    persuasion:5},
+  {id:75, name:'Dr. Rebecca Stern',    title:'Behavioral Psychologist',    origin:'USA',         focus:'Cognitive biases in group decision-making',     bias:'analytical',   persuasion:6},
+  {id:76, name:'Prof. Aditya Sharma',  title:'Psychiatrist',               origin:'India',       focus:'Mental health impact of high-stakes environments',bias:'humanitarian',persuasion:6},
+  {id:77, name:'Dr. Zara Ismail',      title:'Global Health Expert',       origin:'Malaysia',    focus:'Cross-system health equity & access',           bias:'humanitarian', persuasion:5},
+  {id:78, name:'Prof. Bjorn Gustafsson',title:'Evolutionary Biologist',    origin:'Sweden',      focus:'Evolutionary strategy & adaptive fitness',      bias:'systemic',     persuasion:7},
+  {id:79, name:'Dr. Sadia Rahman',     title:'Community Health',           origin:'Bangladesh',  focus:'Last-mile impact & community resilience',       bias:'humanitarian', persuasion:4},
+  {id:80, name:'Prof. Michael Torres', title:'Addiction Medicine',         origin:'USA',         focus:'Compulsive behavior & organizational dysfunction',bias:'analytical',  persuasion:6},
+  // ── LAW & ETHICS (10) ───────────────────────────────────────────
+  {id:81, name:'Judge Diana Osei',     title:'Ret. International Court',   origin:'Ghana',       focus:'Precedent, proportionality & rule of law',      bias:'ethical',      persuasion:9},
+  {id:82, name:'Prof. Yuki Matsumoto', title:'Corporate Law',              origin:'Japan',       focus:'Fiduciary duty & governance structures',        bias:'ethical',      persuasion:8},
+  {id:83, name:'Dr. Carlos Silva',     title:'Constitutional Lawyer',      origin:'Brazil',      focus:'Rights protection & democratic safeguards',     bias:'ethical',      persuasion:7},
+  {id:84, name:'Prof. Emma Thompson',  title:'Legal Philosopher',          origin:'UK',          focus:'Jurisprudence & law-as-social-construct',       bias:'analytical',   persuasion:7},
+  {id:85, name:'Dr. Aisha Kamara',     title:'Human Rights Lawyer',        origin:'Sierra Leone',focus:'Dignity, justice & vulnerable populations',     bias:'humanitarian', persuasion:6},
+  {id:86, name:'Prof. David Schwartz', title:'Bioethicist',                origin:'USA',         focus:'Research ethics & competing moral claims',      bias:'ethical',      persuasion:7},
+  {id:87, name:'Dr. Leila Nazari',     title:'Environmental Lawyer',       origin:'Iran/Canada', focus:'Intergenerational rights & climate justice',    bias:'ethical',      persuasion:6},
+  {id:88, name:'Prof. Santiago Reyes', title:'IP & Innovation Law',        origin:'Mexico',      focus:'Incentive structures & knowledge sharing',      bias:'strategic',    persuasion:7},
+  {id:89, name:'Dr. Ingrid Hansen',    title:'Criminal Justice Scholar',   origin:'Denmark',     focus:'Systemic reform & rehabilitation outcomes',     bias:'humanitarian', persuasion:5},
+  {id:90, name:'Prof. Vikram Patel',   title:'Medical Ethicist',           origin:'India',       focus:'Dignity-preserving decision-making',            bias:'ethical',      persuasion:7},
+  // ── SOCIAL SCIENCES (9) ─────────────────────────────────────────
+  {id:91, name:'Dr. Amara Diallo',     title:'Sociologist',                origin:'Senegal',     focus:'Social capital & community network dynamics',   bias:'humanitarian', persuasion:5},
+  {id:92, name:'Prof. Kenji Watanabe', title:'Cultural Anthropologist',    origin:'Japan',       focus:'Cross-cultural meaning and social contracts',   bias:'systemic',     persuasion:6},
+  {id:93, name:'Dr. Elena Rodríguez',  title:'Organizational Psychologist',origin:'Spain',       focus:'Group dynamics, trust & org culture',           bias:'pragmatic',    persuasion:5},
+  {id:94, name:'Prof. Kwabena Mensah', title:'Economic Sociologist',       origin:'Ghana',       focus:'Institutional trust & market embeddedness',     bias:'systemic',     persuasion:7},
+  {id:95, name:'Dr. Priya Kapoor',     title:'Gender Studies Scholar',     origin:'India',       focus:'Power, representation & overlooked voices',     bias:'humanitarian', persuasion:5},
+  {id:96, name:'Prof. Marcel Dupont',  title:'Social Theorist',            origin:'France',      focus:'Habitus, capital & structural reproduction',    bias:'analytical',   persuasion:7},
+  {id:97, name:'Dr. Yewande Obi',      title:'Urban Planner',              origin:'Nigeria',     focus:'Spatial equity & long-term infrastructure',     bias:'systemic',     persuasion:6},
+  {id:98, name:'Prof. Stefan Holmberg',title:'Environmental Sociologist',  origin:'Sweden',      focus:'Social-ecological systems & collective action',  bias:'systemic',     persuasion:7},
+  {id:99, name:'Dr. Nora Christodoulou',title:'Political Sociologist',     origin:'Greece',      focus:'Civil society, protest & democratic resilience',bias:'humanitarian', persuasion:4},
+];
+
+// Judge stats in localStorage
+const JUDGE_STATS_KEY = 'braintrust_judge_stats_v1';
+function loadJudgeStats(){ try{return JSON.parse(localStorage.getItem(JUDGE_STATS_KEY)||'{}')}catch(e){return{}} }
+function saveJudgeStats(s){ try{localStorage.setItem(JUDGE_STATS_KEY,JSON.stringify(s))}catch(e){} }
+function recordJudgeVote(judgeId, stayed, persuadedByMemberId){
+  const s = loadJudgeStats();
+  if(!s[judgeId]) s[judgeId]={timesVoted:0,timesStayed:0,timesChanged:0,persuadedBy:{}};
+  s[judgeId].timesVoted++;
+  if(stayed){ s[judgeId].timesStayed++; }
+  else {
+    s[judgeId].timesChanged++;
+    if(persuadedByMemberId){
+      s[judgeId].persuadedBy[persuadedByMemberId] = (s[judgeId].persuadedBy[persuadedByMemberId]||0)+1;
+    }
   }
+  saveJudgeStats(s);
 }
 
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let currentStep = 1;
+let comedianEnabled = false;
+let customOpen = false;
+let currentSize = 5;
+let seats = []; // [{slotRole, member}]
+let assembled = [];
+let question = '';
+let statements = {}; // memberId -> text
+let matches = []; // [{a, b, winnerIdx, verdict, expanded}]
+let currentMatchIdx = 0;
+let arenaPhase = 'roundrobin'; // 'roundrobin'|'playoffs'|'finals'|'champion'
+let standings = []; // [{member, wins, losses}]
+let currentCat = 'all';
+let loadingSceneTimer = null;
+
+// ═══════════════════════════════════════
+//  NAVIGATION
+// ═══════════════════════════════════════
+function goToStep(step) {
+  ['1','2','3','4','5','roster'].forEach(s => {
+    const el = document.getElementById('step-' + s);
+    if (el) el.classList.add('hidden');
+  });
+  const target = document.getElementById('step-' + step);
+  if (target) target.classList.remove('hidden');
+  currentStep = step;
+
+  // Update nav pills
+  for (let i = 1; i <= 5; i++) {
+    const pill = document.getElementById('nav-step-' + i);
+    if (!pill) continue;
+    pill.classList.remove('active','done');
+    if (step === i) pill.classList.add('active');
+    else if (typeof step === 'number' && i < step) pill.classList.add('done');
+  }
+  const rosterPill = document.getElementById('nav-roster');
+  rosterPill.classList.remove('active');
+  if (step === 'roster') rosterPill.classList.add('active');
+
+  // arena bar
+  const bar = document.getElementById('arena-bar');
+  if (step === 3 || step === 4) bar.classList.remove('hidden');
+  else bar.classList.add('hidden');
+
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ═══════════════════════════════════════
+//  ASSEMBLY — SIMPLE MODE
+// ═══════════════════════════════════════
 function toggleComedian() {
   comedianEnabled = !comedianEnabled;
-  updateComédianToggle();
-}
-function updateComédianToggle() {
-  const t = document.getElementById('comedian-toggle');
-  t.classList.toggle('on', comedianEnabled);
+  document.getElementById('comedian-track').classList.toggle('on', comedianEnabled);
 }
 
-// ════════════════════════════════════════════════════
-//  AUTO-ASSEMBLY
-// ════════════════════════════════════════════════════
-function autoAssemble() {
-  const roles = getRoleList();
+function quickAssemble(size) {
+  currentSize = size || 5;
+  const roles = buildRoleList(currentSize, comedianEnabled);
   const usedIds = new Set();
   assembled = roles.map(role => {
     const member = pickMember(role, usedIds);
     if (member) usedIds.add(member.id);
-    return { slotRole: role, member };
+    return {slotRole: role, member};
   });
-  renderBoard();
+  renderAssembledStrip();
+  goToStep(2);
 }
 
-function getRoleList() {
-  let roles = [...TRUST_ROLES[trustSize]];
-  if (focusMode === 'comedians') {
-    // All slots are comedian
-    return Array(trustSize).fill('comedian');
-  }
-  if (comedianEnabled) {
-    // Replace the last 'devil' slot with comedian, or last slot
+function buildRoleList(size, includeComedian) {
+  let roles = [...TRUST_ROLES[size]];
+  if (includeComedian) {
     const devilIdx = roles.lastIndexOf('devil');
     if (devilIdx >= 0) roles[devilIdx] = 'comedian';
     else roles[roles.length - 1] = 'comedian';
@@ -1226,626 +1379,1013 @@ function getRoleList() {
 
 function pickMember(role, usedIds) {
   const eligible = MEMBERS.filter(m =>
-    m.roles.includes(role) && !usedIds.has(m.id)
+    !usedIds.has(m.id) &&
+    (role === 'comedian' ? m.category === 'COMEDIAN' : m.roles.includes(role))
   );
-  if (eligible.length === 0) {
-    // Fallback: any unused member
+  if (!eligible.length) {
     const fallback = MEMBERS.filter(m => !usedIds.has(m.id));
     return fallback[Math.floor(Math.random() * fallback.length)] || null;
-  }
-  // Apply focus bias
-  if (focusMode !== 'any' && focusMode !== 'comedians') {
-    const biased = eligible.filter(m => m.focus && m.focus.includes(focusMode));
-    if (biased.length > 0) {
-      return biased[Math.floor(Math.random() * biased.length)];
-    }
-  }
-  if (focusMode === 'comedians') {
-    const comedians = eligible.filter(m => m.category === 'COMEDIAN');
-    if (comedians.length > 0) return comedians[Math.floor(Math.random() * comedians.length)];
   }
   return eligible[Math.floor(Math.random() * eligible.length)];
 }
 
-// ════════════════════════════════════════════════════
-//  RENDER BOARD
-// ════════════════════════════════════════════════════
-function renderBoard() {
-  const board = document.getElementById('board');
-  board.className = `board-grid size-${trustSize}`;
-  if (assembled.length === 0) {
-    board.innerHTML = '';
+// ═══════════════════════════════════════
+//  ASSEMBLY — CUSTOM MODE
+// ═══════════════════════════════════════
+function toggleCustom() {
+  customOpen = !customOpen;
+  document.getElementById('custom-panel').classList.toggle('open', customOpen);
+  document.getElementById('custom-arrow').classList.toggle('open', customOpen);
+  if (customOpen && seats.length === 0) setSize(5);
+}
+
+function setSize(n) {
+  currentSize = n;
+  document.querySelectorAll('.size-card').forEach((c,i) => {
+    c.classList.toggle('active', [3,5,7,9][i] === n);
+  });
+  // Initialize seats with roles but no member
+  seats = buildRoleList(n, comedianEnabled).map(role => ({slotRole: role, member: null}));
+  renderTableSVG();
+  updateCustomStatus();
+}
+
+function renderTableSVG() {
+  const positions = SEAT_POSITIONS[currentSize];
+  const g = document.getElementById('seats-group');
+  g.innerHTML = '';
+  positions.forEach((pos, idx) => {
+    const seat = seats[idx];
+    const role = ROLE_DEFS[seat.slotRole];
+    const hasMember = !!seat.member;
+    const cx = pos[0], cy = pos[1];
+    const seatG = document.createElementNS('http://www.w3.org/2000/svg','g');
+    seatG.setAttribute('class','seat-circle');
+    seatG.onclick = () => openSeatModal(idx);
+
+    // Background circle
+    const circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+    circle.setAttribute('cx', cx); circle.setAttribute('cy', cy); circle.setAttribute('r', 20);
+    circle.setAttribute('fill', hasMember ? '#111827' : '#1f2937');
+    circle.setAttribute('stroke', hasMember ? role.color : '#374151');
+    circle.setAttribute('stroke-width', hasMember ? '2.5' : '1.5');
+    circle.setAttribute('class','seat-ring');
+    seatG.appendChild(circle);
+
+    // Content
+    if (hasMember) {
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',cx); t.setAttribute('y',cy-4);
+      t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+      t.setAttribute('font-size','16'); t.textContent = seat.member.avatar;
+      seatG.appendChild(t);
+      const name = document.createElementNS('http://www.w3.org/2000/svg','text');
+      name.setAttribute('x',cx); name.setAttribute('y',cy+14);
+      name.setAttribute('text-anchor','middle'); name.setAttribute('font-size','6');
+      name.setAttribute('fill','#9ca3af'); name.setAttribute('font-family','Inter,sans-serif');
+      name.setAttribute('font-weight','700');
+      name.textContent = seat.member.name.split(' ')[0];
+      seatG.appendChild(name);
+    } else {
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x',cx); t.setAttribute('y',cy-4);
+      t.setAttribute('text-anchor','middle'); t.setAttribute('dominant-baseline','central');
+      t.setAttribute('font-size','14'); t.textContent = role.icon;
+      seatG.appendChild(t);
+      const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+      label.setAttribute('x',cx); label.setAttribute('y',cy+13);
+      label.setAttribute('text-anchor','middle'); label.setAttribute('font-size','6');
+      label.setAttribute('fill','#6b7280'); label.setAttribute('font-family','Inter,sans-serif');
+      label.setAttribute('font-weight','800'); label.setAttribute('letter-spacing','0.5');
+      label.textContent = role.label.toUpperCase().substring(0,8);
+      seatG.appendChild(label);
+    }
+    g.appendChild(seatG);
+  });
+}
+
+let openSeatIdx = -1;
+function openSeatModal(idx) {
+  openSeatIdx = idx;
+  const seat = seats[idx];
+  const roleInfo = ROLE_DEFS[seat.slotRole];
+  document.getElementById('seat-modal-title').textContent =
+    `Seat ${idx+1} — ${roleInfo.icon} ${roleInfo.label}`;
+
+  const body = document.getElementById('seat-modal-body');
+  const usedIds = new Set(seats.filter((_,i)=>i!==idx&&_.member).map(s=>s.member.id));
+
+  // Role picker section
+  let html = `<div class="modal-section-title">Change Role</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px">`;
+  Object.entries(ROLE_DEFS).forEach(([key, r]) => {
+    html += `<div class="role-option${seat.slotRole===key?' selected':''}" onclick="changeSeatRole(${idx},'${key}')">
+      <div class="role-icon" style="background:${r.color}22">${r.icon}</div>
+      <div class="role-info"><div class="role-name" style="color:${r.color}">${r.label}</div>
+        <div class="role-desc">${r.desc}</div></div>
+    </div>`;
+  });
+  html += `</div>`;
+
+  // Member picker section
+  html += `<div class="modal-section-title">Pick a Specific Member</div>`;
+  html += `<div style="margin-bottom:8px"><input type="text" placeholder="Search…" oninput="filterSeatMembers(this.value,${idx})" style="width:100%;padding:8px 12px;background:#1f2937;border:1px solid #374151;border-radius:8px;color:#f9fafb;font-size:13px;outline:none"/></div>`;
+  html += `<div class="member-mini-grid" id="seat-member-grid">`;
+  html += buildMemberMiniGrid(seat.slotRole, usedIds, seat.member?.id);
+  html += `</div>`;
+
+  body.innerHTML = html;
+  document.getElementById('seat-modal').classList.remove('hidden');
+}
+
+function buildMemberMiniGrid(role, usedIds, currentId, query='') {
+  const q = query.toLowerCase();
+  let candidates = MEMBERS.filter(m => {
+    const roleMatch = role === 'comedian' ? m.category==='COMEDIAN' : m.roles.includes(role);
+    const qMatch = !q || m.name.toLowerCase().includes(q) || m.tags.some(t=>t.includes(q));
+    return roleMatch && qMatch;
+  });
+  if (q && candidates.length < 4) {
+    const extra = MEMBERS.filter(m => !candidates.find(c=>c.id===m.id) &&
+      (m.name.toLowerCase().includes(q) || m.tags.some(t=>t.includes(q))));
+    candidates = [...candidates, ...extra.slice(0,8)];
+  }
+  return candidates.map(m => {
+    const isUsed = usedIds.has(m.id) && m.id !== currentId;
+    return `<div class="member-mini${isUsed?' used':''}" onclick="${isUsed?'':  `assignMemberToSeat(${openSeatIdx},${m.id})`}">
+      <div class="member-mini-avatar">${m.avatar}</div>
+      <div class="member-mini-name">${m.name}${m.id===currentId?' ✓':''}</div>
+    </div>`;
+  }).join('') || '<div style="color:#6b7280;font-size:12px;padding:8px">No matches</div>';
+}
+
+function filterSeatMembers(q, idx) {
+  const seat = seats[idx];
+  const usedIds = new Set(seats.filter((_,i)=>i!==idx&&_.member).map(s=>s.member.id));
+  document.getElementById('seat-member-grid').innerHTML =
+    buildMemberMiniGrid(seat.slotRole, usedIds, seat.member?.id, q);
+}
+
+function changeSeatRole(idx, role) {
+  seats[idx].slotRole = role;
+  seats[idx].member = null;
+  closeSeatModal();
+  openSeatModal(idx);
+  renderTableSVG();
+  updateCustomStatus();
+}
+
+function assignMemberToSeat(idx, memberId) {
+  seats[idx].member = MEMBERS.find(m=>m.id===memberId) || null;
+  closeSeatModal();
+  renderTableSVG();
+  updateCustomStatus();
+}
+
+function closeSeatModal() {
+  document.getElementById('seat-modal').classList.add('hidden');
+  openSeatIdx = -1;
+}
+
+function autoFillSeats() {
+  const usedIds = new Set();
+  seats = seats.map(seat => {
+    const m = pickMember(seat.slotRole, usedIds);
+    if (m) usedIds.add(m.id);
+    return {...seat, member: m};
+  });
+  renderTableSVG();
+  updateCustomStatus();
+}
+
+function updateCustomStatus() {
+  const filled = seats.filter(s=>s.member).length;
+  const total = seats.length;
+  const status = document.getElementById('custom-status');
+  const goBtn = document.getElementById('custom-go-btn');
+  status.textContent = `${filled} of ${total} seats filled`;
+  if (filled === total) {
+    goBtn.disabled = false; goBtn.style.opacity = '1';
+    status.style.color = '#10b981';
+  } else {
+    goBtn.disabled = true; goBtn.style.opacity = '0.5';
+    status.style.color = '#6b7280';
+  }
+}
+
+function proceedFromCustom() {
+  assembled = seats.filter(s=>s.member).map(s=>({slotRole:s.slotRole, member:s.member}));
+  renderAssembledStrip();
+  goToStep(2);
+}
+
+// ═══════════════════════════════════════
+//  STEP 2 — QUESTION
+// ═══════════════════════════════════════
+function renderAssembledStrip() {
+  const strip = document.getElementById('assembled-strip');
+  strip.innerHTML = assembled.map(slot => {
+    const role = ROLE_DEFS[slot.slotRole];
+    return `<div class="assembled-member">
+      <div class="assembled-avatar">${slot.member.avatar}</div>
+      <div class="assembled-role tag-${slot.slotRole}">${role.icon} ${role.label}</div>
+      <div class="assembled-name">${slot.member.name}</div>
+    </div>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════
+//  LOADING SCREEN
+// ═══════════════════════════════════════
+let sceneIdx = 0;
+function showLoading(progressText) {
+  const overlay = document.getElementById('loading-overlay');
+  overlay.classList.remove('hidden');
+  document.getElementById('loading-progress').textContent = progressText || '';
+  sceneIdx = Math.floor(Math.random() * LOADING_SCENES.length);
+  updateLoadingScene();
+  loadingSceneTimer = setInterval(() => {
+    sceneIdx = (sceneIdx + 1) % LOADING_SCENES.length;
+    updateLoadingScene();
+  }, 3500);
+}
+function updateLoadingScene() {
+  const s = LOADING_SCENES[sceneIdx];
+  document.getElementById('loading-icon').textContent = s.icon;
+  document.getElementById('loading-text').textContent = s.text;
+  document.getElementById('loading-sub').textContent = s.sub;
+}
+function hideLoading() {
+  clearInterval(loadingSceneTimer);
+  document.getElementById('loading-overlay').classList.add('hidden');
+}
+
+// ═══════════════════════════════════════
+//  AI CALLS (OpenRouter)
+// ═══════════════════════════════════════
+async function callAI(systemPrompt, userPrompt, maxTokens=250) {
+  const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+    method:'POST',
+    headers:{
+      'Authorization':`Bearer ${OPENROUTER_KEY}`,
+      'Content-Type':'application/json',
+      'HTTP-Referer':'https://braintrustbrief.com',
+      'X-Title':'BrainTrust Brief',
+    },
+    body: JSON.stringify({
+      model: OPENROUTER_MODEL,
+      max_tokens: maxTokens,
+      messages:[
+        {role:'system', content: systemPrompt},
+        {role:'user', content: userPrompt}
+      ]
+    })
+  });
+  const data = await res.json();
+  return data.choices?.[0]?.message?.content || '';
+}
+
+// ═══════════════════════════════════════
+//  JUDGE ASSIGNMENT
+// ═══════════════════════════════════════
+
+// Assign judges to a match. mode: 'rr' (9 random) | 'semi-a' (49) | 'semi-b' (49) | 'final' (99)
+function assignJudges(mode, usedSets) {
+  if (mode === 'final') return [...JUDGES];
+
+  const shuffled = [...JUDGES].sort(() => Math.random() - 0.5);
+
+  if (mode === 'rr') return shuffled.slice(0, 9);
+
+  // For playoffs: split 99 into 49 / 49 / 1 (floater)
+  if (mode === 'semi-split') {
+    const semiA = shuffled.slice(0, 49);
+    const semiB = shuffled.slice(49, 98);
+    const floater = shuffled[98];
+    return { semiA, semiB, floater };
+  }
+  return shuffled.slice(0, 9);
+}
+
+// ═══════════════════════════════════════
+//  JUDGE PANEL AI CALL
+// ═══════════════════════════════════════
+async function callJudgePanel(panelJudges, memberA, memberB, stmtA, stmtB) {
+  // For large panels (>15), use compact mode — no per-judge reasoning to stay within token limits.
+  // For small panels (≤15), include full per-judge reasoning for rich chip tooltips.
+  const compact = panelJudges.length > 15;
+
+  const judgeList = panelJudges.map((j, i) =>
+    compact
+      ? `${j.id}:${j.name.split(' ').slice(-1)[0]}|p${j.persuasion}|${j.bias[0]}`
+      : `Judge ${i+1}: ${j.name} | ${j.title}, ${j.origin} | Focus: "${j.focus}" | Persuasion resistance: ${j.persuasion}/10`
+  ).join('\n');
+
+  const prompt = compact
+    ? `Simulate ${panelJudges.length} judges voting on a debate. Return ONLY a JSON array — no text outside the JSON.
+
+THE QUESTION: "${question}"
+ARGUMENT A — ${memberA.name}: "${stmtA.slice(0,400)}"
+ARGUMENT B — ${memberB.name}: "${stmtB.slice(0,400)}"
+
+JUDGES (id:lastname|persuasion|bias_initial):
+${judgeList}
+
+Rules:
+- initial = gut lean BEFORE arguments: "A", "B", or "none" (≈15% undecided)
+- final = vote AFTER reading both arguments
+- changed = true if initial → final switched (high-persuasion judges resist change)
+- persuaded_by = "A" or "B" if changed, else null
+- No reasoning field needed.
+
+Return array of exactly ${panelJudges.length} objects:
+[{"id":1,"initial":"A","final":"A","changed":false,"persuaded_by":null},...]`
+    : `You are simulating a panel of ${panelJudges.length} highly intelligent judges evaluating a debate.
+
+THE QUESTION: "${question}"
+
+ARGUMENT A — ${memberA.name} (${memberA.tagline}):
+"${stmtA}"
+
+ARGUMENT B — ${memberB.name} (${memberB.tagline}):
+"${stmtB}"
+
+THE JUDGES:
+${judgeList}
+
+For EACH judge:
+1. INITIAL: Gut lean before arguments ("A", "B", or "none")
+2. FINAL: Vote after reading both
+3. REASONING: One specific sentence
+4. CHANGED: true/false
+5. PERSUADED_BY: "A" or "B" if changed, else null
+
+High persuasion resistance (8-10) = rarely changes.
+Return ONLY valid JSON array of ${panelJudges.length} objects:
+[{"id":${panelJudges[0].id},"initial":"A","final":"A","reasoning":"...","changed":false,"persuaded_by":null},...]`;
+
+  // max_tokens: compact = ~30 tokens/judge, full = ~80 tokens/judge, capped at 8000
+  const maxTok = Math.min(panelJudges.length * (compact ? 32 : 80), 8000);
+
+  try {
+    const raw = await callAI(
+      'You are a simulation engine for a judge panel. Return only valid JSON. No markdown, no explanation.',
+      prompt,
+      maxTok
+    );
+    const match = raw.match(/\[[\s\S]*\]/);
+    if (!match) throw new Error('No JSON array found');
+    const parsed = JSON.parse(match[0]);
+    // Add generic reasoning for compact results that lack it
+    if (compact) {
+      parsed.forEach(r => {
+        if (!r.reasoning) r.reasoning = r.changed ? `Persuaded by ${r.persuaded_by==='A'?memberA.name:memberB.name}'s argument.` : 'Maintained initial position.';
+      });
+    }
+    return parsed;
+  } catch(e) {
+    console.warn('Judge panel parse failed, using fallback', e);
+    return panelJudges.map(j => {
+      const initial = Math.random() > 0.5 ? 'A' : (Math.random() > 0.4 ? 'B' : 'none');
+      const changed = Math.random() > (j.persuasion / 10);
+      const final_ = changed ? (initial === 'A' ? 'B' : 'A') : (initial === 'none' ? (Math.random()>0.5?'A':'B') : initial);
+      return { id: j.id, initial, final: final_, reasoning: 'Based on overall argument strength.', changed, persuaded_by: changed ? final_ : null };
+    });
+  }
+}
+
+// ═══════════════════════════════════════
+//  TALLY PANEL RESULTS
+// ═══════════════════════════════════════
+function tallyPanel(panelResults, memberA, memberB) {
+  const votesA = panelResults.filter(r => r.final === 'A').length;
+  const votesB = panelResults.filter(r => r.final === 'B').length;
+  const changed = panelResults.filter(r => r.changed);
+  const stayedA = panelResults.filter(r => !r.changed && r.initial === 'A').length;
+  const stayedB = panelResults.filter(r => !r.changed && r.initial === 'B').length;
+
+  // Record stats
+  panelResults.forEach(r => {
+    const judge = JUDGES.find(j => j.id === r.id);
+    if (!judge) return;
+    const winnerMember = r.final === 'A' ? memberA : memberB;
+    recordJudgeVote(r.id, !r.changed, r.changed ? winnerMember.id : null);
+  });
+
+  const winner = votesA > votesB ? 'A' : 'B';
+  const persuaderName = changed.length > 0
+    ? (changed.filter(r=>r.persuaded_by==='A').length >= changed.filter(r=>r.persuaded_by==='B').length
+        ? memberA.name : memberB.name)
+    : null;
+
+  return { votesA, votesB, winner, changed: changed.length, total: panelResults.length,
+    stayedA, stayedB, persuaderName, winnerMember: winner === 'A' ? memberA : memberB,
+    panelResults };
+}
+
+// ═══════════════════════════════════════
+//  JUDGE PANEL RENDER HELPERS
+// ═══════════════════════════════════════
+const BIAS_COLORS = {
+  analytical:'#3b82f6', visionary:'#8b5cf6', humanitarian:'#10b981',
+  strategic:'#f59e0b', pragmatic:'#6b7280', ethical:'#6366f1',
+  systemic:'#0891b2', creative:'#ec4899'
+};
+
+function judgeChipHTML(judge, result) {
+  const color = BIAS_COLORS[judge.bias] || '#6b7280';
+  const initials = judge.name.replace(/^(Dr\.|Prof\.|Gen\.|Col\.|Cmd\.|Judge|Gov\.|Amb\.)\s*/,'')
+    .split(' ').slice(0,2).map(n=>n[0]).join('');
+  if (!result) {
+    return `<div class="judge-chip" title="${judge.name}\n${judge.title}, ${judge.origin}\n${judge.focus}"
+      style="border-color:${color}22;background:${color}11;color:${color}">
+      <span class="judge-initials">${initials}</span>
+    </div>`;
+  }
+  const changed = result.changed;
+  const finalVote = result.final;
+  return `<div class="judge-chip judged${changed?' changed':''}" title="${judge.name} (${judge.title})\n${result.reasoning}${changed?' ← CHANGED MIND':''}"
+    style="border-color:${changed?'#f59e0b':color};background:${changed?'rgba(245,158,11,0.15)':color+'22'};color:${changed?'#fbbf24':color}">
+    <span class="judge-initials">${initials}</span>
+    <span class="judge-vote">${finalVote}</span>
+    ${changed?'<span class="judge-changed-dot">↺</span>':''}
+  </div>`;
+}
+
+function panelSummaryHTML(tally, memberA, memberB) {
+  const aColor = '#3b82f6', bColor = '#f59e0b';
+  const total = tally.total;
+  const pctA = Math.round(tally.votesA/total*100);
+  const pctB = Math.round(tally.votesB/total*100);
+  return `<div class="panel-summary">
+    <div class="panel-vote-bar">
+      <div class="panel-vote-seg" style="width:${pctA}%;background:${aColor}22;border-right:2px solid ${aColor}">
+        <span style="color:${aColor};font-weight:900">${tally.votesA}</span>
+        <span style="color:${aColor};font-size:10px"> votes</span>
+      </div>
+      <div class="panel-vote-seg" style="width:${pctB}%;background:${bColor}22;border-left:2px solid ${bColor}">
+        <span style="color:${bColor};font-weight:900">${tally.votesB}</span>
+        <span style="color:${bColor};font-size:10px"> votes</span>
+      </div>
+    </div>
+    <div class="panel-meta">
+      <span style="color:#10b981;font-weight:700">Winner: ${tally.winnerMember.name} (${tally.winner==='A'?pctA:pctB}%)</span>
+      ${tally.changed > 0 ? `<span style="color:#f59e0b">· ${tally.changed} mind${tally.changed!==1?'s':''} changed${tally.persuaderName ? ` · <strong>${tally.persuaderName}</strong> most persuasive` : ''}</span>` : '<span style="color:#6b7280">· All judges held their initial position</span>'}
+    </div>
+  </div>`;
+}
+
+function buildPersonaPrompt(member) {
+  return `You are ${member.name} (${member.era}, ${member.origin}).
+Tagline: "${member.tagline}"
+Your debate superpower: ${member.debateSuperpower}
+Your signature move: ${member.signatureMove}
+Famous quote of yours: "${member.quote}"
+Traits — Boldness: ${member.traits.boldness}/10, Analytical: ${member.traits.analyticalDepth}/10, Emotional IQ: ${member.traits.emotionalIQ}/10, Contrarian: ${member.traits.contrarian}/10.
+
+Respond ONLY as ${member.name.split(' ')[0]} would — in their authentic voice, philosophy, and worldview. Be direct, opinionated, and specific. Do NOT break character. Do NOT use hedging language. Speak with confidence and authority. 130-160 words maximum.`;
+}
+
+// ═══════════════════════════════════════
+//  STEP 3 — OPENING STATEMENTS
+// ═══════════════════════════════════════
+async function launchArena() {
+  question = document.getElementById('question-input').value.trim();
+  if (!question) {
+    document.getElementById('question-input').focus();
+    document.getElementById('question-input').style.borderColor = '#ef4444';
+    setTimeout(() => document.getElementById('question-input').style.borderColor='#374151', 1500);
     return;
   }
-  board.innerHTML = assembled.map((slot, idx) => {
-    if (!slot.member) {
-      return `<div class="slot-card empty">
-        <span style="font-size:28px;color:#374151;">＋</span>
-        <span>Empty Slot</span>
-      </div>`;
-    }
-    const r = slot.slotRole;
-    const m = slot.member;
-    const roleInfo = ROLE_DEFS[r];
-    return `
-      <div class="slot-card">
-        <div class="slot-banner role-${r}"></div>
-        <div class="slot-role-tag tag-${r}">${roleInfo.icon} ${roleInfo.label}</div>
-        <div class="slot-avatar">${m.avatar}</div>
-        <div class="slot-name">${m.name}</div>
-        <div class="slot-tagline">${m.tagline}</div>
-        <button class="slot-swap-btn" onclick="openSwapModal(${idx})">⇄ Swap</button>
-      </div>`;
+  const btn = document.getElementById('launch-btn');
+  btn.disabled = true;
+  btn.textContent = 'Convening your BrainTrust…';
+
+  goToStep(3);
+  document.getElementById('question-display').textContent = `"${question}"`;
+
+  // Update arena bar
+  document.getElementById('arena-bar-title').textContent = 'Gathering opening statements…';
+  document.getElementById('arena-bar-sub').textContent = `0 of ${assembled.length} ready`;
+  document.getElementById('arena-next-btn').disabled = true;
+  document.getElementById('arena-next-btn').textContent = 'Waiting…';
+
+  // Render empty cards
+  const grid = document.getElementById('statements-grid');
+  grid.innerHTML = assembled.map((slot,i) => {
+    const role = ROLE_DEFS[slot.slotRole];
+    return `<div class="statement-card" id="stmt-card-${i}" style="transition-delay:${i*80}ms">
+      <div class="statement-header">
+        <div class="statement-avatar">${slot.member.avatar}</div>
+        <div class="statement-meta">
+          <div class="statement-name">${slot.member.name}</div>
+          <div class="statement-role tag-${slot.slotRole}">${role.icon} ${role.label}</div>
+        </div>
+      </div>
+      <div class="statement-loading" id="stmt-loading-${i}">
+        <div class="dot-pulse"><span></span><span></span><span></span></div>
+        <span>Formulating…</span>
+      </div>
+      <div class="statement-body hidden" id="stmt-body-${i}"></div>
+    </div>`;
   }).join('');
 
-  // Update nav counter
-  document.getElementById('nav-count').textContent = assembled.filter(s => s.member).length;
+  // Animate cards in
+  setTimeout(() => {
+    assembled.forEach((_,i) => {
+      setTimeout(() => document.getElementById('stmt-card-'+i)?.classList.add('visible'), i*100);
+    });
+  }, 50);
 
-  // Show submit section if there are assembled members
-  if (assembled.length > 0 && assembled.some(s => s.member)) {
-    const sec = document.getElementById('submit-section');
-    if (sec) {
-      sec.classList.remove('hidden');
-      const names = assembled.filter(s=>s.member).map(s=>s.member.name).join(' · ');
-      const namesEl = document.getElementById('assembled-names');
-      if (namesEl) namesEl.textContent = names;
+  statements = {};
+  let completed = 0;
+
+  // Fetch statements in parallel (max 3 at a time)
+  const queue = [...assembled.map((slot,i)=>({slot,i}))];
+  const runBatch = async () => {
+    const batch = queue.splice(0, 3);
+    await Promise.all(batch.map(async ({slot, i}) => {
+      try {
+        const system = buildPersonaPrompt(slot.member);
+        const user = `The question before the BrainTrust is: "${question}"
+
+Give your opening argument. What is your position? What do you see that others miss?`;
+        const text = await callAI(system, user, 200);
+        statements[slot.member.id] = text;
+        // Animate in the response
+        const loading = document.getElementById('stmt-loading-'+i);
+        const body = document.getElementById('stmt-body-'+i);
+        if (loading) loading.classList.add('hidden');
+        if (body) {
+          body.classList.remove('hidden');
+          await typeText(body, text);
+        }
+      } catch(e) {
+        const fallback = `[${slot.member.name} is thinking... API connection needed]`;
+        statements[slot.member.id] = fallback;
+        const body = document.getElementById('stmt-body-'+i);
+        const loading = document.getElementById('stmt-loading-'+i);
+        if (loading) loading.classList.add('hidden');
+        if (body) { body.classList.remove('hidden'); body.textContent = fallback; }
+      }
+      completed++;
+      document.getElementById('statements-sub').textContent =
+        `${completed} of ${assembled.length} minds have spoken…`;
+      document.getElementById('arena-bar-sub').textContent =
+        `${completed} of ${assembled.length} ready`;
+      if (completed === assembled.length) {
+        document.getElementById('arena-bar-title').textContent = 'All statements in — ready to battle';
+        document.getElementById('arena-next-btn').textContent = 'Start the Battle →';
+        document.getElementById('arena-next-btn').disabled = false;
+        document.getElementById('arena-next-btn').onclick = startRoundRobin;
+      }
+    }));
+    if (queue.length) await runBatch();
+  };
+  await runBatch();
+  btn.disabled = false;
+  btn.textContent = '⚔️ Take It to the BrainTrust →';
+}
+
+async function typeText(el, text, speed=18) {
+  el.innerHTML = '';
+  const cursor = document.createElement('span');
+  cursor.className = 'typing-cursor';
+  el.appendChild(cursor);
+  let i = 0;
+  await new Promise(resolve => {
+    const interval = setInterval(() => {
+      if (i < text.length) {
+        cursor.insertAdjacentText('beforebegin', text[i]);
+        i++;
+        if (i % 30 === 0) el.scrollTop = el.scrollHeight;
+      } else {
+        cursor.remove();
+        resolve();
+        clearInterval(interval);
+      }
+    }, speed);
+  });
+}
+
+// ═══════════════════════════════════════
+//  STEP 4 — ROUND ROBIN BATTLE
+// ═══════════════════════════════════════
+function startRoundRobin() {
+  // Build all matchups, each with 9 randomly assigned judges
+  matches = [];
+  for (let i = 0; i < assembled.length; i++) {
+    for (let j = i+1; j < assembled.length; j++) {
+      matches.push({
+        a: assembled[i], b: assembled[j],
+        winnerIdx: -1, verdict: '', expanded: false,
+        judges: assignJudges('rr'), tally: null
+      });
     }
   }
+  currentMatchIdx = 0;
+  arenaPhase = 'roundrobin';
+  goToStep(4);
+  document.getElementById('battle-title').textContent = 'Round Robin';
+  document.getElementById('battle-sub').textContent =
+    `${matches.length} matchups — click a match to judge it, or judge them all at once`;
+  renderBattleContent();
+  document.getElementById('arena-bar-title').textContent = 'Round Robin';
+  document.getElementById('arena-bar-sub').textContent = `0 of ${matches.length} judged`;
+  document.getElementById('arena-next-btn').textContent = 'Judge Next Match';
+  document.getElementById('arena-next-btn').disabled = false;
+  document.getElementById('arena-next-btn').onclick = judgeNextMatch;
 }
 
-// ════════════════════════════════════════════════════
-//  SWAP MODAL
-// ════════════════════════════════════════════════════
-function openSwapModal(idx) {
-  swapSlotIdx = idx;
-  const slot = assembled[idx];
-  const roleInfo = ROLE_DEFS[slot.slotRole];
-  document.getElementById('swap-modal-title').textContent =
-    `Swap ${roleInfo.icon} ${roleInfo.label} — ${slot.member ? slot.member.name : 'Empty'}`;
-  document.getElementById('swap-search').value = '';
-  document.getElementById('swap-modal').classList.remove('hidden');
-  renderSwapGrid('');
+function renderBattleContent() {
+  const el = document.getElementById('battle-content');
+  el.innerHTML = `<div class="match-list">${matches.map((m,i) => matchCardHTML(m,i)).join('')}</div>`;
 }
 
-function closeSwapModal() {
-  document.getElementById('swap-modal').classList.add('hidden');
-  swapSlotIdx = -1;
-}
+function matchCardHTML(m, idx) {
+  const aRole = ROLE_DEFS[m.a.slotRole];
+  const bRole = ROLE_DEFS[m.b.slotRole];
+  const isDone = m.winnerIdx >= 0;
+  const aWon = m.winnerIdx === 0;
+  const bWon = m.winnerIdx === 1;
+  const panelSize = m.judges ? m.judges.length : 9;
+  const label = panelSize === 99 ? 'FULL PANEL OF 99' : panelSize === 49 ? 'PANEL OF 49' : 'PANEL OF 9';
+  const chipsClass = panelSize > 15 ? 'judge-chips-row compact' : 'judge-chips-row';
 
-function renderSwapGrid(query) {
-  if (swapSlotIdx < 0) return;
-  const slot = assembled[swapSlotIdx];
-  const role = slot.slotRole;
-  const currentId = slot.member ? slot.member.id : -1;
-  const q = query.toLowerCase();
-
-  // Show all members eligible for this role (or all if comedian slot)
-  let candidates = MEMBERS.filter(m => {
-    const roleMatch = role === 'comedian' ? m.category === 'COMEDIAN' : m.roles.includes(role);
-    const nameMatch = !q || m.name.toLowerCase().includes(q) || m.tags.some(t => t.includes(q));
-    return roleMatch && nameMatch;
-  });
-  // Also show any member if search has text
-  if (q && candidates.length < 5) {
-    const extra = MEMBERS.filter(m =>
-      (m.name.toLowerCase().includes(q) || m.tags.some(t => t.includes(q))) &&
-      !candidates.find(c => c.id === m.id)
-    );
-    candidates = [...candidates, ...extra];
+  // Build judge chips
+  let judgeSection = '';
+  if (m.judges) {
+    if (!isDone) {
+      // Pre-judging: show unlit chips
+      judgeSection = `<div class="judge-panel-wrap" id="judge-panel-${idx}">
+        <div class="judge-panel-label"><span>${label}</span>
+          <span class="judge-count-badge">awaiting deliberation</span></div>
+        <div class="${chipsClass}">${m.judges.map(j => judgeChipHTML(j, null)).join('')}</div>
+      </div>`;
+    } else if (m.tally) {
+      // Post-judging: show voted chips + summary
+      const idToResult = {};
+      (m.tally.panelResults || []).forEach(r => { idToResult[r.id] = r; });
+      judgeSection = `<div class="judge-panel-wrap" id="judge-panel-${idx}">
+        <div class="judge-panel-label"><span>${label}</span>
+          <span class="judge-count-badge">${m.tally.votesA}–${m.tally.votesB} · ${m.tally.changed} changed</span></div>
+        <div class="${chipsClass}">${m.judges.map(j => judgeChipHTML(j, idToResult[j.id] || null)).join('')}</div>
+        ${panelSummaryHTML(m.tally, m.a.member, m.b.member)}
+      </div>`;
+    }
   }
 
-  const usedIds = new Set(assembled.filter((s,i) => i !== swapSlotIdx && s.member).map(s => s.member.id));
-
-  document.getElementById('swap-grid').innerHTML = candidates.map(m => {
-    const isCurrent = m.id === currentId;
-    const isUsed = usedIds.has(m.id);
-    const firstRole = m.roles[0];
-    return `
-      <div class="swap-card${isCurrent ? ' current' : ''}" onclick="${isCurrent || isUsed ? '' : `doSwap(${m.id})`}">
-        <div class="sw-avatar">${m.avatar}</div>
-        <div class="sw-name">${m.name}</div>
-        <div class="sw-role tag-${firstRole}">${ROLE_DEFS[firstRole].icon} ${ROLE_DEFS[firstRole].label}</div>
-        ${isCurrent ? '<div style="font-size:10px;color:#6b7280;margin-top:4px;">Current</div>' : ''}
-        ${isUsed && !isCurrent ? '<div style="font-size:10px;color:#6b7280;margin-top:4px;">In use</div>' : ''}
-      </div>`;
-  }).join('') || '<div style="color:#6b7280;padding:16px;grid-column:1/-1;">No matches found.</div>';
+  return `<div class="match-card${isDone?' done-win':''}${idx===currentMatchIdx&&!isDone?' current':''}" id="match-${idx}">
+    <div class="match-header" onclick="toggleMatchExpand(${idx})">
+      <div class="match-num">Match ${idx+1}</div>
+      <div class="match-fighters">
+        <div class="fighter-chip${aWon?' winner':isDone?' loser':''}">
+          ${m.a.member.avatar} ${m.a.member.name.split(' ')[0]}
+          <span style="font-size:9px;color:inherit;opacity:0.7">${aRole.icon}</span>
+        </div>
+        <div class="vs-label">VS</div>
+        <div class="fighter-chip${bWon?' winner':isDone?' loser':''}">
+          ${m.b.member.avatar} ${m.b.member.name.split(' ')[0]}
+          <span style="font-size:9px;color:inherit;opacity:0.7">${bRole.icon}</span>
+        </div>
+      </div>
+      ${isDone
+        ? `<div class="match-status done">✓ ${(m.winnerIdx===0?m.a:m.b).member.name.split(' ')[0]} wins <span style="font-size:9px;color:#6b7280">${m.tally?`(${m.tally.votesA}–${m.tally.votesB})`:''}  </span></div>`
+        : `<div class="match-status${idx===currentMatchIdx?' judging':' pending'}">${idx===currentMatchIdx?'⏳ Up next':'Pending'}</div>`
+      }
+      <button class="match-expand" onclick="event.stopPropagation();toggleMatchExpand(${idx})">${m.expanded?'▲':'▼'}</button>
+    </div>
+    <div class="match-detail${m.expanded?' open':''}" id="match-detail-${idx}">
+      <div class="fighter-arg">
+        <div class="fighter-arg-name">${m.a.member.name} ${aWon?'🏆':''}</div>
+        <div class="fighter-arg-text">${statements[m.a.member.id] || 'No statement yet'}</div>
+      </div>
+      <div class="fighter-arg">
+        <div class="fighter-arg-name">${m.b.member.name} ${bWon?'🏆':''}</div>
+        <div class="fighter-arg-text">${statements[m.b.member.id] || 'No statement yet'}</div>
+      </div>
+      ${judgeSection ? `<div style="grid-column:1/-1">${judgeSection}</div>` : ''}
+      ${!isDone ? `<div style="grid-column:1/-1;text-align:center;padding-top:4px">
+        <button onclick="event.stopPropagation();judgeSingleMatch(${idx})" style="padding:10px 24px;background:rgba(251,191,36,0.15);color:#fbbf24;border:1px solid rgba(251,191,36,0.3);border-radius:10px;font-size:13px;font-weight:700;cursor:pointer">⚖️ Convene the Panel</button>
+      </div>` : ''}
+    </div>
+  </div>`;
 }
 
-function doSwap(memberId) {
-  if (swapSlotIdx < 0) return;
-  const member = MEMBERS.find(m => m.id === memberId);
-  if (!member) return;
-  assembled[swapSlotIdx].member = member;
-  closeSwapModal();
-  renderBoard();
+function toggleMatchExpand(idx) {
+  matches[idx].expanded = !matches[idx].expanded;
+  renderBattleContent();
 }
 
-// ════════════════════════════════════════════════════
-//  ROSTER TAB
-// ════════════════════════════════════════════════════
+async function judgeSingleMatch(idx) {
+  const m = matches[idx];
+  const stmtA = statements[m.a.member.id] || '';
+  const stmtB = statements[m.b.member.id] || '';
+
+  // Show judging state in card
+  const cardEl = document.getElementById('match-' + idx);
+  if (cardEl) {
+    const statusEl = cardEl.querySelector('.match-status');
+    if (statusEl) { statusEl.className='match-status judging'; statusEl.textContent='⏳ Panel deliberating…'; }
+    // Show placeholder chips while loading
+    const panelWrap = document.getElementById('judge-panel-' + idx);
+    if (panelWrap) panelWrap.innerHTML = `<div class="judge-panel-label">
+      <span>PANEL OF 9</span><span class="judge-count-badge">deliberating…</span></div>
+      <div class="judge-chips-row">${m.judges.map(j=>judgeChipHTML(j,null)).join('')}</div>`;
+  }
+
+  try {
+    const panelResults = await callJudgePanel(m.judges, m.a.member, m.b.member, stmtA, stmtB);
+    const tally = tallyPanel(panelResults, m.a.member, m.b.member);
+    matches[idx].winnerIdx = tally.winner === 'A' ? 0 : 1;
+    matches[idx].verdict = `${tally.votesA}–${tally.votesB} panel vote. ${tally.changed} judge${tally.changed!==1?'s':''} changed position.${tally.persuaderName?' Most persuasive: '+tally.persuaderName+'.':''}`;
+    matches[idx].tally = tally;
+    matches[idx].expanded = true;
+  } catch(e) {
+    const flip = Math.random() > 0.5;
+    matches[idx].winnerIdx = flip ? 0 : 1;
+    matches[idx].verdict = '[Panel offline — coin flip used]';
+    matches[idx].tally = null;
+  }
+
+  const judged = matches.filter(m=>m.winnerIdx>=0).length;
+  document.getElementById('arena-bar-sub').textContent = `${judged} of ${matches.length} judged`;
+  while (currentMatchIdx < matches.length && matches[currentMatchIdx].winnerIdx >= 0) currentMatchIdx++;
+
+  if (judged === matches.length) {
+    document.getElementById('arena-next-btn').textContent = 'See Standings & Playoffs →';
+    document.getElementById('arena-next-btn').onclick = showStandings;
+  } else {
+    document.getElementById('arena-next-btn').textContent = 'Judge Next Match';
+    document.getElementById('arena-next-btn').onclick = judgeNextMatch;
+  }
+  renderBattleContent();
+}
+
+async function judgeNextMatch() {
+  if (currentMatchIdx >= matches.length) { showStandings(); return; }
+  const nextPending = matches.findIndex((m,i)=>i>=currentMatchIdx && m.winnerIdx<0);
+  if (nextPending < 0) { showStandings(); return; }
+  currentMatchIdx = nextPending;
+  matches[currentMatchIdx].expanded = true;
+  renderBattleContent();
+  await judgeSingleMatch(currentMatchIdx);
+}
+
+function showStandings() {
+  // Tally wins
+  standings = assembled.map(slot => ({member: slot.member, slotRole: slot.slotRole, wins:0, losses:0}));
+  matches.forEach(m => {
+    if (m.winnerIdx < 0) return;
+    const winner = m.winnerIdx === 0 ? m.a.member : m.b.member;
+    const loser = m.winnerIdx === 0 ? m.b.member : m.a.member;
+    const ws = standings.find(s=>s.member.id===winner.id);
+    const ls = standings.find(s=>s.member.id===loser.id);
+    if (ws) ws.wins++;
+    if (ls) ls.losses++;
+  });
+  standings.sort((a,b) => b.wins - a.wins || a.losses - b.losses);
+
+  const top4 = standings.slice(0,4);
+  const rest = standings.slice(4);
+
+  const el = document.getElementById('battle-content');
+  el.innerHTML = `
+    <div style="margin-bottom:24px">
+      <div class="arena-phase-title">📊 Round Robin Standings
+        <span class="phase-badge active">Complete</span>
+      </div>
+      <div class="standings-grid">
+        ${standings.map((s,i) => `
+          <div class="standing-card${i<4?' advancing':''}">
+            <div class="standing-rank">${i<4?['🥇','🥈','🥉','4️⃣'][i]:i+1}</div>
+            <div class="standing-avatar">${s.member.avatar}</div>
+            <div class="standing-name">${s.member.name}</div>
+            <div class="standing-record">${s.wins}W – ${s.losses}L</div>
+            ${i<4?'<div style="font-size:9px;color:#fbbf24;font-weight:700;margin-top:3px">ADVANCES</div>':''}
+          </div>`).join('')}
+      </div>
+      ${rest.length ? `<div style="font-size:12px;color:#6b7280;margin-top:12px">Eliminated: ${rest.map(s=>s.member.name).join(', ')}</div>` : ''}
+    </div>`;
+
+  document.getElementById('arena-bar-title').textContent = 'Round Robin Complete';
+  document.getElementById('arena-bar-sub').textContent = `Top ${top4.length} advance to playoffs`;
+  document.getElementById('arena-next-btn').textContent = 'Start Playoffs →';
+  document.getElementById('arena-next-btn').onclick = startPlayoffs;
+  document.getElementById('battle-title').textContent = 'Standings';
+  document.getElementById('battle-sub').textContent = '';
+}
+
+async function startPlayoffs() {
+  const top4 = standings.slice(0,Math.min(4, standings.length));
+  arenaPhase = 'playoffs';
+  document.getElementById('battle-title').textContent = 'Playoffs';
+  document.getElementById('battle-sub').textContent = 'Top minds go head to head';
+  document.getElementById('arena-bar-title').textContent = 'Playoffs';
+
+  // Assign 49 judges to each semi + 1 floater unassigned
+  const judgeSplit = assignJudges('semi-split');
+
+  // Build semi-final matches: 1 vs 4, 2 vs 3
+  const semis = top4.length >= 4
+    ? [{a:top4[0],b:top4[3]},{a:top4[1],b:top4[2]}]
+    : [{a:top4[0],b:top4[1]}];
+
+  const semifinalMatches = semis.map((m, i) => ({
+    a:{member:m.a.member,slotRole:m.a.slotRole},
+    b:{member:m.b.member,slotRole:m.b.slotRole},
+    winnerIdx:-1, verdict:'', expanded:true,
+    judges: i === 0 ? judgeSplit.semiA : (judgeSplit.semiB || judgeSplit.semiA)
+  }));
+
+  const floater = judgeSplit.floater;
+  const floaterBadge = floater ? `
+    <div class="floater-badge" title="${floater.title} — ${floater.focus}">
+      ⚖️ Unassigned Judge: <strong>${floater.name}</strong> · ${floater.title}, ${floater.origin}
+    </div>` : '';
+
+  const el = document.getElementById('battle-content');
+  el.innerHTML = `
+    <div class="arena-phase-title">🏟️ Semi-Finals <span class="phase-badge active">Live</span></div>
+    ${floaterBadge}
+    <div class="match-list" id="playoff-matches">
+      ${semifinalMatches.map((m,i)=>matchCardHTML(m,i)).join('')}
+    </div>`;
+
+  document.getElementById('arena-next-btn').textContent = 'Judge Semi-Finals →';
+  document.getElementById('arena-next-btn').onclick = async () => {
+    document.getElementById('arena-next-btn').disabled = true;
+    document.getElementById('arena-next-btn').textContent = 'Judging…';
+    for (let i=0;i<semifinalMatches.length;i++) {
+      await judgeSingleMatch_playoff(semifinalMatches, i, el);
+    }
+    // Build final
+    const finalists = semifinalMatches.map(m => m.winnerIdx===0 ? m.a : m.b);
+    await runFinal(finalists);
+  };
+}
+
+async function judgeSingleMatch_playoff(matchArr, idx, container) {
+  const m = matchArr[idx];
+  const stmtA = statements[m.a.member.id] || '';
+  const stmtB = statements[m.b.member.id] || '';
+  const judges = m.judges || [];
+  const panelSize = judges.length;
+
+  // Show deliberating state
+  const cardEl = document.getElementById('match-' + idx);
+  if (cardEl) {
+    const statusEl = cardEl.querySelector('.match-status');
+    if (statusEl) { statusEl.className='match-status judging'; statusEl.textContent='⏳ Panel deliberating…'; }
+    const panelWrap = document.getElementById('judge-panel-' + idx);
+    if (panelWrap) panelWrap.innerHTML = `<div class="judge-panel-label">
+      <span>PANEL OF ${panelSize}</span><span class="judge-count-badge">deliberating…</span></div>
+      <div class="judge-chips-row">${judges.map(j=>judgeChipHTML(j,null)).join('')}</div>`;
+  }
+
+  try {
+    const panelResults = await callJudgePanel(judges, m.a.member, m.b.member, stmtA, stmtB);
+    const tally = tallyPanel(panelResults, m.a.member, m.b.member);
+    matchArr[idx].winnerIdx = tally.winner === 'A' ? 0 : 1;
+    matchArr[idx].verdict = `${tally.votesA}–${tally.votesB} panel vote. ${tally.changed} judge${tally.changed!==1?'s':''} changed position.${tally.persuaderName?' Most persuasive: '+tally.persuaderName+'.':''}`;
+    matchArr[idx].tally = tally;
+    matchArr[idx].expanded = true;
+  } catch(e) {
+    const flip = Math.random() > 0.5;
+    matchArr[idx].winnerIdx = flip ? 0 : 1;
+    matchArr[idx].verdict = '[Panel offline — coin flip used]';
+    matchArr[idx].tally = null;
+  }
+
+  // Re-render that card
+  const cardEl2 = document.getElementById('match-' + idx);
+  if (cardEl2) cardEl2.outerHTML = matchCardHTML(matchArr[idx], idx);
+}
+
+async function runFinal(finalists) {
+  const el = document.getElementById('battle-content');
+  el.innerHTML += `
+    <div class="arena-phase-title" style="margin-top:28px">🏆 The Final <span class="phase-badge active">Live</span>
+      <span style="font-size:12px;color:#fbbf24;margin-left:10px">All 99 judges vote</span>
+    </div>
+    <div class="match-list" id="final-match"></div>`;
+
+  // All 99 judges participate in the final
+  const allJudges = assignJudges('final');
+
+  const finalMatch = {
+    a:finalists[0], b:finalists[1],
+    winnerIdx:-1, verdict:'', expanded:true,
+    judges: allJudges
+  };
+
+  document.getElementById('final-match').innerHTML = matchCardHTML(finalMatch, 0);
+  document.getElementById('arena-bar-title').textContent = 'The Final';
+  document.getElementById('arena-bar-sub').textContent = `${finalists[0].member.name} vs ${finalists[1].member.name} · 99 judges`;
+  document.getElementById('arena-next-btn').textContent = 'Convene All 99 Judges →';
+  document.getElementById('arena-next-btn').disabled = false;
+  document.getElementById('arena-next-btn').onclick = async () => {
+    document.getElementById('arena-next-btn').disabled = true;
+    document.getElementById('arena-next-btn').textContent = 'All 99 judges deliberating…';
+    await judgeSingleMatch_playoff([finalMatch], 0, el);
+    const champion = finalMatch.winnerIdx===0 ? finalists[0] : finalists[1];
+    const runnerUp = finalMatch.winnerIdx===0 ? finalists[1] : finalists[0];
+    document.getElementById('final-match').innerHTML = matchCardHTML(finalMatch, 0);
+    document.getElementById('arena-next-btn').textContent = 'See the Champion →';
+    document.getElementById('arena-next-btn').disabled = false;
+    document.getElementById('arena-next-btn').onclick = () => showChampion(champion, runnerUp, finalMatch.verdict);
+  };
+}
+
+function showChampion(champ, runnerUp, verdict) {
+  goToStep(5);
+  document.getElementById('arena-bar').classList.add('hidden');
+  const champStatement = statements[champ.member.id] || '';
+  const ruStatement = statements[runnerUp.member.id] || '';
+  document.getElementById('champion-content').innerHTML = `
+    <div class="champion-card">
+      <div class="champion-trophy">🏆</div>
+      <div class="champion-name">${champ.member.name}</div>
+      <div style="font-size:18px;margin-bottom:6px">${champ.member.avatar}</div>
+      <div class="champion-label">${ROLE_DEFS[champ.slotRole].icon} ${ROLE_DEFS[champ.slotRole].label} · BrainTrust Champion</div>
+      <div class="champion-argument">${champStatement}</div>
+      <div style="font-size:13px;color:#6b7280;margin-bottom:12px;font-style:italic">Judge's verdict: "${verdict}"</div>
+    </div>
+    <div style="margin-top:24px;background:#111827;border:1px solid #1f2937;border-radius:16px;padding:20px">
+      <div style="font-size:12px;font-weight:800;color:#6b7280;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">
+        😈 Dissenting View — ${runnerUp.member.name}
+      </div>
+      <div style="font-size:13px;color:#9ca3af;line-height:1.7">${ruStatement}</div>
+    </div>
+    <div style="margin-top:20px;text-align:center">
+      <button onclick="restartFromScratch()" style="padding:12px 28px;background:#1f2937;color:#d1d5db;font-size:14px;font-weight:700;border:none;border-radius:12px;cursor:pointer;margin-right:12px">🔄 New Question</button>
+      <button onclick="goToStep(1)" style="padding:12px 28px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font-size:14px;font-weight:900;border:none;border-radius:12px;cursor:pointer">⚡ New BrainTrust</button>
+    </div>`;
+}
+
+function restartFromScratch() {
+  question = '';
+  statements = {};
+  matches = [];
+  document.getElementById('question-input').value = '';
+  goToStep(2);
+}
+
+function arenaNext() { document.getElementById('arena-next-btn').click(); }
+function arenaBack() { goToStep(currentStep - 1); }
+
+// ═══════════════════════════════════════
+//  ROSTER
+// ═══════════════════════════════════════
+function filterRoster() {
+  const q = (document.getElementById('roster-search').value || '').toLowerCase();
+  const grid = document.getElementById('roster-grid');
+  const visible = MEMBERS.filter(m => {
+    const catMatch = currentCat === 'all' || m.category === currentCat;
+    const qMatch = !q || m.name.toLowerCase().includes(q) || m.tagline.toLowerCase().includes(q) || m.tags.some(t=>t.includes(q));
+    return catMatch && qMatch;
+  });
+  grid.innerHTML = visible.map(m => rosterCardHTML(m)).join('');
+}
+
 function setCat(cat, el) {
   currentCat = cat;
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
   el.classList.add('active');
   filterRoster();
 }
 
-function filterRoster() {
-  const q = (document.getElementById('search-input').value || '').toLowerCase();
-  const grid = document.getElementById('roster-grid');
-  const visible = MEMBERS.filter(m => {
-    const catMatch = currentCat === 'all' || m.category === currentCat;
-    const qMatch = !q || m.name.toLowerCase().includes(q) ||
-      m.tagline.toLowerCase().includes(q) ||
-      m.tags.some(t => t.includes(q)) ||
-      m.roles.some(r => r.includes(q));
-    return catMatch && qMatch;
-  });
-  grid.innerHTML = visible.map(m => memberCardHTML(m)).join('');
-}
-
-function renderRoster() {
-  filterRoster();
-}
-
-function memberCardHTML(m) {
-  const isSelected = manualSelected.has(m.id);
-  const catClass = {
-    BUSINESS:'cat-business', HISTORICAL:'cat-historical', PHILOSOPHER:'cat-philosopher',
-    SCIENTIST:'cat-scientist', FICTIONAL:'cat-fictional', COMEDIAN:'cat-comedian'
-  }[m.category] || 'cat-business';
-  const catLabel = {
-    BUSINESS:'💼 Business', HISTORICAL:'⚔️ Historical', PHILOSOPHER:'🧠 Philosopher',
-    SCIENTIST:'🔬 Scientist', FICTIONAL:'🎭 Fictional', COMEDIAN:'😂 Comedian'
-  }[m.category];
-
-  const roleChips = m.roles.map(r =>
-    `<span class="role-chip tag-${r}">${ROLE_DEFS[r].icon} ${ROLE_DEFS[r].label}</span>`
-  ).join('');
-
-  const traitBars = Object.entries({
-    'Boldness': m.traits.boldness,
-    'Analytical': m.traits.analyticalDepth,
-    'Emotional IQ': m.traits.emotionalIQ,
-    'Contrarian': m.traits.contrarian,
-    'Comm Power': m.traits.communicationPower
-  }).map(([name, val]) => `
-    <div class="trait-row">
-      <div class="trait-name">${name}</div>
-      <div class="trait-bar"><div class="trait-fill" style="width:${val*10}%"></div></div>
-    </div>`).join('');
-
-  return `
-  <div class="member-card" id="card-${m.id}">
+function rosterCardHTML(m) {
+  const catClass = {BUSINESS:'cat-business',HISTORICAL:'cat-historical',PHILOSOPHER:'cat-philosopher',
+    SCIENTIST:'cat-scientist',FICTIONAL:'cat-fictional',COMEDIAN:'cat-comedian'}[m.category]||'cat-business';
+  const catLabel = {BUSINESS:'💼 Business',HISTORICAL:'⚔️ Historical',PHILOSOPHER:'🧠 Philosopher',
+    SCIENTIST:'🔬 Scientist',FICTIONAL:'🎭 Fictional',COMEDIAN:'😂 Comedian'}[m.category];
+  const chips = m.roles.map(r=>`<span class="role-chip tag-${r}">${ROLE_DEFS[r].icon} ${ROLE_DEFS[r].label}</span>`).join('');
+  return `<div class="member-card">
     <div class="card-banner ${catClass}">
-      <span class="card-cat-tag" style="background:rgba(0,0,0,0.4);color:#d1d5db;">${catLabel}</span>
+      <span style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;padding:3px 8px;border-radius:6px;background:rgba(0,0,0,0.4);color:#d1d5db;">${catLabel}</span>
       <div class="card-avatar">${m.avatar}</div>
     </div>
     <div class="card-body">
       <div class="card-name">${m.name}</div>
       <div class="card-era">${m.era} · ${m.origin}</div>
       <div class="card-quote">"${m.quote}"</div>
-      <div class="role-chips">${roleChips}</div>
-      <div class="power-box">
-        <div class="power-title">⚡ Debate Superpower</div>
-        <div class="power-text">${m.debateSuperpower}</div>
-      </div>
-      <div class="power-box" style="margin-bottom:12px;">
-        <div class="power-title">🎯 Signature Move</div>
-        <div class="power-text">${m.signatureMove}</div>
-      </div>
-      <button class="traits-toggle" onclick="toggleTraits(${m.id})">
-        <span id="traits-arrow-${m.id}">▶</span> Trait Profile
-      </button>
-      <div class="traits-panel" id="traits-${m.id}">${traitBars}</div>
-      <div class="card-tags">${m.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
-      <button class="card-add-btn ${isSelected ? 'remove' : 'add'}" onclick="toggleMember(${m.id})">
-        ${isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust'}
-      </button>
+      <div class="role-chips">${chips}</div>
+      <div class="power-box"><div class="power-title">⚡ Debate Superpower</div><div class="power-text">${m.debateSuperpower}</div></div>
+      <div class="power-box"><div class="power-title">🎯 Signature Move</div><div class="power-text">${m.signatureMove}</div></div>
+      <div class="card-tags">${m.tags.map(t=>`<span class="card-tag">${t}</span>`).join('')}</div>
     </div>
   </div>`;
 }
 
-function toggleTraits(id) {
-  const panel = document.getElementById('traits-' + id);
-  const arrow = document.getElementById('traits-arrow-' + id);
-  panel.classList.toggle('open');
-  arrow.textContent = panel.classList.contains('open') ? '▼' : '▶';
-}
+// Close modals on overlay click
+document.getElementById('seat-modal').addEventListener('click',e=>{if(e.target.id==='seat-modal')closeSeatModal()});
 
-function toggleMember(id) {
-  if (manualSelected.has(id)) {
-    manualSelected.delete(id);
-  } else {
-    manualSelected.add(id);
-  }
-  updateBottomPanel();
-  // Re-render just the button
-  const card = document.getElementById('card-' + id);
-  if (card) {
-    const btn = card.querySelector('.card-add-btn');
-    const isSelected = manualSelected.has(id);
-    btn.className = `card-add-btn ${isSelected ? 'remove' : 'add'}`;
-    btn.textContent = isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust';
-  }
-  document.getElementById('nav-count').textContent = manualSelected.size;
-}
-
-function updateBottomPanel() {
-  const panel = document.getElementById('bottom-panel');
-  const count = manualSelected.size;
-  if (count === 0) { panel.classList.add('hidden'); return; }
-  panel.classList.remove('hidden');
-  const avatarEl = document.getElementById('panel-avatars');
-  const members = [...manualSelected].map(id => MEMBERS.find(m => m.id === id)).filter(Boolean);
-  avatarEl.innerHTML = members.slice(0, 9).map(m =>
-    `<div class="panel-avatar">${m.avatar}</div>`
-  ).join('');
-  document.getElementById('panel-title').textContent =
-    count <= 3 ? 'Keep going — add more minds' :
-    count <= 5 ? 'Solid BrainTrust forming' :
-    'Powerhouse BrainTrust assembled!';
-  document.getElementById('panel-sub').textContent = `${count} member${count !== 1 ? 's' : ''} selected`;
-}
-
-function clearAll() {
-  manualSelected.clear();
-  updateBottomPanel();
-  document.getElementById('nav-count').textContent = 0;
-  filterRoster();
-}
-
-function goToArena() {
-  if (manualSelected.size < 3) {
-    alert('Add at least 3 members to your BrainTrust first!');
-    return;
-  }
-  // Build assembled from manual selection
-  assembled = [...manualSelected].map(id => ({
-    slotRole: 'visionary',
-    member: MEMBERS.find(m => m.id === id)
-  }));
-  switchTab('assemble');
-  showSubmitSection();
-}
-
-function clearAssembly() {
-  assembled = [];
-  renderBoard();
-  document.getElementById('submit-section').classList.add('hidden');
-  document.getElementById('question-input').value = '';
-}
-
-function showSubmitSection() {
-  const sec = document.getElementById('submit-section');
-  sec.classList.remove('hidden');
-  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  const names = assembled
-    .filter(s => s.member)
-    .map(s => s.member.name)
-    .join(' · ');
-  document.getElementById('assembled-names').textContent = names;
-  // Track picks in stats
-  assembled.forEach(s => {
-    if (s.member) trackStat(s.member.id, 'timesPicked');
-  });
-}
-
-// ════════════════════════════════════════════════════
-//  STATS TRACKING (localStorage)
-// ════════════════════════════════════════════════════
-const STATS_KEY = 'braintrust_stats_v1';
-
-function loadStats() {
-  try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); }
-  catch(e) { return {}; }
-}
-
-function saveStats(stats) {
-  try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch(e) {}
-}
-
-function trackStat(memberId, stat, amount = 1) {
-  const stats = loadStats();
-  if (!stats[memberId]) stats[memberId] = {};
-  stats[memberId][stat] = (stats[memberId][stat] || 0) + amount;
-  saveStats(stats);
-}
-
-function getMemberStats(memberId) {
-  const stats = loadStats();
-  return stats[memberId] || {};
-}
-
-function getStatDisplay(memberId) {
-  const s = getMemberStats(memberId);
-  const picked = s.timesPicked || 0;
-  const groupWins = s.groupWins || 0;
-  const groupPlays = s.groupPlays || 0;
-  const finalWins = s.finalWins || 0;
-  const finalPlays = s.finalPlays || 0;
-  const champs = s.championships || 0;
-  const devil = s.devilRole || 0;
-  const mvp = s.mvpAwards || 0;
-  return { picked, groupWins, groupPlays, finalWins, finalPlays, champs, devil, mvp,
-    groupWinPct: groupPlays ? Math.round(groupWins/groupPlays*100) : 0,
-    finalWinPct: finalPlays ? Math.round(finalWins/finalPlays*100) : 0,
-  };
-}
-
-// ════════════════════════════════════════════════════
-//  RUNWARE AI PORTRAIT GENERATION
-// ════════════════════════════════════════════════════
-const RUNWARE_KEY = 'FzBincWPz7STQNSsQ7Pu9gT5ykPw34dH';
-const RUNWARE_MODEL = 'runware:101@1'; // Flux.1 Dev
-const imgCache = {};
-
-async function generatePortrait(memberId) {
-  const m = MEMBERS.find(x => x.id === memberId);
-  if (!m) return null;
-  if (imgCache[memberId]) return imgCache[memberId];
-
-  const era = m.era || 'historical';
-  const prompt = `Dramatic portrait of ${m.name}, ${era}, highly detailed, cinematic lighting, dark background, oil painting style with photorealistic rendering, face and upper body, regal and powerful expression, artistic masterpiece`;
-
-  const taskUUID = crypto.randomUUID();
-  try {
-    const resp = await fetch('https://api.runware.ai/v1', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RUNWARE_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify([{
-        taskType: 'imageInference',
-        taskUUID,
-        model: RUNWARE_MODEL,
-        positivePrompt: prompt,
-        negativePrompt: 'cartoon, anime, deformed, blurry, low quality',
-        width: 512,
-        height: 512,
-        numberResults: 1,
-        outputFormat: 'WEBP',
-      }])
-    });
-    const data = await resp.json();
-    const result = data?.data?.[0];
-    if (result?.imageURL) {
-      imgCache[memberId] = result.imageURL;
-      return result.imageURL;
-    }
-  } catch(e) {
-    console.warn('Runware error:', e);
-  }
-  return null;
-}
-
-async function handleGenPortrait(memberId, btn) {
-  const container = document.getElementById('img-area-' + memberId);
-  if (!container) return;
-  btn.textContent = '⏳';
-  btn.disabled = true;
-  container.querySelector('.img-emoji') && (container.querySelector('.img-emoji').style.opacity = '0.3');
-  const spinner = document.createElement('div');
-  spinner.className = 'img-loading';
-  spinner.innerHTML = '<div class="img-spinner"></div><div style="font-size:11px;color:#6b7280;margin-top:4px;">Generating portrait…</div>';
-  container.appendChild(spinner);
-
-  const url = await generatePortrait(memberId);
-  spinner.remove();
-  if (url) {
-    container.innerHTML = `<img src="${url}" alt="${MEMBERS.find(x=>x.id===memberId)?.name}" style="width:100%;height:100%;object-fit:cover;">`;
-  } else {
-    btn.textContent = '🎨 Portrait';
-    btn.disabled = false;
-    container.querySelector('.img-emoji') && (container.querySelector('.img-emoji').style.opacity = '1');
-  }
-}
-
-// ════════════════════════════════════════════════════
-//  FUNNY LOADING SCENES
-// ════════════════════════════════════════════════════
-const LOADING_SCENES = [
-  { icon:'🎤', text:'Napoleon is warming up the microphone...', sub:'He requested "My Way" by Sinatra. The DJ is terrified.' },
-  { icon:'🏷️', text:'Cleopatra is haggling at a garage sale...', sub:'"I ruled an empire. I\'m not paying $4 for this lamp."' },
-  { icon:'🚭', text:'Churchill is staring at a no-smoking sign...', sub:'He\'s read it 12 times. He refuses to believe it applies to him.' },
-  { icon:'📱', text:'Darwin is scrolling through Instagram...', sub:'"Survival of the most followed. This changes everything."' },
-  { icon:'🚗', text:'Einstein is stuck in traffic...', sub:'He\'s trying to calculate if he can age slower by driving faster.' },
-  { icon:'📋', text:'Sun Tzu is filling out TPS reports...', sub:'"Know your enemy. Know your manager. Also know the cover sheet format."' },
-  { icon:'📞', text:'Socrates is on hold with customer service...', sub:'"I only know one thing — this hold music is eternal."' },
-  { icon:'🎫', text:'Caesar just got a parking ticket...', sub:'"Et tu, meter maid?"' },
-  { icon:'🤳', text:'Genghis Khan is taking a selfie at the Eiffel Tower...', sub:'He\'s already written a 1-star Yelp review of Paris. "Conquered better places."' },
-  { icon:'🛒', text:'Steve Jobs is at Costco...', sub:'"I want one product. Just one. Why is everything in bulk?"' },
-];
-
-let loadingSceneIdx = 0;
-let loadingInterval = null;
-
-function showLoadingScreen() {
-  const overlay = document.getElementById('loading-overlay');
-  overlay.classList.remove('hidden');
-  loadingSceneIdx = Math.floor(Math.random() * LOADING_SCENES.length);
-  updateLoadingScene();
-  loadingInterval = setInterval(() => {
-    loadingSceneIdx = (loadingSceneIdx + 1) % LOADING_SCENES.length;
-    updateLoadingScene();
-  }, 3500);
-  animateLoadingBar();
-}
-
-function updateLoadingScene() {
-  const s = LOADING_SCENES[loadingSceneIdx];
-  const icon = document.getElementById('loading-icon');
-  const text = document.getElementById('loading-text');
-  const sub = document.getElementById('loading-sub');
-  if (icon) { icon.style.opacity = '0'; setTimeout(() => { icon.textContent = s.icon; icon.style.opacity = '1'; }, 200); }
-  if (text) text.textContent = s.text;
-  if (sub) sub.textContent = s.sub;
-}
-
-function animateLoadingBar() {
-  const bar = document.getElementById('loading-bar-fill');
-  if (!bar) return;
-  bar.style.width = '0%';
-  setTimeout(() => { bar.style.width = '100%'; bar.style.transition = 'width 2.5s ease'; }, 100);
-}
-
-function hideLoadingScreen() {
-  clearInterval(loadingInterval);
-  loadingInterval = null;
-  document.getElementById('loading-overlay').classList.add('hidden');
-  const bar = document.getElementById('loading-bar-fill');
-  if (bar) { bar.style.width = '0%'; bar.style.transition = 'none'; }
-}
-
-function launchArena() {
-  const q = document.getElementById('question-input')?.value?.trim();
-  if (!q) {
-    document.getElementById('question-input').focus();
-    document.getElementById('question-input').style.borderColor = '#ef4444';
-    setTimeout(() => document.getElementById('question-input').style.borderColor = '#374151', 1500);
-    return;
-  }
-  showLoadingScreen();
-  // Simulate processing (Arena is future feature — for now, demo the loading then show a result)
-  setTimeout(() => {
-    hideLoadingScreen();
-    alert(`Your BrainTrust of ${assembled.filter(s=>s.member).length} minds is deliberating on:\n\n"${q.substring(0,120)}${q.length>120?'…':''}"\n\n(Full Arena battle system coming next!)`);
-  }, 7000);
-}
-
-// ════════════════════════════════════════════════════
-//  UPDATED MEMBER CARD HTML (Sports Card with Flip)
-// ════════════════════════════════════════════════════
-function memberCardHTML(m) {
-  const isSelected = manualSelected.has(m.id);
-  const catClass = {
-    BUSINESS:'cat-business', HISTORICAL:'cat-historical', PHILOSOPHER:'cat-philosopher',
-    SCIENTIST:'cat-scientist', FICTIONAL:'cat-fictional', COMEDIAN:'cat-comedian'
-  }[m.category] || 'cat-business';
-  const catLabel = {
-    BUSINESS:'💼 Business', HISTORICAL:'⚔️ Historical', PHILOSOPHER:'🧠 Philosopher',
-    SCIENTIST:'🔬 Scientist', FICTIONAL:'🎭 Fictional', COMEDIAN:'😂 Comedian'
-  }[m.category];
-
-  const roleChips = m.roles.map(r =>
-    `<span class="role-chip tag-${r}">${ROLE_DEFS[r].icon} ${ROLE_DEFS[r].label}</span>`
-  ).join('');
-
-  const traitBars = Object.entries({
-    'Boldness': m.traits.boldness,
-    'Analytical': m.traits.analyticalDepth,
-    'Emotional IQ': m.traits.emotionalIQ,
-    'Contrarian': m.traits.contrarian,
-    'Comm Power': m.traits.communicationPower
-  }).map(([name, val]) => `
-    <div class="trait-row">
-      <div class="trait-name">${name}</div>
-      <div class="trait-bar"><div class="trait-fill" style="width:${val*10}%"></div></div>
-    </div>`).join('');
-
-  const stats = getStatDisplay(m.id);
-  const cachedImg = imgCache[m.id];
-
-  const frontFace = `
-  <div class="sc-front member-card" id="card-${m.id}">
-    <div class="card-banner ${catClass}" style="height:auto;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
-      <span class="card-cat-tag" style="background:rgba(0,0,0,0.4);color:#d1d5db;">${catLabel}</span>
-      <button class="flip-btn" onclick="flipCard(${m.id})">Stats ▶</button>
-    </div>
-    <div class="card-img-area" id="img-area-${m.id}">
-      ${cachedImg
-        ? `<img src="${cachedImg}" alt="${m.name}">`
-        : `<div class="img-emoji">${m.avatar}</div>
-           <button class="gen-btn" onclick="handleGenPortrait(${m.id}, this)">🎨 Portrait</button>`
-      }
-    </div>
-    <div class="card-body">
-      <div class="card-name">${m.name}</div>
-      <div class="card-era">${m.era} · ${m.origin}</div>
-      <div class="card-quote">"${m.quote}"</div>
-      <div class="role-chips">${roleChips}</div>
-      <div class="power-box">
-        <div class="power-title">⚡ Debate Superpower</div>
-        <div class="power-text">${m.debateSuperpower}</div>
-      </div>
-      <div class="power-box" style="margin-bottom:12px;">
-        <div class="power-title">🎯 Signature Move</div>
-        <div class="power-text">${m.signatureMove}</div>
-      </div>
-      <button class="traits-toggle" onclick="toggleTraits(${m.id})">
-        <span id="traits-arrow-${m.id}">▶</span> Trait Profile
-      </button>
-      <div class="traits-panel" id="traits-${m.id}">${traitBars}</div>
-      <div class="card-tags">${m.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
-      <button class="card-add-btn ${isSelected ? 'remove' : 'add'}" onclick="toggleMember(${m.id})">
-        ${isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust'}
-      </button>
-    </div>
-  </div>`;
-
-  const backFace = `
-  <div class="sc-back">
-    <div class="sc-back-title">📊 ${m.name} — Career Stats</div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Times Picked</span><span class="sc-stat-val gold">${stats.picked}</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Group Wins</span><span class="sc-stat-val">${stats.groupWins} <span style="color:#6b7280;font-size:10px;">(${stats.groupWinPct}%)</span></span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Final Wins</span><span class="sc-stat-val">${stats.finalWins} <span style="color:#6b7280;font-size:10px;">(${stats.finalWinPct}%)</span></span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Championships 🏆</span><span class="sc-stat-val gold">${stats.champs}</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Devil's Advocate 😈</span><span class="sc-stat-val">${stats.devil}</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">MVP Awards ⭐</span><span class="sc-stat-val gold">${stats.mvp}</span></div>
-    <div class="sc-stat-row" style="margin-top:6px;"><span class="sc-stat-label">Boldness</span><span class="sc-stat-val">${m.traits.boldness}/10</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Analytical Depth</span><span class="sc-stat-val">${m.traits.analyticalDepth}/10</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Emotional IQ</span><span class="sc-stat-val">${m.traits.emotionalIQ}/10</span></div>
-    <div class="sc-stat-row"><span class="sc-stat-label">Contrarian</span><span class="sc-stat-val">${m.traits.contrarian}/10</span></div>
-    <div class="sc-flip-hint">Click to flip back ◀</div>
-  </div>`;
-
-  return `
-  <div class="sc-wrapper" id="sc-${m.id}" onclick="handleCardAreaClick(event, ${m.id})">
-    <div class="sc-inner" style="min-height:520px;">
-      ${frontFace}
-      ${backFace}
-    </div>
-  </div>`;
-}
-
-function flipCard(memberId) {
-  const wrapper = document.getElementById('sc-' + memberId);
-  if (wrapper) wrapper.classList.toggle('flipped');
-}
-
-function handleCardAreaClick(e, memberId) {
-  // Only flip if clicking on the back face
-  const wrapper = document.getElementById('sc-' + memberId);
-  if (wrapper && wrapper.classList.contains('flipped')) {
-    // click on back face → flip back
-    wrapper.classList.remove('flipped');
-  }
-  // clicks on front face are handled by individual buttons
-}
-
-// Close swap modal on overlay click
-document.getElementById('swap-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeSwapModal();
-});
-
-// Close loading overlay on click (for demo purposes)
-document.getElementById('loading-overlay').addEventListener('click', function(e) {
-  if (e.target === this) hideLoadingScreen();
-});
-
-// ════════════════════════════════════════════════════
+// ═══════════════════════════════════════
 //  INIT
-// ════════════════════════════════════════════════════
-(function init() {
-  // Render a placeholder board on load
-  const board = document.getElementById('board');
-  board.innerHTML = `
-    <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:#374151;">
-      <div style="font-size:48px;margin-bottom:12px;">🎲</div>
-      <div style="font-size:16px;font-weight:700;margin-bottom:8px;">Your BrainTrust awaits</div>
-      <div style="font-size:13px;">Choose a size, set your focus, then hit <strong style="color:#9ca3af;">Auto-Assemble</strong> — or pick members manually from the Roster tab.</div>
-    </div>`;
+// ═══════════════════════════════════════
+(function init(){
+  filterRoster();
 })();
 </script>
 </body>
