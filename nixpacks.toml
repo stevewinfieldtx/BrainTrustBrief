@@ -1,5 +1,11 @@
+[phases.setup]
+nixPkgs = ["nodejs_22"]
+
 [phases.install]
-cmds = ["cd frontend && npm ci"]
+cmds = [
+  "cd frontend && rm -f package-lock.json",
+  "cd frontend && npm install --legacy-peer-deps"
+]
 
 [phases.build]
 cmds = ["cd frontend && npm run build"]
