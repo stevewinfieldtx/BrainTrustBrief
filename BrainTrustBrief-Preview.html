@@ -1,0 +1,1852 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>BrainTrust Brief</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Inter', system-ui, sans-serif; background: #030712; color: #f9fafb; min-height: 100vh; }
+
+/* ── CONFERENCE ROOM HERO BG ──────────────────────── */
+.room-bg {
+  position: relative;
+  background:
+    linear-gradient(180deg, rgba(3,7,18,0) 0%, #030712 100%),
+    linear-gradient(135deg, #0a1628 0%, #0d1f3c 30%, #111827 60%, #030712 100%);
+  overflow: hidden;
+}
+.room-bg::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 80px),
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 80px);
+  pointer-events: none;
+}
+.room-bg::after {
+  content: '';
+  position: absolute; top: 0; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 300px;
+  background: radial-gradient(ellipse at center top, rgba(245,158,11,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.room-table {
+  position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 160px;
+  background: linear-gradient(180deg, #1a1208 0%, #0d0b06 100%);
+  border-radius: 50%;
+  border-top: 3px solid rgba(251,191,36,0.2);
+  box-shadow: 0 -20px 60px rgba(0,0,0,0.8), inset 0 2px 8px rgba(251,191,36,0.05);
+  pointer-events: none;
+}
+
+/* ── SUBMIT SECTION (post-assembly) ───────────────── */
+.submit-section {
+  margin-top: 32px; padding: 28px; background: #111827;
+  border: 1px solid #1f2937; border-radius: 20px;
+  border-top: 3px solid #fbbf24;
+}
+.submit-section h3 { font-size: 18px; font-weight: 900; margin-bottom: 6px; }
+.submit-section p { font-size: 13px; color: #6b7280; margin-bottom: 16px; }
+.submit-textarea { width: 100%; min-height: 100px; padding: 14px 16px;
+  background: #1f2937; border: 1px solid #374151; border-radius: 12px;
+  color: #f9fafb; font-size: 14px; font-family: inherit; resize: vertical;
+  outline: none; line-height: 1.5; margin-bottom: 14px; }
+.submit-textarea:focus { border-color: #fbbf24; }
+.submit-textarea::placeholder { color: #4b5563; }
+.submit-btn { padding: 14px 32px; background: linear-gradient(135deg,#f59e0b,#ea580c);
+  color: #fff; font-size: 16px; font-weight: 900; border: none; border-radius: 14px;
+  cursor: pointer; box-shadow: 0 6px 20px rgba(245,158,11,0.3); transition: all 0.2s; }
+.submit-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(245,158,11,0.4); }
+
+/* ── SPORTS CARD FLIP ────────────────────────────── */
+.sc-wrapper { perspective: 1000px; }
+.sc-inner { position: relative; width: 100%; transition: transform 0.6s; transform-style: preserve-3d; }
+.sc-wrapper.flipped .sc-inner { transform: rotateY(180deg); }
+.sc-front, .sc-back {
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  border-radius: 20px; overflow: hidden;
+}
+.sc-back { position: absolute; inset: 0; transform: rotateY(180deg);
+  background: #0d1117; border: 1px solid #374151; border-radius: 20px;
+  padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+.sc-back-title { font-size: 14px; font-weight: 900; color: #fbbf24; margin-bottom: 4px; text-align: center; }
+.sc-stat-row { display: flex; justify-content: space-between; align-items: center;
+  padding: 5px 8px; background: #111827; border-radius: 8px; }
+.sc-stat-label { font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; }
+.sc-stat-val { font-size: 13px; font-weight: 900; color: #f9fafb; }
+.sc-stat-val.gold { color: #fbbf24; }
+.sc-flip-hint { font-size: 10px; color: #374151; text-align: center; margin-top: auto; padding-top: 8px; }
+.card-img-area { width: 100%; height: 160px; background: #1f2937; position: relative; overflow: hidden; }
+.card-img-area img { width: 100%; height: 100%; object-fit: cover; }
+.card-img-area .img-loading { position: absolute; inset: 0; display: flex; align-items: center;
+  justify-content: center; flex-direction: column; gap: 8px; }
+.img-spinner { width: 28px; height: 28px; border: 3px solid #374151; border-top-color: #fbbf24;
+  border-radius: 50%; animation: spin 0.8s linear infinite; }
+.card-img-area .img-emoji { font-size: 48px; position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%); }
+.card-img-area .gen-btn { position: absolute; bottom: 8px; right: 8px; padding: 5px 10px;
+  background: rgba(245,158,11,0.9); color: #111; font-size: 10px; font-weight: 800;
+  border: none; border-radius: 6px; cursor: pointer; }
+.flip-btn { position: absolute; top: 8px; left: 8px; padding: 4px 10px;
+  background: rgba(0,0,0,0.6); color: #fbbf24; font-size: 10px; font-weight: 700;
+  border: none; border-radius: 6px; cursor: pointer; z-index: 5; }
+
+/* ── FUNNY LOADING SCREEN ────────────────────────── */
+.loading-overlay {
+  position: fixed; inset: 0; background: rgba(3,7,18,0.95); z-index: 300;
+  display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 24px;
+}
+.loading-overlay.hidden { display: none; }
+.loading-scene { max-width: 420px; text-align: center; padding: 32px;
+  background: #111827; border: 1px solid #1f2937; border-radius: 24px; }
+.loading-scene-icon { font-size: 64px; margin-bottom: 16px; animation: float 2s ease-in-out infinite; }
+.loading-scene-text { font-size: 16px; font-weight: 700; color: #f9fafb; margin-bottom: 8px; }
+.loading-scene-sub { font-size: 13px; color: #6b7280; line-height: 1.5; }
+.loading-bar { width: 300px; height: 4px; background: #1f2937; border-radius: 999px; overflow: hidden; }
+.loading-bar-fill { height: 100%; width: 0%; background: linear-gradient(90deg,#f59e0b,#ea580c);
+  border-radius: 999px; transition: width 0.5s ease; animation: loading-pulse 2s ease-in-out infinite; }
+@keyframes loading-pulse { 0%{opacity:1} 50%{opacity:0.6} 100%{opacity:1} }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes fadein { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── NAV ─────────────────────────────────────────── */
+nav { position: sticky; top: 0; z-index: 50; background: rgba(3,7,18,0.94); backdrop-filter: blur(12px);
+  border-bottom: 1px solid #1f2937; padding: 0 24px; height: 64px; display: flex; align-items: center; justify-content: space-between; }
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+.logo-icon { width: 38px; height: 38px; border-radius: 12px; background: linear-gradient(135deg, #f59e0b, #ea580c);
+  display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: 0 4px 16px rgba(245,158,11,0.25); }
+.logo-text { font-size: 20px; font-weight: 900; letter-spacing: -0.02em; }
+.logo-text span { color: #fbbf24; }
+.trust-counter { display: flex; align-items: center; gap: 8px; padding: 8px 16px; background: #1f2937;
+  border-radius: 12px; border: 1px solid #374151; font-size: 13px; font-weight: 700; color: #d1d5db; }
+.trust-counter .count { color: #fbbf24; font-size: 18px; font-weight: 900; }
+
+/* ── TABS ─────────────────────────────────────────── */
+.tab-bar { display: flex; gap: 4px; padding: 12px 24px; background: #030712; border-bottom: 1px solid #1f2937; }
+.tab-btn { padding: 8px 18px; border-radius: 10px; border: none; background: transparent; color: #6b7280;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+.tab-btn.active { background: #fbbf24; color: #111827; }
+.tab-btn:not(.active):hover { background: #1f2937; color: #d1d5db; }
+
+/* ── WORKSHOP (Assemble tab) ─────────────────────── */
+.workshop { max-width: 1100px; margin: 0 auto; padding: 32px 24px; }
+.section-title { font-size: 22px; font-weight: 900; letter-spacing: -0.02em; margin-bottom: 6px; }
+.section-sub { font-size: 14px; color: #6b7280; margin-bottom: 24px; }
+
+/* Size selector */
+.size-selector { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+.size-btn { padding: 10px 24px; border-radius: 12px; border: 2px solid #374151; background: #111827;
+  color: #9ca3af; font-size: 15px; font-weight: 800; cursor: pointer; transition: all 0.15s; }
+.size-btn.active { border-color: #fbbf24; background: rgba(251,191,36,0.1); color: #fbbf24; }
+.size-btn:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
+
+/* Focus pills */
+.focus-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; align-items: center; }
+.focus-label { font-size: 13px; font-weight: 700; color: #6b7280; margin-right: 4px; }
+.focus-pill { padding: 6px 14px; border-radius: 999px; border: 1px solid #374151; background: #111827;
+  color: #9ca3af; font-size: 12px; font-weight: 700; cursor: pointer; transition: all 0.15s; }
+.focus-pill.active { border-color: #fbbf24; background: rgba(251,191,36,0.12); color: #fbbf24; }
+.focus-pill:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
+
+/* Comedian toggle */
+.comedian-row { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; padding: 14px 18px;
+  background: #111827; border: 1px solid #374151; border-radius: 14px; width: fit-content; }
+.toggle-track { width: 44px; height: 24px; border-radius: 999px; background: #374151; cursor: pointer;
+  position: relative; transition: background 0.2s; flex-shrink: 0; }
+.toggle-track.on { background: #d97706; }
+.toggle-thumb { position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%;
+  background: #fff; transition: transform 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.4); }
+.toggle-track.on .toggle-thumb { transform: translateX(20px); }
+.toggle-label { font-size: 13px; font-weight: 700; color: #9ca3af; }
+.toggle-label strong { color: #fbbf24; }
+
+/* GO button */
+.go-btn { display: inline-flex; align-items: center; gap: 10px; padding: 14px 36px; background: linear-gradient(135deg,#f59e0b,#ea580c);
+  color: #fff; font-size: 18px; font-weight: 900; border: none; border-radius: 16px; cursor: pointer;
+  box-shadow: 0 8px 24px rgba(245,158,11,0.3); transition: all 0.2s; letter-spacing: -0.01em; margin-bottom: 32px; }
+.go-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(245,158,11,0.4); }
+.go-btn .go-icon { font-size: 22px; }
+
+/* Assembled board */
+.board-grid { display: grid; gap: 16px; }
+.board-grid.size-3 { grid-template-columns: repeat(3, 1fr); }
+.board-grid.size-5 { grid-template-columns: repeat(3, 1fr); }
+.board-grid.size-7 { grid-template-columns: repeat(4, 1fr); }
+.board-grid.size-9 { grid-template-columns: repeat(5, 1fr); }
+@media(max-width:700px){ .board-grid { grid-template-columns: 1fr 1fr !important; } }
+
+/* Slot card */
+.slot-card { border-radius: 20px; border: 2px solid #1f2937; background: #111827; overflow: hidden;
+  position: relative; transition: transform 0.15s, box-shadow 0.15s; cursor: pointer; }
+.slot-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px rgba(0,0,0,0.4); }
+.slot-card.empty { border-style: dashed; border-color: #374151; background: #0d1117; display: flex;
+  align-items: center; justify-content: center; min-height: 200px; flex-direction: column; gap: 8px;
+  color: #374151; font-size: 13px; font-weight: 700; cursor: default; }
+.slot-banner { height: 8px; width: 100%; }
+.slot-role-tag { position: absolute; top: 16px; left: 12px; font-size: 10px; font-weight: 800;
+  padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.06em; }
+.slot-avatar { font-size: 42px; text-align: center; padding: 28px 12px 8px; }
+.slot-name { font-size: 14px; font-weight: 900; text-align: center; padding: 0 12px; line-height: 1.2; }
+.slot-tagline { font-size: 11px; color: #6b7280; text-align: center; padding: 4px 12px 12px; line-height: 1.4; }
+.slot-swap-btn { width: 100%; padding: 10px; background: #1f2937; border: none; border-top: 1px solid #374151;
+  color: #9ca3af; font-size: 12px; font-weight: 700; cursor: pointer; transition: background 0.15s; }
+.slot-swap-btn:hover { background: #374151; color: #fff; }
+
+/* Role colors */
+.role-visionary   { background: linear-gradient(135deg,#7c3aed,#4c1d95); }
+.role-strategist  { background: linear-gradient(135deg,#1d4ed8,#1e3a8a); }
+.role-marketer    { background: linear-gradient(135deg,#db2777,#9d174d); }
+.role-finance     { background: linear-gradient(135deg,#059669,#064e3b); }
+.role-innovator   { background: linear-gradient(135deg,#0891b2,#164e63); }
+.role-operator    { background: linear-gradient(135deg,#d97706,#92400e); }
+.role-product     { background: linear-gradient(135deg,#dc2626,#7f1d1d); }
+.role-people      { background: linear-gradient(135deg,#0d9488,#134e4a); }
+.role-conscience  { background: linear-gradient(135deg,#4f46e5,#312e81); }
+.role-devil       { background: linear-gradient(135deg,#b91c1c,#450a0a); }
+.role-comedian    { background: linear-gradient(135deg,#ea580c,#7c2d12); }
+
+.tag-visionary   { background: rgba(124,58,237,0.2); color: #a78bfa; }
+.tag-strategist  { background: rgba(29,78,216,0.2); color: #93c5fd; }
+.tag-marketer    { background: rgba(219,39,119,0.2); color: #f9a8d4; }
+.tag-finance     { background: rgba(5,150,105,0.2); color: #6ee7b7; }
+.tag-innovator   { background: rgba(8,145,178,0.2); color: #67e8f9; }
+.tag-operator    { background: rgba(217,119,6,0.2); color: #fcd34d; }
+.tag-product     { background: rgba(220,38,38,0.2); color: #fca5a5; }
+.tag-people      { background: rgba(13,148,136,0.2); color: #5eead4; }
+.tag-conscience  { background: rgba(79,70,229,0.2); color: #c4b5fd; }
+.tag-devil       { background: rgba(185,28,28,0.2); color: #fca5a5; }
+.tag-comedian    { background: rgba(234,88,12,0.2); color: #fdba74; }
+
+/* ── SWAP MODAL ──────────────────────────────────── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 200; display: flex;
+  align-items: center; justify-content: center; padding: 24px; }
+.modal-box { background: #111827; border: 1px solid #374151; border-radius: 24px; width: 100%; max-width: 720px;
+  max-height: 80vh; display: flex; flex-direction: column; overflow: hidden; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid #1f2937; display: flex; align-items: center; justify-content: space-between; }
+.modal-header h3 { font-size: 18px; font-weight: 900; }
+.modal-close { width: 32px; height: 32px; border-radius: 8px; background: #1f2937; border: none;
+  color: #9ca3af; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.modal-close:hover { background: #374151; color: #fff; }
+.modal-search { padding: 16px 24px; border-bottom: 1px solid #1f2937; }
+.modal-search input { width: 100%; padding: 10px 14px; background: #1f2937; border: 1px solid #374151;
+  border-radius: 10px; color: #f9fafb; font-size: 14px; outline: none; }
+.modal-search input::placeholder { color: #6b7280; }
+.modal-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px;
+  padding: 16px 24px; overflow-y: auto; }
+.swap-card { background: #1f2937; border: 2px solid #374151; border-radius: 14px; padding: 14px 10px;
+  cursor: pointer; text-align: center; transition: all 0.15s; }
+.swap-card:hover { border-color: #fbbf24; background: rgba(251,191,36,0.05); }
+.swap-card.current { border-color: #4b5563; opacity: 0.5; cursor: default; }
+.swap-card .sw-avatar { font-size: 28px; margin-bottom: 6px; }
+.swap-card .sw-name { font-size: 12px; font-weight: 800; line-height: 1.2; margin-bottom: 4px; }
+.swap-card .sw-role { font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; display: inline-block; }
+
+/* ── ROSTER TAB ──────────────────────────────────── */
+.roster-wrap { max-width: 1200px; margin: 0 auto; padding: 32px 24px; }
+.controls { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+.search-box { flex: 1; min-width: 200px; position: relative; }
+.search-box input { width: 100%; padding: 12px 16px; background: #111827; border: 1px solid #374151;
+  border-radius: 12px; color: #f9fafb; font-size: 14px; outline: none; }
+.search-box input:focus { border-color: #fbbf24; }
+.filter-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+.pill { padding: 8px 16px; border-radius: 999px; border: 1px solid #374151; background: #111827;
+  color: #9ca3af; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.pill.active { border-color: #fbbf24; background: rgba(251,191,36,0.1); color: #fbbf24; }
+.pill:hover:not(.active) { border-color: #6b7280; color: #d1d5db; }
+.roster-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+
+/* ── MEMBER CARD ─────────────────────────────────── */
+.member-card { background: #111827; border: 1px solid #1f2937; border-radius: 20px; overflow: hidden; transition: transform 0.2s, box-shadow 0.2s; }
+.member-card:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(0,0,0,0.5); }
+.card-banner { height: 80px; display: flex; align-items: flex-end; padding: 0 16px 10px; position: relative; }
+.card-avatar { font-size: 36px; position: absolute; right: 16px; bottom: -18px; width: 52px; height: 52px;
+  background: #030712; border-radius: 14px; display: flex; align-items: center; justify-content: center;
+  border: 2px solid #1f2937; }
+.cat-business  { background: linear-gradient(135deg, #1e3a5f 0%, #0d2137 100%); }
+.cat-historical{ background: linear-gradient(135deg, #3b1a0a 0%, #1a0c05 100%); }
+.cat-philosopher{ background: linear-gradient(135deg, #1a1048 0%, #0d0922 100%); }
+.cat-scientist { background: linear-gradient(135deg, #0d3320 0%, #071a10 100%); }
+.cat-fictional { background: linear-gradient(135deg, #2d1045 0%, #160824 100%); }
+.cat-comedian  { background: linear-gradient(135deg, #3d1500 0%, #1c0900 100%); }
+.card-cat-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 3px 8px; border-radius: 6px; }
+.card-body { padding: 28px 16px 16px; }
+.card-name { font-size: 18px; font-weight: 900; margin-bottom: 2px; }
+.card-era { font-size: 12px; color: #6b7280; margin-bottom: 10px; }
+.card-quote { font-size: 12px; font-style: italic; color: #9ca3af; background: #1f2937; border-radius: 10px;
+  padding: 10px 12px; margin-bottom: 12px; line-height: 1.5; border-left: 3px solid #374151; }
+.card-stat-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.card-stat-label { font-size: 11px; font-weight: 700; color: #6b7280; }
+.card-stat-val { font-size: 11px; font-weight: 700; color: #fbbf24; }
+.power-box { background: #1f2937; border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
+.power-title { font-size: 10px; font-weight: 800; color: #6b7280; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.power-text { font-size: 12px; color: #d1d5db; font-weight: 600; }
+.traits-toggle { background: none; border: none; color: #6b7280; font-size: 11px; font-weight: 700;
+  cursor: pointer; padding: 0; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; }
+.traits-toggle:hover { color: #fbbf24; }
+.traits-panel { display: none; }
+.traits-panel.open { display: block; }
+.trait-row { margin-bottom: 6px; }
+.trait-name { font-size: 10px; color: #6b7280; font-weight: 600; margin-bottom: 2px; }
+.trait-bar { height: 5px; background: #1f2937; border-radius: 999px; overflow: hidden; }
+.trait-fill { height: 100%; border-radius: 999px; background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.role-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.role-chip { font-size: 10px; font-weight: 800; padding: 3px 8px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.card-tag { font-size: 11px; color: #6b7280; background: #1f2937; padding: 3px 8px; border-radius: 6px; }
+.card-add-btn { width: 100%; padding: 10px; border-radius: 10px; border: none; font-size: 13px; font-weight: 800;
+  cursor: pointer; transition: all 0.15s; }
+.card-add-btn.add { background: #fbbf24; color: #111827; }
+.card-add-btn.add:hover { background: #fde68a; }
+.card-add-btn.remove { background: #1f2937; color: #ef4444; border: 1px solid #374151; }
+.card-add-btn.remove:hover { background: #7f1d1d; color: #fff; }
+
+/* ── HERO ─────────────────────────────────────────── */
+.hero { position: relative; text-align: center; padding: 64px 24px 48px; overflow: hidden; }
+.hero-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 600px; height: 400px; border-radius: 50%; background: radial-gradient(ellipse, rgba(245,158,11,0.12) 0%, transparent 70%); pointer-events: none; }
+.hero h1 { font-size: clamp(36px,7vw,64px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 14px; }
+.hero h1 .gold { color: #fbbf24; }
+.hero p { font-size: 17px; color: #9ca3af; max-width: 580px; margin: 0 auto 28px; line-height: 1.6; }
+.stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; max-width: 800px; margin: 0 auto; padding: 0 24px; }
+.stat-card { background: #111827; border: 1px solid #1f2937; border-radius: 16px; padding: 20px; text-align: center; }
+.stat-val { font-size: 32px; font-weight: 900; color: #fbbf24; }
+.stat-lbl { font-size: 11px; color: #6b7280; font-weight: 600; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+/* ── BOTTOM PANEL ─────────────────────────────────── */
+.bottom-panel { position: fixed; bottom: 0; left: 0; right: 0; background: rgba(17,24,39,0.97);
+  backdrop-filter: blur(12px); border-top: 1px solid #374151; padding: 12px 24px; z-index: 40;
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.panel-avatars { display: flex; gap: -4px; }
+.panel-avatar { width: 36px; height: 36px; background: #1f2937; border-radius: 10px; display: flex;
+  align-items: center; justify-content: center; font-size: 18px; border: 2px solid #030712; margin-left: -6px; }
+.panel-avatar:first-child { margin-left: 0; }
+.panel-info { flex: 1; }
+.panel-title { font-size: 13px; font-weight: 800; color: #f9fafb; }
+.panel-sub { font-size: 11px; color: #6b7280; }
+.panel-go { padding: 10px 20px; background: #fbbf24; color: #111827; font-weight: 900; font-size: 14px;
+  border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+.panel-go:hover { background: #fde68a; }
+.panel-clear { padding: 10px 16px; background: #1f2937; color: #9ca3af; font-weight: 700; font-size: 13px;
+  border: none; border-radius: 12px; cursor: pointer; transition: all 0.15s; }
+.panel-clear:hover { background: #374151; color: #fff; }
+
+.hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">
+    <div class="logo-icon">🧠</div>
+    <div class="logo-text">Brain<span>Trust</span> Brief</div>
+  </div>
+  <div class="trust-counter">
+    Your BrainTrust: <span class="count" id="nav-count">0</span>
+  </div>
+</nav>
+
+<!-- TAB BAR -->
+<div class="tab-bar">
+  <button class="tab-btn active" onclick="switchTab('assemble')">⚡ Assemble</button>
+  <button class="tab-btn" onclick="switchTab('roster')">👥 Roster</button>
+  <button class="tab-btn" onclick="switchTab('home')">🏠 How It Works</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  ASSEMBLE TAB                                      -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="tab-assemble" class="workshop">
+  <div class="section-title">⚡ Assemble Your BrainTrust</div>
+  <div class="section-sub">Choose a size, set your focus, hit GO — or hand-pick from the Roster.</div>
+
+  <!-- Size selector -->
+  <div style="font-size:13px;font-weight:700;color:#6b7280;margin-bottom:10px;">TRUST SIZE</div>
+  <div class="size-selector">
+    <button class="size-btn" onclick="setSize(3)">3 Minds</button>
+    <button class="size-btn active" onclick="setSize(5)">5 Minds</button>
+    <button class="size-btn" onclick="setSize(7)">7 Minds</button>
+    <button class="size-btn" onclick="setSize(9)">9 Minds</button>
+  </div>
+
+  <!-- Focus pills -->
+  <div class="focus-row">
+    <span class="focus-label">FOCUS</span>
+    <button class="focus-pill active" onclick="setFocus('any')">Any Mix</button>
+    <button class="focus-pill" onclick="setFocus('marketing')">📣 Marketing</button>
+    <button class="focus-pill" onclick="setFocus('finance')">💰 Finance</button>
+    <button class="focus-pill" onclick="setFocus('tech')">⚙️ Tech</button>
+    <button class="focus-pill" onclick="setFocus('strategy')">♟️ Strategy</button>
+    <button class="focus-pill" onclick="setFocus('creative')">🎨 Creative</button>
+    <button class="focus-pill" onclick="setFocus('operations')">🏭 Operations</button>
+    <button class="focus-pill" onclick="setFocus('people')">🤝 People</button>
+    <button class="focus-pill" onclick="setFocus('comedians')">😂 Comedians Only</button>
+  </div>
+
+  <!-- Comedian toggle -->
+  <div class="comedian-row" id="comedian-toggle-row">
+    <div class="toggle-track" id="comedian-toggle" onclick="toggleComedian()">
+      <div class="toggle-thumb"></div>
+    </div>
+    <div class="toggle-label">Include a <strong>Comedian</strong> on your team <span style="color:#6b7280;font-size:11px;">(takes one slot)</span></div>
+  </div>
+
+  <!-- Auto-Assemble button -->
+  <button class="go-btn" onclick="autoAssemble()">
+    <span class="go-icon">🎲</span> Auto-Assemble My BrainTrust
+  </button>
+
+  <!-- Role legend -->
+  <div id="role-legend" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;" class="hidden"></div>
+
+  <!-- Assembled board -->
+  <div id="board" class="board-grid size-5"></div>
+
+  <!-- Submit section — shown after assembly -->
+  <div class="submit-section hidden" id="submit-section">
+    <h3>🎯 Your BrainTrust is Assembled — Now Ask Them Something</h3>
+    <p>Pose any business challenge, strategic dilemma, or decision you're wrestling with. Be specific for better results.</p>
+    <textarea class="submit-textarea" id="question-input" placeholder="Example: Should I raise a Series A now or wait 12 months and grow revenue first? We're at $800K ARR growing 15% MoM but burning $120K/month…"></textarea>
+    <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+      <button class="submit-btn" onclick="launchArena()">
+        ⚔️ Submit to the BrainTrust →
+      </button>
+      <button onclick="clearAssembly()" style="padding:12px 20px;background:#1f2937;color:#9ca3af;font-weight:700;font-size:13px;border:none;border-radius:12px;cursor:pointer;">
+        ↺ Reassemble
+      </button>
+      <span style="font-size:12px;color:#4b5563;margin-left:auto;">
+        <span id="assembled-names" style="color:#6b7280;"></span>
+      </span>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  LOADING OVERLAY                                   -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="loading-overlay hidden" id="loading-overlay">
+  <div class="loading-scene" id="loading-scene">
+    <div class="loading-scene-icon" id="loading-icon">🎤</div>
+    <div class="loading-scene-text" id="loading-text">Napoleon is warming up the microphone...</div>
+    <div class="loading-scene-sub" id="loading-sub">He requested "My Way" by Sinatra. The DJ is terrified.</div>
+  </div>
+  <div class="loading-bar"><div class="loading-bar-fill" id="loading-bar-fill"></div></div>
+  <div style="font-size:12px;color:#374151;margin-top:8px;">Convening your BrainTrust…</div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  ROSTER TAB                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="tab-roster" class="roster-wrap hidden">
+  <div class="section-title">👥 Full Roster</div>
+  <div class="section-sub">Browse all 62 minds. Click a card to add/remove from your BrainTrust.</div>
+  <div class="controls">
+    <div class="search-box">
+      <input type="text" id="search-input" placeholder="Search by name, trait, tag…" oninput="filterRoster()" />
+    </div>
+    <div class="filter-pills">
+      <button class="pill active" onclick="setCat('all',this)">All</button>
+      <button class="pill" onclick="setCat('BUSINESS',this)">💼 Business</button>
+      <button class="pill" onclick="setCat('HISTORICAL',this)">⚔️ Historical</button>
+      <button class="pill" onclick="setCat('PHILOSOPHER',this)">🧠 Philosophers</button>
+      <button class="pill" onclick="setCat('SCIENTIST',this)">🔬 Scientists</button>
+      <button class="pill" onclick="setCat('FICTIONAL',this)">🎭 Fictional</button>
+      <button class="pill" onclick="setCat('COMEDIAN',this)">😂 Comedians</button>
+    </div>
+  </div>
+  <div class="roster-grid" id="roster-grid"></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  HOME TAB                                          -->
+<!-- ══════════════════════════════════════════════════ -->
+<div id="tab-home" class="hidden">
+  <div class="room-bg" style="padding: 72px 24px 120px; text-align:center; position:relative; min-height:360px;">
+    <div class="room-table"></div>
+    <div style="position:relative;z-index:2;">
+      <div style="font-size:13px;font-weight:800;color:#f59e0b;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:14px;">The Boardroom is Open</div>
+      <h1 style="font-size:clamp(32px,6vw,58px);font-weight:900;letter-spacing:-0.04em;line-height:1.05;margin-bottom:16px;">
+        Your Personal <span style="color:#fbbf24;">Dream Team</span><br>of Advisors
+      </h1>
+      <p style="font-size:16px;color:#9ca3af;max-width:560px;margin:0 auto 28px;line-height:1.6;">
+        Assemble history's greatest minds. Submit any challenge.<br>Watch them debate, refine, and compete until one answer rises to the top.
+      </p>
+      <button onclick="switchTab('assemble')" style="padding:14px 32px;background:linear-gradient(135deg,#f59e0b,#ea580c);color:#fff;font-size:16px;font-weight:900;border:none;border-radius:14px;cursor:pointer;box-shadow:0 6px 20px rgba(245,158,11,0.3);">
+        ⚡ Assemble Your BrainTrust →
+      </button>
+    </div>
+  </div>
+  <div style="max-width:800px;margin:0 auto;padding:40px 24px 80px;">
+  <div class="stats" style="margin-bottom:40px;">
+    <div class="stat-card"><div class="stat-val">62</div><div class="stat-lbl">Minds</div></div>
+    <div class="stat-card"><div class="stat-val">8</div><div class="stat-lbl">Answers Generated</div></div>
+    <div class="stat-card"><div class="stat-val">28</div><div class="stat-lbl">Battles</div></div>
+    <div class="stat-card"><div class="stat-val">1</div><div class="stat-lbl">Champion</div></div>
+  </div>
+  <div style="display:grid;gap:16px;">
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
+      <div style="font-size:28px;flex-shrink:0;">⚡</div>
+      <div><div style="font-weight:900;margin-bottom:4px;">1. Assemble Your BrainTrust</div><div style="font-size:13px;color:#9ca3af;">Pick 3–9 members by role, focus, or hand-select from 62 legends.</div></div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
+      <div style="font-size:28px;flex-shrink:0;">🎯</div>
+      <div><div style="font-weight:900;margin-bottom:4px;">2. Submit Your Question</div><div style="font-size:13px;color:#9ca3af;">Any business challenge, strategic dilemma, or career decision. Add context.</div></div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
+      <div style="font-size:28px;flex-shrink:0;">⚔️</div>
+      <div><div style="font-weight:900;margin-bottom:4px;">3. 28 Round-Robin Battles</div><div style="font-size:13px;color:#9ca3af;">8 answers compete head-to-head. No ties. Top 4 advance to playoffs.</div></div>
+    </div>
+    <div style="background:#111827;border:1px solid #1f2937;border-radius:16px;padding:24px;display:flex;gap:16px;">
+      <div style="font-size:28px;flex-shrink:0;">🏆</div>
+      <div><div style="font-weight:900;margin-bottom:4px;">4. Championship + Full Report</div><div style="font-size:13px;color:#9ca3af;">Best of 7 finals. Winner gets a full writeup + a dissenting opinion.</div></div>
+    </div>
+  </div>
+  </div><!-- /inner padding div -->
+</div><!-- /tab-home -->
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  BOTTOM PANEL (manual picks)                       -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="bottom-panel hidden" id="bottom-panel">
+  <div class="panel-avatars" id="panel-avatars"></div>
+  <div class="panel-info">
+    <div class="panel-title" id="panel-title">BrainTrust Ready</div>
+    <div class="panel-sub" id="panel-sub">0 members selected</div>
+  </div>
+  <button class="panel-clear" onclick="clearAll()">Clear All</button>
+  <button class="panel-go" onclick="goToArena()">Submit Question →</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════ -->
+<!--  SWAP MODAL                                        -->
+<!-- ══════════════════════════════════════════════════ -->
+<div class="modal-overlay hidden" id="swap-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h3 id="swap-modal-title">Swap Member</h3>
+      <button class="modal-close" onclick="closeSwapModal()">✕</button>
+    </div>
+    <div class="modal-search">
+      <input type="text" id="swap-search" placeholder="Search by name…" oninput="renderSwapGrid(this.value)" />
+    </div>
+    <div class="modal-grid" id="swap-grid"></div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════════════════
+//  ROLE DEFINITIONS
+// ════════════════════════════════════════════════════
+const ROLE_DEFS = {
+  visionary:  { label:'Visionary',   icon:'🔮', desc:'Sees the future' },
+  strategist: { label:'Strategist',  icon:'♟️',  desc:'Designs the plan' },
+  marketer:   { label:'Marketer',    icon:'📣', desc:'Wins hearts & minds' },
+  finance:    { label:'Finance',     icon:'💰', desc:'Controls the numbers' },
+  innovator:  { label:'Innovator',   icon:'⚙️', desc:'Builds the new thing' },
+  operator:   { label:'Operator',    icon:'🏭', desc:'Executes flawlessly' },
+  product:    { label:'Product',     icon:'📦', desc:'Shapes the offering' },
+  people:     { label:'People',      icon:'🤝', desc:'Leads & inspires' },
+  conscience: { label:'Conscience',  icon:'⚖️', desc:'Moral compass' },
+  devil:      { label:"Devil's Adv", icon:'😈', desc:'Challenges everything' },
+  comedian:   { label:'Comedian',    icon:'😂', desc:'Cuts through BS' },
+};
+
+// Role templates for trust sizes
+const TRUST_ROLES = {
+  3: ['visionary','strategist','devil'],
+  5: ['visionary','strategist','marketer','finance','devil'],
+  7: ['visionary','strategist','marketer','finance','innovator','operator','devil'],
+  9: ['visionary','strategist','marketer','finance','innovator','operator','product','people','devil'],
+};
+
+// ════════════════════════════════════════════════════
+//  MEMBER DATA (62 members)
+// ════════════════════════════════════════════════════
+const MEMBERS = [
+  // ── BUSINESS TITANS ──
+  { id:1,  name:'Steve Jobs',        avatar:'🍎', category:'BUSINESS',   era:'20th–21st c.', origin:'USA',
+    tagline:'Reality distortion field on full blast.',
+    quote:'Stay hungry, stay foolish.',
+    debateSuperpower:'Makes you believe impossible is default.',
+    signatureMove:'The One More Thing reveal',
+    roles:['visionary','marketer','product'], focus:['marketing','creative','strategy'],
+    traits:{boldness:10,analyticalDepth:7,emotionalIQ:8,contrarian:9,communicationPower:10},
+    tags:['design','marketing','simplicity','vision','disruption'] },
+
+  { id:2,  name:'Warren Buffett',    avatar:'📈', category:'BUSINESS',   era:'20th–21st c.', origin:'USA',
+    tagline:'Patience is a competitive advantage.',
+    quote:'Price is what you pay. Value is what you get.',
+    debateSuperpower:'Finds the floor in any argument.',
+    signatureMove:'The long-term patience trap',
+    roles:['finance','strategist','conscience'], focus:['finance','strategy'],
+    traits:{boldness:6,analyticalDepth:10,emotionalIQ:7,contrarian:5,communicationPower:8},
+    tags:['investing','value','patience','frugality','discipline'] },
+
+  { id:3,  name:'Elon Musk',         avatar:'🚀', category:'BUSINESS',   era:'21st c.', origin:'South Africa/USA',
+    tagline:'First principles all the way down.',
+    quote:'When something is important enough, you do it even if the odds are not in your favor.',
+    debateSuperpower:'Reframes every constraint as optional.',
+    signatureMove:'The 10x or bust ultimatum',
+    roles:['visionary','innovator','devil'], focus:['tech','strategy','creative'],
+    traits:{boldness:10,analyticalDepth:9,emotionalIQ:4,contrarian:10,communicationPower:9},
+    tags:['first-principles','risk','innovation','scale','moonshots'] },
+
+  { id:4,  name:'Jeff Bezos',        avatar:'📦', category:'BUSINESS',   era:'21st c.', origin:'USA',
+    tagline:'Day 1 never ends.',
+    quote:'Your margin is my opportunity.',
+    debateSuperpower:'Obsesses over customer backwards from Day 1.',
+    signatureMove:'The 2-pizza team memo',
+    roles:['strategist','operator','product'], focus:['operations','strategy','tech'],
+    traits:{boldness:9,analyticalDepth:9,emotionalIQ:6,contrarian:8,communicationPower:8},
+    tags:['customer-obsession','scale','logistics','long-term','discipline'] },
+
+  { id:5,  name:'Oprah Winfrey',     avatar:'⭐', category:'BUSINESS',   era:'20th–21st c.', origin:'USA',
+    tagline:'The most trusted voice in the room.',
+    quote:'Turn your wounds into wisdom.',
+    debateSuperpower:'Gets to the human truth in any argument.',
+    signatureMove:'The vulnerable pivot that wins everyone over',
+    roles:['marketer','people','visionary'], focus:['people','marketing','creative'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:10,contrarian:5,communicationPower:10},
+    tags:['storytelling','empathy','brand','influence','media'] },
+
+  { id:6,  name:'Henry Ford',        avatar:'🚗', category:'BUSINESS',   era:'19th–20th c.', origin:'USA',
+    tagline:'If it can\'t be mass-produced, it\'s not a solution.',
+    quote:'Whether you think you can or you think you can\'t, you\'re right.',
+    debateSuperpower:'Turns artisan ideas into scalable machines.',
+    signatureMove:'The assembly-line simplification',
+    roles:['operator','innovator','product'], focus:['operations','tech'],
+    traits:{boldness:8,analyticalDepth:7,emotionalIQ:4,contrarian:7,communicationPower:7},
+    tags:['manufacturing','scale','efficiency','disruption','labor'] },
+
+  { id:7,  name:'John D. Rockefeller',avatar:'🛢️', category:'BUSINESS',  era:'19th–20th c.', origin:'USA',
+    tagline:'Control the infrastructure, own the market.',
+    quote:'Don\'t be afraid to give up the good to go for the great.',
+    debateSuperpower:'Finds the choke point in any market.',
+    signatureMove:'Vertical integration until competition vanishes',
+    roles:['strategist','finance','operator'], focus:['finance','strategy','operations'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:4,contrarian:6,communicationPower:6},
+    tags:['monopoly','strategy','oil','ruthless','patience'] },
+
+  { id:8,  name:'Andrew Carnegie',   avatar:'🏗️', category:'BUSINESS',   era:'19th–20th c.', origin:'Scotland/USA',
+    tagline:'Steelman your competitors, then outbuild them.',
+    quote:'The man who dies rich dies disgraced.',
+    debateSuperpower:'Turns capital into legacy infrastructure.',
+    signatureMove:'Philanthropy as brand moat',
+    roles:['finance','operator','people'], focus:['finance','operations','people'],
+    traits:{boldness:8,analyticalDepth:8,emotionalIQ:6,contrarian:5,communicationPower:8},
+    tags:['steel','philanthropy','scale','frugality','legacy'] },
+
+  { id:9,  name:'Walt Disney',       avatar:'🏰', category:'BUSINESS',   era:'20th c.', origin:'USA',
+    tagline:'If you can dream it, you can build it.',
+    quote:'All our dreams can come true, if we have the courage to pursue them.',
+    debateSuperpower:'Makes irrational bets on pure imagination.',
+    signatureMove:'The theme-park pivot nobody saw coming',
+    roles:['visionary','product','marketer'], focus:['creative','marketing','product'],
+    traits:{boldness:9,analyticalDepth:5,emotionalIQ:8,contrarian:8,communicationPower:9},
+    tags:['storytelling','imagination','brand','creativity','entertainment'] },
+
+  { id:10, name:'P.T. Barnum',       avatar:'🎪', category:'BUSINESS',   era:'19th c.', origin:'USA',
+    tagline:'There\'s no such thing as bad publicity.',
+    quote:'Nobody ever lost a dollar by underestimating the taste of the American public.',
+    debateSuperpower:'Manufactures spectacle from nothing.',
+    signatureMove:'The hype machine that creates its own demand',
+    roles:['marketer','visionary','comedian'], focus:['marketing','creative'],
+    traits:{boldness:10,analyticalDepth:4,emotionalIQ:7,contrarian:8,communicationPower:10},
+    tags:['hype','showmanship','marketing','spectacle','audacity'] },
+
+  // ── HISTORICAL LEADERS ──
+  { id:11, name:'Napoleon Bonaparte', avatar:'👑', category:'HISTORICAL', era:'18th–19th c.', origin:'France',
+    tagline:'Audacity, speed, and superior positioning.',
+    quote:'Impossible is a word found only in the dictionary of fools.',
+    debateSuperpower:'Out-maneuvers every counterargument before it forms.',
+    signatureMove:'The flanking attack on conventional wisdom',
+    roles:['strategist','operator','visionary'], focus:['strategy','operations'],
+    traits:{boldness:10,analyticalDepth:9,emotionalIQ:6,contrarian:9,communicationPower:9},
+    tags:['strategy','speed','logistics','ambition','leadership'] },
+
+  { id:12, name:'Sun Tzu',           avatar:'⚔️', category:'HISTORICAL', era:'5th c. BC', origin:'China',
+    tagline:'Win without fighting if you can.',
+    quote:'Know your enemy and know yourself and you will not be imperiled in a hundred battles.',
+    debateSuperpower:'Frames every contest in terms of information asymmetry.',
+    signatureMove:'The invisible strategy that wins before it starts',
+    roles:['strategist','devil','conscience'], focus:['strategy'],
+    traits:{boldness:7,analyticalDepth:10,emotionalIQ:7,contrarian:8,communicationPower:9},
+    tags:['strategy','deception','warfare','patience','psychology'] },
+
+  { id:13, name:'Julius Caesar',     avatar:'🏛️', category:'HISTORICAL', era:'1st c. BC', origin:'Rome',
+    tagline:'Speed, rhetoric, and decisive action.',
+    quote:'Veni, vidi, vici.',
+    debateSuperpower:'Makes bold action seem like the only logical choice.',
+    signatureMove:'The veni-vidi-vici summary that ends debate',
+    roles:['strategist','operator','people'], focus:['strategy','operations','people'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:7,contrarian:7,communicationPower:10},
+    tags:['leadership','rhetoric','politics','speed','legacy'] },
+
+  { id:14, name:'Genghis Khan',      avatar:'🏹', category:'HISTORICAL', era:'12th–13th c.', origin:'Mongolia',
+    tagline:'Meritocracy, mobility, and total commitment.',
+    quote:'If you\'re afraid, don\'t do it. If you\'re doing it, don\'t be afraid.',
+    debateSuperpower:'Dismantles entrenched positions with overwhelming force.',
+    signatureMove:'The psychological surrender offer (resistance is punished)',
+    roles:['operator','strategist','devil'], focus:['strategy','operations'],
+    traits:{boldness:10,analyticalDepth:7,emotionalIQ:5,contrarian:9,communicationPower:7},
+    tags:['conquest','logistics','meritocracy','scale','ruthless'] },
+
+  { id:15, name:'Cleopatra',         avatar:'🐍', category:'HISTORICAL', era:'1st c. BC', origin:'Egypt',
+    tagline:'Soft power in the hardest game.',
+    quote:'I will not be triumphed over.',
+    debateSuperpower:'Turns alliances into weapons.',
+    signatureMove:'The charm offensive that resets the power dynamic',
+    roles:['strategist','people','marketer'], focus:['strategy','people','marketing'],
+    traits:{boldness:9,analyticalDepth:9,emotionalIQ:10,contrarian:7,communicationPower:10},
+    tags:['diplomacy','influence','politics','intelligence','alliances'] },
+
+  { id:16, name:'Alexander the Great',avatar:'🌍', category:'HISTORICAL',era:'4th c. BC', origin:'Macedonia',
+    tagline:'Lead from the front, always.',
+    quote:'There is nothing impossible to him who will try.',
+    debateSuperpower:'Makes ambition feel obligatory.',
+    signatureMove:'The personal charge that galvanizes the entire team',
+    roles:['visionary','operator','people'], focus:['strategy','people'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:7,contrarian:7,communicationPower:9},
+    tags:['ambition','conquest','leadership','vision','legacy'] },
+
+  { id:17, name:'Catherine the Great',avatar:'🦅', category:'HISTORICAL',era:'18th c.', origin:'Russia',
+    tagline:'Enlightened pragmatism at imperial scale.',
+    quote:'Power without a nation\'s confidence is nothing.',
+    debateSuperpower:'Institutionalizes good ideas so they outlast her.',
+    signatureMove:'The meritocratic appointment that rewrites culture',
+    roles:['strategist','people','operator'], focus:['strategy','people','operations'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:8,contrarian:6,communicationPower:8},
+    tags:['statecraft','enlightenment','reform','power','pragmatism'] },
+
+  { id:18, name:'Winston Churchill',  avatar:'🎖️', category:'HISTORICAL', era:'20th c.', origin:'UK',
+    tagline:'Words as weapons of mass inspiration.',
+    quote:'Never, never, never give up.',
+    debateSuperpower:'Makes resolve feel like the only rational response.',
+    signatureMove:'The defiant speech that turns the room',
+    roles:['people','marketer','conscience'], focus:['people','marketing','strategy'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:8,contrarian:7,communicationPower:10},
+    tags:['rhetoric','courage','leadership','war','resilience'] },
+
+  { id:19, name:'Abraham Lincoln',    avatar:'🎩', category:'HISTORICAL', era:'19th c.', origin:'USA',
+    tagline:'Moral authority as strategic asset.',
+    quote:'Give me six hours to chop down a tree and I will spend the first four sharpening the axe.',
+    debateSuperpower:'Finds the moral high ground that others concede.',
+    signatureMove:'The self-deprecating story that makes the point land',
+    roles:['people','conscience','strategist'], focus:['people','strategy'],
+    traits:{boldness:8,analyticalDepth:9,emotionalIQ:9,contrarian:6,communicationPower:10},
+    tags:['morality','leadership','storytelling','patience','unity'] },
+
+  { id:20, name:'Harriet Tubman',     avatar:'🌟', category:'HISTORICAL', era:'19th c.', origin:'USA',
+    tagline:'Courage is the only plan B.',
+    quote:'I never ran my train off the track and I never lost a passenger.',
+    debateSuperpower:'Makes risk acceptable by making inaction unacceptable.',
+    signatureMove:'The proven track record that silences doubt',
+    roles:['operator','people','conscience'], focus:['operations','people'],
+    traits:{boldness:10,analyticalDepth:7,emotionalIQ:8,contrarian:8,communicationPower:8},
+    tags:['courage','leadership','freedom','execution','resilience'] },
+
+  // ── PHILOSOPHERS ──
+  { id:21, name:'Socrates',           avatar:'🏺', category:'PHILOSOPHER', era:'5th c. BC', origin:'Greece',
+    tagline:'The question is always more powerful than the answer.',
+    quote:'I know that I know nothing.',
+    debateSuperpower:'Dismantles any position with sequential questions.',
+    signatureMove:'The Socratic interrogation that collapses false confidence',
+    roles:['devil','conscience','strategist'], focus:['strategy'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:8,contrarian:10,communicationPower:9},
+    tags:['philosophy','questioning','ethics','wisdom','dialectic'] },
+
+  { id:22, name:'Aristotle',          avatar:'📚', category:'PHILOSOPHER', era:'4th c. BC', origin:'Greece',
+    tagline:'Classification is power.',
+    quote:'We are what we repeatedly do. Excellence, then, is not an act but a habit.',
+    debateSuperpower:'Builds unassailable logical frameworks.',
+    signatureMove:'The taxonomy that reveals what everyone missed',
+    roles:['strategist','conscience','product'], focus:['strategy'],
+    traits:{boldness:7,analyticalDepth:10,emotionalIQ:7,contrarian:6,communicationPower:8},
+    tags:['logic','ethics','science','virtue','framework'] },
+
+  { id:23, name:'Machiavelli',        avatar:'🗡️', category:'PHILOSOPHER', era:'15th–16th c.', origin:'Italy',
+    tagline:'Power is amoral. Use it.',
+    quote:'It is better to be feared than loved, if you cannot be both.',
+    debateSuperpower:'Names the unspoken power dynamics.',
+    signatureMove:'The cold realpolitik analysis that nobody wants to say out loud',
+    roles:['devil','strategist','conscience'], focus:['strategy'],
+    traits:{boldness:9,analyticalDepth:9,emotionalIQ:6,contrarian:9,communicationPower:8},
+    tags:['power','realpolitik','strategy','pragmatism','manipulation'] },
+
+  { id:24, name:'Benjamin Franklin',  avatar:'⚡', category:'PHILOSOPHER', era:'18th c.', origin:'USA',
+    tagline:'Practical wisdom, deployed with wit.',
+    quote:'An investment in knowledge pays the best interest.',
+    debateSuperpower:'Makes complex ideas immediately actionable.',
+    signatureMove:'The pithy maxim that ends debate and sticks forever',
+    roles:['innovator','strategist','marketer'], focus:['tech','strategy','marketing'],
+    traits:{boldness:8,analyticalDepth:9,emotionalIQ:8,contrarian:6,communicationPower:9},
+    tags:['innovation','pragmatism','diplomacy','wit','science'] },
+
+  { id:25, name:'Ayn Rand',           avatar:'🗽', category:'PHILOSOPHER', era:'20th c.', origin:'Russia/USA',
+    tagline:'Individual excellence over collective mediocrity.',
+    quote:'The question isn\'t who is going to let me; it\'s who is going to stop me.',
+    debateSuperpower:'Makes selfishness sound noble and necessary.',
+    signatureMove:'The objectivist takedown of altruistic reasoning',
+    roles:['devil','visionary','conscience'], focus:['strategy','creative'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:3,contrarian:10,communicationPower:9},
+    tags:['individualism','capitalism','philosophy','objectivism','controversy'] },
+
+  { id:26, name:'Sigmund Freud',      avatar:'🛋️', category:'PHILOSOPHER', era:'19th–20th c.', origin:'Austria',
+    tagline:'Every decision has an unconscious architect.',
+    quote:'The goal of all life is death.',
+    debateSuperpower:'Reframes all arguments through hidden motivation.',
+    signatureMove:'The psychoanalytic reveal of what\'s really going on',
+    roles:['devil','conscience','people'], focus:['people','marketing'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:7,contrarian:9,communicationPower:8},
+    tags:['psychology','unconscious','motivation','sexuality','analysis'] },
+
+  { id:27, name:'Carl Jung',          avatar:'🌀', category:'PHILOSOPHER', era:'20th c.', origin:'Switzerland',
+    tagline:'The collective unconscious is in the room.',
+    quote:'Until you make the unconscious conscious, it will direct your life and you will call it fate.',
+    debateSuperpower:'Finds the archetypal pattern behind every trend.',
+    signatureMove:'The mythic framework that reveals hidden meaning',
+    roles:['conscience','people','visionary'], focus:['people','creative'],
+    traits:{boldness:7,analyticalDepth:10,emotionalIQ:9,contrarian:7,communicationPower:8},
+    tags:['psychology','archetypes','myth','symbolism','shadow'] },
+
+  { id:28, name:'Mahatma Gandhi',     avatar:'☮️', category:'PHILOSOPHER', era:'20th c.', origin:'India',
+    tagline:'Moral power outlasts physical force.',
+    quote:'Be the change you wish to see in the world.',
+    debateSuperpower:'Makes opponents lose by winning.',
+    signatureMove:'The principled non-engagement that changes everything',
+    roles:['conscience','people','visionary'], focus:['people','strategy'],
+    traits:{boldness:8,analyticalDepth:7,emotionalIQ:10,contrarian:8,communicationPower:9},
+    tags:['nonviolence','morality','leadership','sacrifice','freedom'] },
+
+  { id:29, name:'Malcolm X',          avatar:'✊', category:'PHILOSOPHER', era:'20th c.', origin:'USA',
+    tagline:'Name the injustice. Don\'t apologize for it.',
+    quote:'The future belongs to those who prepare for it today.',
+    debateSuperpower:'Cuts through politeness to name power structures.',
+    signatureMove:'The uncompromising reframe that makes moderates uncomfortable',
+    roles:['devil','conscience','marketer'], focus:['people','marketing','strategy'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:7,contrarian:10,communicationPower:10},
+    tags:['justice','race','power','rhetoric','courage'] },
+
+  { id:30, name:'Nelson Mandela',     avatar:'🕊️', category:'PHILOSOPHER', era:'20th–21st c.', origin:'South Africa',
+    tagline:'Forgiveness is the ultimate power move.',
+    quote:'It always seems impossible until it\'s done.',
+    debateSuperpower:'Makes long-term sacrifice feel like strategic brilliance.',
+    signatureMove:'The principled perseverance that outlasts every opponent',
+    roles:['conscience','people','strategist'], focus:['people','strategy'],
+    traits:{boldness:9,analyticalDepth:8,emotionalIQ:10,contrarian:6,communicationPower:10},
+    tags:['forgiveness','leadership','justice','sacrifice','legacy'] },
+
+  // ── SCIENTISTS ──
+  { id:31, name:'Leonardo da Vinci',  avatar:'🎨', category:'SCIENTIST',  era:'15th–16th c.', origin:'Italy',
+    tagline:'Curiosity is the engine of reinvention.',
+    quote:'Learning never exhausts the mind.',
+    debateSuperpower:'Connects art, science, and engineering in one move.',
+    signatureMove:'The interdisciplinary insight nobody else could see',
+    roles:['innovator','visionary','product'], focus:['tech','creative'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:8,contrarian:8,communicationPower:7},
+    tags:['curiosity','art','science','invention','renaissance'] },
+
+  { id:32, name:'Nikola Tesla',       avatar:'⚡', category:'SCIENTIST',  era:'19th–20th c.', origin:'Serbia/USA',
+    tagline:'Decades ahead, dollars behind.',
+    quote:'The present is theirs; the future, for which I really worked, is mine.',
+    debateSuperpower:'Presents the technically correct answer that the market ignores.',
+    signatureMove:'The visionary tech proof-of-concept that changes history',
+    roles:['innovator','visionary','product'], focus:['tech','creative'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:4,contrarian:9,communicationPower:6},
+    tags:['electricity','invention','genius','eccentric','AC-power'] },
+
+  { id:33, name:'Thomas Edison',      avatar:'💡', category:'SCIENTIST',  era:'19th–20th c.', origin:'USA',
+    tagline:'Invention is 1% inspiration, 99% perspiration.',
+    quote:'I have not failed. I\'ve just found 10,000 ways that won\'t work.',
+    debateSuperpower:'Turns brute-force iteration into competitive moat.',
+    signatureMove:'The relentless-testing flywheel that finds what works',
+    roles:['innovator','operator','product'], focus:['tech','operations'],
+    traits:{boldness:8,analyticalDepth:8,emotionalIQ:5,contrarian:6,communicationPower:7},
+    tags:['invention','iteration','patents','perseverance','commercialization'] },
+
+  { id:34, name:'Marie Curie',        avatar:'☢️', category:'SCIENTIST',  era:'19th–20th c.', origin:'Poland/France',
+    tagline:'Rigor over recognition.',
+    quote:'Nothing in life is to be feared, it is only to be understood.',
+    debateSuperpower:'Demands empirical evidence over any argument.',
+    signatureMove:'The data-first standard that invalidates speculation',
+    roles:['innovator','conscience','product'], focus:['tech','strategy'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:6,contrarian:7,communicationPower:7},
+    tags:['science','research','perseverance','data','radioactivity'] },
+
+  { id:35, name:'Albert Einstein',    avatar:'🧪', category:'SCIENTIST',  era:'20th c.', origin:'Germany/USA',
+    tagline:'Imagination over information.',
+    quote:'Imagination is more important than knowledge.',
+    debateSuperpower:'Reframes the problem until the answer becomes obvious.',
+    signatureMove:'The thought experiment that dissolves the constraint',
+    roles:['visionary','innovator','devil'], focus:['tech','strategy','creative'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:7,contrarian:9,communicationPower:8},
+    tags:['physics','imagination','thought-experiments','relativity','pacifism'] },
+
+  // ── FICTIONAL LEGENDS ──
+  { id:36, name:'Tony Stark',         avatar:'🦾', category:'FICTIONAL',  era:'Modern', origin:'Marvel',
+    tagline:'Genius, billionaire, playboy, philanthropist.',
+    quote:'I am Iron Man.',
+    debateSuperpower:'Engineers a solution to any problem, live, in the room.',
+    signatureMove:'The dramatic reveal that resets everyone\'s assumptions',
+    roles:['innovator','visionary','marketer'], focus:['tech','creative','marketing'],
+    traits:{boldness:10,analyticalDepth:9,emotionalIQ:6,contrarian:8,communicationPower:10},
+    tags:['engineering','ego','innovation','sacrifice','futurism'] },
+
+  { id:37, name:'Sherlock Holmes',    avatar:'🔍', category:'FICTIONAL',  era:'Victorian', origin:'UK',
+    tagline:'You\'ve missed everything obvious.',
+    quote:'When you have eliminated the impossible, whatever remains must be the truth.',
+    debateSuperpower:'Solves the problem before anyone else states it.',
+    signatureMove:'The deduction chain that leaves everyone speechless',
+    roles:['devil','strategist','innovator'], focus:['strategy','tech'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:3,contrarian:10,communicationPower:8},
+    tags:['deduction','logic','observation','mystery','intellect'] },
+
+  { id:38, name:'Gordon Gekko',       avatar:'💹', category:'FICTIONAL',  era:'1980s', origin:'Wall Street',
+    tagline:'Greed clarifies.',
+    quote:'Greed, for lack of a better word, is good.',
+    debateSuperpower:'Makes pure self-interest sound like market efficiency.',
+    signatureMove:'The hostile framing that turns everyone into a price',
+    roles:['finance','devil','strategist'], focus:['finance','strategy'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:3,contrarian:9,communicationPower:10},
+    tags:['finance','greed','wall-street','capitalism','ruthless'] },
+
+  { id:39, name:'Don Draper',         avatar:'🥃', category:'FICTIONAL',  era:'1960s', origin:'Mad Men',
+    tagline:'Sell the feeling, not the product.',
+    quote:'If you don\'t like what\'s being said, change the conversation.',
+    debateSuperpower:'Reframes any problem as a desire to be sold.',
+    signatureMove:'The nostalgic pitch that bypasses logic entirely',
+    roles:['marketer','visionary','product'], focus:['marketing','creative'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:8,contrarian:7,communicationPower:10},
+    tags:['advertising','charisma','nostalgia','brand','identity'] },
+
+  { id:40, name:'Michael Corleone',   avatar:'🌹', category:'FICTIONAL',  era:'Modern', origin:'The Godfather',
+    tagline:'Nothing personal — only business.',
+    quote:'Keep your friends close, but your enemies closer.',
+    debateSuperpower:'Sees every alliance as a future leverage point.',
+    signatureMove:'The patient power consolidation nobody sees coming',
+    roles:['strategist','operator','devil'], focus:['strategy','operations','finance'],
+    traits:{boldness:8,analyticalDepth:10,emotionalIQ:6,contrarian:7,communicationPower:8},
+    tags:['strategy','loyalty','power','patience','cold-blooded'] },
+
+  { id:41, name:'Tyrion Lannister',   avatar:'🍷', category:'FICTIONAL',  era:'Fantasy', origin:'Game of Thrones',
+    tagline:'My mind is my weapon.',
+    quote:'A mind needs books as a sword needs a whetstone.',
+    debateSuperpower:'Wins arguments from a position of weakness.',
+    signatureMove:'The self-aware underdog pivot that resets the power dynamic',
+    roles:['strategist','devil','conscience'], focus:['strategy','people'],
+    traits:{boldness:9,analyticalDepth:9,emotionalIQ:8,contrarian:9,communicationPower:9},
+    tags:['wit','strategy','politics','underdog','survival'] },
+
+  { id:42, name:'Yoda',               avatar:'🌿', category:'FICTIONAL',  era:'Sci-Fi', origin:'Star Wars',
+    tagline:'Do or do not. There is no try.',
+    quote:'Fear is the path to the dark side.',
+    debateSuperpower:'Cuts to first principles with three words.',
+    signatureMove:'The Zen paradox that dissolves false urgency',
+    roles:['conscience','visionary','people'], focus:['strategy','people'],
+    traits:{boldness:7,analyticalDepth:9,emotionalIQ:10,contrarian:8,communicationPower:9},
+    tags:['wisdom','patience','force','mentorship','paradox'] },
+
+  { id:43, name:'Spock',              avatar:'🖖', category:'FICTIONAL',  era:'Sci-Fi', origin:'Star Trek',
+    tagline:'Logic is the beginning of wisdom, not the end.',
+    quote:'Insufficient facts always invite danger.',
+    debateSuperpower:'Removes emotion and reveals the optimal path.',
+    signatureMove:'The cold probability analysis that the group ignores at their peril',
+    roles:['devil','innovator','strategist'], focus:['tech','strategy'],
+    traits:{boldness:5,analyticalDepth:10,emotionalIQ:3,contrarian:8,communicationPower:7},
+    tags:['logic','science','rationality','Vulcan','data'] },
+
+  { id:44, name:'Walter White',       avatar:'🧫', category:'FICTIONAL',  era:'Modern', origin:'Breaking Bad',
+    tagline:'I am the danger.',
+    quote:'I am not in danger, Skyler. I am the danger.',
+    debateSuperpower:'Manufactures leverage out of desperation.',
+    signatureMove:'The identity transformation that reframes all past constraints',
+    roles:['devil','innovator','operator'], focus:['tech','operations','strategy'],
+    traits:{boldness:10,analyticalDepth:9,emotionalIQ:4,contrarian:9,communicationPower:8},
+    tags:['transformation','chemistry','ego','power','ruthless'] },
+
+  { id:45, name:'Jay Gatsby',         avatar:'🥂', category:'FICTIONAL',  era:'1920s', origin:'The Great Gatsby',
+    tagline:'Reinvention is the American superpower.',
+    quote:'Can\'t repeat the past? Why of course you can!',
+    debateSuperpower:'Makes obsessive commitment sound like vision.',
+    signatureMove:'The spectacular brand statement that makes everyone believe',
+    roles:['marketer','visionary','product'], focus:['marketing','creative'],
+    traits:{boldness:9,analyticalDepth:4,emotionalIQ:7,contrarian:7,communicationPower:9},
+    tags:['reinvention','ambition','image','obsession','tragedy'] },
+
+  { id:46, name:'Atticus Finch',      avatar:'⚖️', category:'FICTIONAL',  era:'1930s', origin:'To Kill a Mockingbird',
+    tagline:'Moral clarity, sustained under pressure.',
+    quote:'You never really understand a person until you climb into his skin and walk around in it.',
+    debateSuperpower:'Makes integrity the only acceptable position.',
+    signatureMove:'The empathy argument that redefines the stakes',
+    roles:['conscience','people','devil'], focus:['people','strategy'],
+    traits:{boldness:8,analyticalDepth:8,emotionalIQ:10,contrarian:7,communicationPower:9},
+    tags:['morality','justice','empathy','courage','integrity'] },
+
+  { id:47, name:'Hannibal Lecter',    avatar:'🦋', category:'FICTIONAL',  era:'Modern', origin:'Silence of the Lambs',
+    tagline:'Rudeness is a poor substitute for wit.',
+    quote:'A census taker once tried to test me.',
+    debateSuperpower:'Profiles opponents\' weaknesses with surgical precision.',
+    signatureMove:'The psychological trap dressed as intellectual curiosity',
+    roles:['devil','strategist','marketer'], focus:['strategy','marketing'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:9,contrarian:10,communicationPower:10},
+    tags:['psychology','manipulation','intelligence','precision','dark'] },
+
+  { id:48, name:'Professor Moriarty', avatar:'🕸️', category:'FICTIONAL',  era:'Victorian', origin:'Sherlock Holmes',
+    tagline:'Every system has a choke point.',
+    quote:'You stand in the way not merely of an individual, but of a mighty organization.',
+    debateSuperpower:'Designs systems that trap opponents before they move.',
+    signatureMove:'The organizational map that reveals a hidden web of control',
+    roles:['strategist','devil','operator'], focus:['strategy','operations','finance'],
+    traits:{boldness:9,analyticalDepth:10,emotionalIQ:5,contrarian:9,communicationPower:7},
+    tags:['genius','strategy','organization','control','chess'] },
+
+  { id:49, name:'Hermione Granger',   avatar:'📖', category:'FICTIONAL',  era:'Fantasy', origin:'Harry Potter',
+    tagline:'Research beats improvisation every time.',
+    quote:'When in doubt, go to the library.',
+    debateSuperpower:'Has the source and the counterargument ready before you finish speaking.',
+    signatureMove:'The pre-prepared briefing that wins the debate before it starts',
+    roles:['product','innovator','conscience'], focus:['tech','strategy','operations'],
+    traits:{boldness:7,analyticalDepth:10,emotionalIQ:7,contrarian:6,communicationPower:8},
+    tags:['knowledge','preparation','rules','loyalty','intellect'] },
+
+  { id:50, name:'Tiger Woods',        avatar:'⛳', category:'FICTIONAL',  era:'Modern', origin:'Sports',
+    tagline:'Process discipline beats raw talent.',
+    quote:'No matter how good you get, you can always get better, and that\'s the exciting part.',
+    debateSuperpower:'Makes relentless preparation sound like the only strategy.',
+    signatureMove:'The mental-game reset that turns pressure into advantage',
+    roles:['operator','people','product'], focus:['operations','people'],
+    traits:{boldness:9,analyticalDepth:8,emotionalIQ:7,contrarian:5,communicationPower:7},
+    tags:['focus','discipline','process','pressure','greatness'] },
+
+  // ── COMEDIANS ──
+  { id:51, name:'George Carlin',      avatar:'🎤', category:'COMEDIAN',   era:'20th–21st c.', origin:'USA',
+    tagline:'BS-detector set to maximum.',
+    quote:'Think of how stupid the average person is and realize half of them are stupider than that.',
+    debateSuperpower:'Exposes institutional absurdity with perfect comic timing.',
+    signatureMove:'The 7-word brutality that makes the audience laugh then wince',
+    roles:['comedian','devil','conscience'], focus:['marketing','strategy','creative'],
+    traits:{boldness:10,analyticalDepth:9,emotionalIQ:7,contrarian:10,communicationPower:10},
+    tags:['satire','language','truth','cynicism','philosophy'] },
+
+  { id:52, name:'Mark Twain',         avatar:'🛶', category:'COMEDIAN',   era:'19th c.', origin:'USA',
+    tagline:'Wit is the shortest path to truth.',
+    quote:'Truth is stranger than fiction, because fiction is obliged to stick to possibilities.',
+    debateSuperpower:'Makes satire land harder than a lecture.',
+    signatureMove:'The folksy story that ends with an unexpected gut punch',
+    roles:['comedian','conscience','marketer'], focus:['marketing','creative','strategy'],
+    traits:{boldness:9,analyticalDepth:8,emotionalIQ:8,contrarian:8,communicationPower:10},
+    tags:['satire','storytelling','America','wit','humanism'] },
+
+  { id:53, name:'Groucho Marx',       avatar:'🥸', category:'COMEDIAN',   era:'20th c.', origin:'USA',
+    tagline:'Any organization worth joining wouldn\'t have me.',
+    quote:'Outside of a dog, a book is man\'s best friend. Inside of a dog, it\'s too dark to read.',
+    debateSuperpower:'Destroys pomposity with wordplay.',
+    signatureMove:'The non-sequitur that punctures inflated arguments',
+    roles:['comedian','devil','marketer'], focus:['marketing','creative'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:7,contrarian:9,communicationPower:10},
+    tags:['wordplay','wit','absurdism','anti-authority','puns'] },
+
+  { id:54, name:'Richard Pryor',      avatar:'🔥', category:'COMEDIAN',   era:'20th c.', origin:'USA',
+    tagline:'Truth delivered through laughter hits harder.',
+    quote:'I\'m not a comedian. I\'m Prometheus, and comedy is my fire.',
+    debateSuperpower:'Weaponizes personal vulnerability to disarm resistance.',
+    signatureMove:'The autobiographical truth-bomb that nobody can deflect',
+    roles:['comedian','people','marketer'], focus:['people','marketing','creative'],
+    traits:{boldness:10,analyticalDepth:7,emotionalIQ:10,contrarian:9,communicationPower:10},
+    tags:['race','truth','vulnerability','fire','authenticity'] },
+
+  { id:55, name:'Robin Williams',     avatar:'🌈', category:'COMEDIAN',   era:'20th–21st c.', origin:'USA',
+    tagline:'Empathy at the speed of improv.',
+    quote:'No matter what people tell you, words and ideas can change the world.',
+    debateSuperpower:'Disarms hostility and builds connection instantly.',
+    signatureMove:'The rapid-fire pivot that reframes before anyone can object',
+    roles:['comedian','people','marketer'], focus:['people','marketing','creative'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:10,contrarian:7,communicationPower:10},
+    tags:['improv','empathy','energy','humanity','creativity'] },
+
+  { id:56, name:'Jerry Seinfeld',     avatar:'☕', category:'COMEDIAN',   era:'20th–21st c.', origin:'USA',
+    tagline:'Precision is funnier than exaggeration.',
+    quote:'Confidence is the food of the wise man but the liquor of the fool.',
+    debateSuperpower:'Finds the absurdity hiding in the ordinary assumption.',
+    signatureMove:'The "what\'s the deal with" observation that reframes everything',
+    roles:['comedian','product','marketer'], focus:['marketing','creative','product'],
+    traits:{boldness:7,analyticalDepth:9,emotionalIQ:7,contrarian:8,communicationPower:9},
+    tags:['observation','precision','detail','process','craft'] },
+
+  { id:57, name:'Chris Rock',         avatar:'💥', category:'COMEDIAN',   era:'20th–21st c.', origin:'USA',
+    tagline:'Both sides of the truth, at full volume.',
+    quote:'You don\'t pay taxes, they take taxes.',
+    debateSuperpower:'States the painful obvious that polite people avoid.',
+    signatureMove:'The both-sides roast that forces honest self-examination',
+    roles:['comedian','devil','conscience'], focus:['people','marketing','strategy'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:7,contrarian:9,communicationPower:10},
+    tags:['race','society','truth','boldness','duality'] },
+
+  { id:58, name:'Dave Chappelle',     avatar:'🎭', category:'COMEDIAN',   era:'21st c.', origin:'USA',
+    tagline:'Power surrendered is a performance.',
+    quote:'The worst thing to call somebody is crazy. It\'s dismissive.',
+    debateSuperpower:'Refuses consensus reality and forces independent thinking.',
+    signatureMove:'The walk-away that resets the entire power structure',
+    roles:['comedian','devil','conscience'], focus:['creative','people','strategy'],
+    traits:{boldness:10,analyticalDepth:8,emotionalIQ:8,contrarian:10,communicationPower:10},
+    tags:['independence','culture','power','authenticity','risk'] },
+
+  { id:59, name:'Bill Burr',          avatar:'🤬', category:'COMEDIAN',   era:'21st c.', origin:'USA',
+    tagline:'Every sacred cow deserves a closer look.',
+    quote:'Nobody tells the truth like a comedian.',
+    debateSuperpower:'Attacks groupthink from the side nobody was watching.',
+    signatureMove:'The seemingly-offensive setup that reveals the actual uncomfortable truth',
+    roles:['comedian','devil','conscience'], focus:['strategy','creative','people'],
+    traits:{boldness:10,analyticalDepth:7,emotionalIQ:6,contrarian:10,communicationPower:9},
+    tags:['rants','honesty','masculinity','contrarian','groupthink'] },
+
+  { id:60, name:'Tina Fey',           avatar:'📝', category:'COMEDIAN',   era:'21st c.', origin:'USA',
+    tagline:'Smart is the new funny.',
+    quote:'You can\'t be that kid standing at the top of the waterslide overthinking it.',
+    debateSuperpower:'Satirizes power structures while building them.',
+    signatureMove:'The yes-and improv principle applied to strategic pivots',
+    roles:['comedian','product','marketer'], focus:['creative','marketing','product'],
+    traits:{boldness:8,analyticalDepth:8,emotionalIQ:8,contrarian:7,communicationPower:9},
+    tags:['writing','satire','women','media','improv'] },
+
+  { id:61, name:'John Cleese',        avatar:'🎩', category:'COMEDIAN',   era:'20th–21st c.', origin:'UK',
+    tagline:'Creativity lives outside the open mode.',
+    quote:'Creativity is not a talent. It is a way of operating.',
+    debateSuperpower:'Diagnoses organizational dysfunction through absurdist mirror.',
+    signatureMove:'The Ministry-of-Silly-Walks metaphor that perfectly describes the meeting',
+    roles:['comedian','innovator','devil'], focus:['creative','tech','strategy'],
+    traits:{boldness:8,analyticalDepth:9,emotionalIQ:7,contrarian:8,communicationPower:9},
+    tags:['absurdism','creativity','bureaucracy','Monty-Python','open-mode'] },
+
+  { id:62, name:'Hawkeye Pierce',     avatar:'🏥', category:'COMEDIAN',   era:'1950s', origin:'M*A*S*H',
+    tagline:'Irreverence is a survival mechanism.',
+    quote:'War isn\'t hell. War is war and hell is hell. And of the two, war is a lot worse.',
+    debateSuperpower:'Cuts through crisis with humor and unexpected empathy.',
+    signatureMove:'The joke that defuses the tension and then the pivot to the actual solution',
+    roles:['comedian','people','conscience'], focus:['people','creative'],
+    traits:{boldness:9,analyticalDepth:7,emotionalIQ:9,contrarian:8,communicationPower:9},
+    tags:['irreverence','empathy','survival','crisis','humanity'] },
+];
+
+// ════════════════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════════════════
+let trustSize = 5;
+let focusMode = 'any';
+let comedianEnabled = false;
+let assembled = [];   // array of {slotRole, member} or null
+let manualSelected = new Set();
+let currentCat = 'all';
+let swapSlotIdx = -1;
+
+// ════════════════════════════════════════════════════
+//  TAB SWITCHING
+// ════════════════════════════════════════════════════
+function switchTab(tab) {
+  document.getElementById('tab-assemble').classList.toggle('hidden', tab !== 'assemble');
+  document.getElementById('tab-roster').classList.toggle('hidden', tab !== 'roster');
+  document.getElementById('tab-home').classList.toggle('hidden', tab !== 'home');
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const tabs = ['assemble','roster','home'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  if (tab === 'roster') renderRoster();
+}
+
+// ════════════════════════════════════════════════════
+//  ASSEMBLY CONTROLS
+// ════════════════════════════════════════════════════
+function setSize(n) {
+  trustSize = n;
+  document.querySelectorAll('.size-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.trim().startsWith(n));
+  });
+  // Update board grid class
+  const board = document.getElementById('board');
+  board.className = `board-grid size-${n}`;
+  // If already assembled, re-render placeholders
+  if (assembled.length > 0) renderBoard();
+}
+
+function setFocus(f) {
+  focusMode = f;
+  document.querySelectorAll('.focus-pill').forEach(p => {
+    const fval = p.getAttribute('onclick').match(/setFocus\('(.+?)'\)/)[1];
+    p.classList.toggle('active', fval === f);
+  });
+  // Auto-enable comedian toggle if comedians-only
+  if (f === 'comedians') {
+    comedianEnabled = true;
+    updateComédianToggle();
+  }
+}
+
+function toggleComedian() {
+  comedianEnabled = !comedianEnabled;
+  updateComédianToggle();
+}
+function updateComédianToggle() {
+  const t = document.getElementById('comedian-toggle');
+  t.classList.toggle('on', comedianEnabled);
+}
+
+// ════════════════════════════════════════════════════
+//  AUTO-ASSEMBLY
+// ════════════════════════════════════════════════════
+function autoAssemble() {
+  const roles = getRoleList();
+  const usedIds = new Set();
+  assembled = roles.map(role => {
+    const member = pickMember(role, usedIds);
+    if (member) usedIds.add(member.id);
+    return { slotRole: role, member };
+  });
+  renderBoard();
+}
+
+function getRoleList() {
+  let roles = [...TRUST_ROLES[trustSize]];
+  if (focusMode === 'comedians') {
+    // All slots are comedian
+    return Array(trustSize).fill('comedian');
+  }
+  if (comedianEnabled) {
+    // Replace the last 'devil' slot with comedian, or last slot
+    const devilIdx = roles.lastIndexOf('devil');
+    if (devilIdx >= 0) roles[devilIdx] = 'comedian';
+    else roles[roles.length - 1] = 'comedian';
+  }
+  return roles;
+}
+
+function pickMember(role, usedIds) {
+  const eligible = MEMBERS.filter(m =>
+    m.roles.includes(role) && !usedIds.has(m.id)
+  );
+  if (eligible.length === 0) {
+    // Fallback: any unused member
+    const fallback = MEMBERS.filter(m => !usedIds.has(m.id));
+    return fallback[Math.floor(Math.random() * fallback.length)] || null;
+  }
+  // Apply focus bias
+  if (focusMode !== 'any' && focusMode !== 'comedians') {
+    const biased = eligible.filter(m => m.focus && m.focus.includes(focusMode));
+    if (biased.length > 0) {
+      return biased[Math.floor(Math.random() * biased.length)];
+    }
+  }
+  if (focusMode === 'comedians') {
+    const comedians = eligible.filter(m => m.category === 'COMEDIAN');
+    if (comedians.length > 0) return comedians[Math.floor(Math.random() * comedians.length)];
+  }
+  return eligible[Math.floor(Math.random() * eligible.length)];
+}
+
+// ════════════════════════════════════════════════════
+//  RENDER BOARD
+// ════════════════════════════════════════════════════
+function renderBoard() {
+  const board = document.getElementById('board');
+  board.className = `board-grid size-${trustSize}`;
+  if (assembled.length === 0) {
+    board.innerHTML = '';
+    return;
+  }
+  board.innerHTML = assembled.map((slot, idx) => {
+    if (!slot.member) {
+      return `<div class="slot-card empty">
+        <span style="font-size:28px;color:#374151;">＋</span>
+        <span>Empty Slot</span>
+      </div>`;
+    }
+    const r = slot.slotRole;
+    const m = slot.member;
+    const roleInfo = ROLE_DEFS[r];
+    return `
+      <div class="slot-card">
+        <div class="slot-banner role-${r}"></div>
+        <div class="slot-role-tag tag-${r}">${roleInfo.icon} ${roleInfo.label}</div>
+        <div class="slot-avatar">${m.avatar}</div>
+        <div class="slot-name">${m.name}</div>
+        <div class="slot-tagline">${m.tagline}</div>
+        <button class="slot-swap-btn" onclick="openSwapModal(${idx})">⇄ Swap</button>
+      </div>`;
+  }).join('');
+
+  // Update nav counter
+  document.getElementById('nav-count').textContent = assembled.filter(s => s.member).length;
+
+  // Show submit section if there are assembled members
+  if (assembled.length > 0 && assembled.some(s => s.member)) {
+    const sec = document.getElementById('submit-section');
+    if (sec) {
+      sec.classList.remove('hidden');
+      const names = assembled.filter(s=>s.member).map(s=>s.member.name).join(' · ');
+      const namesEl = document.getElementById('assembled-names');
+      if (namesEl) namesEl.textContent = names;
+    }
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  SWAP MODAL
+// ════════════════════════════════════════════════════
+function openSwapModal(idx) {
+  swapSlotIdx = idx;
+  const slot = assembled[idx];
+  const roleInfo = ROLE_DEFS[slot.slotRole];
+  document.getElementById('swap-modal-title').textContent =
+    `Swap ${roleInfo.icon} ${roleInfo.label} — ${slot.member ? slot.member.name : 'Empty'}`;
+  document.getElementById('swap-search').value = '';
+  document.getElementById('swap-modal').classList.remove('hidden');
+  renderSwapGrid('');
+}
+
+function closeSwapModal() {
+  document.getElementById('swap-modal').classList.add('hidden');
+  swapSlotIdx = -1;
+}
+
+function renderSwapGrid(query) {
+  if (swapSlotIdx < 0) return;
+  const slot = assembled[swapSlotIdx];
+  const role = slot.slotRole;
+  const currentId = slot.member ? slot.member.id : -1;
+  const q = query.toLowerCase();
+
+  // Show all members eligible for this role (or all if comedian slot)
+  let candidates = MEMBERS.filter(m => {
+    const roleMatch = role === 'comedian' ? m.category === 'COMEDIAN' : m.roles.includes(role);
+    const nameMatch = !q || m.name.toLowerCase().includes(q) || m.tags.some(t => t.includes(q));
+    return roleMatch && nameMatch;
+  });
+  // Also show any member if search has text
+  if (q && candidates.length < 5) {
+    const extra = MEMBERS.filter(m =>
+      (m.name.toLowerCase().includes(q) || m.tags.some(t => t.includes(q))) &&
+      !candidates.find(c => c.id === m.id)
+    );
+    candidates = [...candidates, ...extra];
+  }
+
+  const usedIds = new Set(assembled.filter((s,i) => i !== swapSlotIdx && s.member).map(s => s.member.id));
+
+  document.getElementById('swap-grid').innerHTML = candidates.map(m => {
+    const isCurrent = m.id === currentId;
+    const isUsed = usedIds.has(m.id);
+    const firstRole = m.roles[0];
+    return `
+      <div class="swap-card${isCurrent ? ' current' : ''}" onclick="${isCurrent || isUsed ? '' : `doSwap(${m.id})`}">
+        <div class="sw-avatar">${m.avatar}</div>
+        <div class="sw-name">${m.name}</div>
+        <div class="sw-role tag-${firstRole}">${ROLE_DEFS[firstRole].icon} ${ROLE_DEFS[firstRole].label}</div>
+        ${isCurrent ? '<div style="font-size:10px;color:#6b7280;margin-top:4px;">Current</div>' : ''}
+        ${isUsed && !isCurrent ? '<div style="font-size:10px;color:#6b7280;margin-top:4px;">In use</div>' : ''}
+      </div>`;
+  }).join('') || '<div style="color:#6b7280;padding:16px;grid-column:1/-1;">No matches found.</div>';
+}
+
+function doSwap(memberId) {
+  if (swapSlotIdx < 0) return;
+  const member = MEMBERS.find(m => m.id === memberId);
+  if (!member) return;
+  assembled[swapSlotIdx].member = member;
+  closeSwapModal();
+  renderBoard();
+}
+
+// ════════════════════════════════════════════════════
+//  ROSTER TAB
+// ════════════════════════════════════════════════════
+function setCat(cat, el) {
+  currentCat = cat;
+  document.querySelectorAll('.pill').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  filterRoster();
+}
+
+function filterRoster() {
+  const q = (document.getElementById('search-input').value || '').toLowerCase();
+  const grid = document.getElementById('roster-grid');
+  const visible = MEMBERS.filter(m => {
+    const catMatch = currentCat === 'all' || m.category === currentCat;
+    const qMatch = !q || m.name.toLowerCase().includes(q) ||
+      m.tagline.toLowerCase().includes(q) ||
+      m.tags.some(t => t.includes(q)) ||
+      m.roles.some(r => r.includes(q));
+    return catMatch && qMatch;
+  });
+  grid.innerHTML = visible.map(m => memberCardHTML(m)).join('');
+}
+
+function renderRoster() {
+  filterRoster();
+}
+
+function memberCardHTML(m) {
+  const isSelected = manualSelected.has(m.id);
+  const catClass = {
+    BUSINESS:'cat-business', HISTORICAL:'cat-historical', PHILOSOPHER:'cat-philosopher',
+    SCIENTIST:'cat-scientist', FICTIONAL:'cat-fictional', COMEDIAN:'cat-comedian'
+  }[m.category] || 'cat-business';
+  const catLabel = {
+    BUSINESS:'💼 Business', HISTORICAL:'⚔️ Historical', PHILOSOPHER:'🧠 Philosopher',
+    SCIENTIST:'🔬 Scientist', FICTIONAL:'🎭 Fictional', COMEDIAN:'😂 Comedian'
+  }[m.category];
+
+  const roleChips = m.roles.map(r =>
+    `<span class="role-chip tag-${r}">${ROLE_DEFS[r].icon} ${ROLE_DEFS[r].label}</span>`
+  ).join('');
+
+  const traitBars = Object.entries({
+    'Boldness': m.traits.boldness,
+    'Analytical': m.traits.analyticalDepth,
+    'Emotional IQ': m.traits.emotionalIQ,
+    'Contrarian': m.traits.contrarian,
+    'Comm Power': m.traits.communicationPower
+  }).map(([name, val]) => `
+    <div class="trait-row">
+      <div class="trait-name">${name}</div>
+      <div class="trait-bar"><div class="trait-fill" style="width:${val*10}%"></div></div>
+    </div>`).join('');
+
+  return `
+  <div class="member-card" id="card-${m.id}">
+    <div class="card-banner ${catClass}">
+      <span class="card-cat-tag" style="background:rgba(0,0,0,0.4);color:#d1d5db;">${catLabel}</span>
+      <div class="card-avatar">${m.avatar}</div>
+    </div>
+    <div class="card-body">
+      <div class="card-name">${m.name}</div>
+      <div class="card-era">${m.era} · ${m.origin}</div>
+      <div class="card-quote">"${m.quote}"</div>
+      <div class="role-chips">${roleChips}</div>
+      <div class="power-box">
+        <div class="power-title">⚡ Debate Superpower</div>
+        <div class="power-text">${m.debateSuperpower}</div>
+      </div>
+      <div class="power-box" style="margin-bottom:12px;">
+        <div class="power-title">🎯 Signature Move</div>
+        <div class="power-text">${m.signatureMove}</div>
+      </div>
+      <button class="traits-toggle" onclick="toggleTraits(${m.id})">
+        <span id="traits-arrow-${m.id}">▶</span> Trait Profile
+      </button>
+      <div class="traits-panel" id="traits-${m.id}">${traitBars}</div>
+      <div class="card-tags">${m.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+      <button class="card-add-btn ${isSelected ? 'remove' : 'add'}" onclick="toggleMember(${m.id})">
+        ${isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust'}
+      </button>
+    </div>
+  </div>`;
+}
+
+function toggleTraits(id) {
+  const panel = document.getElementById('traits-' + id);
+  const arrow = document.getElementById('traits-arrow-' + id);
+  panel.classList.toggle('open');
+  arrow.textContent = panel.classList.contains('open') ? '▼' : '▶';
+}
+
+function toggleMember(id) {
+  if (manualSelected.has(id)) {
+    manualSelected.delete(id);
+  } else {
+    manualSelected.add(id);
+  }
+  updateBottomPanel();
+  // Re-render just the button
+  const card = document.getElementById('card-' + id);
+  if (card) {
+    const btn = card.querySelector('.card-add-btn');
+    const isSelected = manualSelected.has(id);
+    btn.className = `card-add-btn ${isSelected ? 'remove' : 'add'}`;
+    btn.textContent = isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust';
+  }
+  document.getElementById('nav-count').textContent = manualSelected.size;
+}
+
+function updateBottomPanel() {
+  const panel = document.getElementById('bottom-panel');
+  const count = manualSelected.size;
+  if (count === 0) { panel.classList.add('hidden'); return; }
+  panel.classList.remove('hidden');
+  const avatarEl = document.getElementById('panel-avatars');
+  const members = [...manualSelected].map(id => MEMBERS.find(m => m.id === id)).filter(Boolean);
+  avatarEl.innerHTML = members.slice(0, 9).map(m =>
+    `<div class="panel-avatar">${m.avatar}</div>`
+  ).join('');
+  document.getElementById('panel-title').textContent =
+    count <= 3 ? 'Keep going — add more minds' :
+    count <= 5 ? 'Solid BrainTrust forming' :
+    'Powerhouse BrainTrust assembled!';
+  document.getElementById('panel-sub').textContent = `${count} member${count !== 1 ? 's' : ''} selected`;
+}
+
+function clearAll() {
+  manualSelected.clear();
+  updateBottomPanel();
+  document.getElementById('nav-count').textContent = 0;
+  filterRoster();
+}
+
+function goToArena() {
+  if (manualSelected.size < 3) {
+    alert('Add at least 3 members to your BrainTrust first!');
+    return;
+  }
+  // Build assembled from manual selection
+  assembled = [...manualSelected].map(id => ({
+    slotRole: 'visionary',
+    member: MEMBERS.find(m => m.id === id)
+  }));
+  switchTab('assemble');
+  showSubmitSection();
+}
+
+function clearAssembly() {
+  assembled = [];
+  renderBoard();
+  document.getElementById('submit-section').classList.add('hidden');
+  document.getElementById('question-input').value = '';
+}
+
+function showSubmitSection() {
+  const sec = document.getElementById('submit-section');
+  sec.classList.remove('hidden');
+  sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const names = assembled
+    .filter(s => s.member)
+    .map(s => s.member.name)
+    .join(' · ');
+  document.getElementById('assembled-names').textContent = names;
+  // Track picks in stats
+  assembled.forEach(s => {
+    if (s.member) trackStat(s.member.id, 'timesPicked');
+  });
+}
+
+// ════════════════════════════════════════════════════
+//  STATS TRACKING (localStorage)
+// ════════════════════════════════════════════════════
+const STATS_KEY = 'braintrust_stats_v1';
+
+function loadStats() {
+  try { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); }
+  catch(e) { return {}; }
+}
+
+function saveStats(stats) {
+  try { localStorage.setItem(STATS_KEY, JSON.stringify(stats)); } catch(e) {}
+}
+
+function trackStat(memberId, stat, amount = 1) {
+  const stats = loadStats();
+  if (!stats[memberId]) stats[memberId] = {};
+  stats[memberId][stat] = (stats[memberId][stat] || 0) + amount;
+  saveStats(stats);
+}
+
+function getMemberStats(memberId) {
+  const stats = loadStats();
+  return stats[memberId] || {};
+}
+
+function getStatDisplay(memberId) {
+  const s = getMemberStats(memberId);
+  const picked = s.timesPicked || 0;
+  const groupWins = s.groupWins || 0;
+  const groupPlays = s.groupPlays || 0;
+  const finalWins = s.finalWins || 0;
+  const finalPlays = s.finalPlays || 0;
+  const champs = s.championships || 0;
+  const devil = s.devilRole || 0;
+  const mvp = s.mvpAwards || 0;
+  return { picked, groupWins, groupPlays, finalWins, finalPlays, champs, devil, mvp,
+    groupWinPct: groupPlays ? Math.round(groupWins/groupPlays*100) : 0,
+    finalWinPct: finalPlays ? Math.round(finalWins/finalPlays*100) : 0,
+  };
+}
+
+// ════════════════════════════════════════════════════
+//  RUNWARE AI PORTRAIT GENERATION
+// ════════════════════════════════════════════════════
+const RUNWARE_KEY = 'FzBincWPz7STQNSsQ7Pu9gT5ykPw34dH';
+const RUNWARE_MODEL = 'runware:101@1'; // Flux.1 Dev
+const imgCache = {};
+
+async function generatePortrait(memberId) {
+  const m = MEMBERS.find(x => x.id === memberId);
+  if (!m) return null;
+  if (imgCache[memberId]) return imgCache[memberId];
+
+  const era = m.era || 'historical';
+  const prompt = `Dramatic portrait of ${m.name}, ${era}, highly detailed, cinematic lighting, dark background, oil painting style with photorealistic rendering, face and upper body, regal and powerful expression, artistic masterpiece`;
+
+  const taskUUID = crypto.randomUUID();
+  try {
+    const resp = await fetch('https://api.runware.ai/v1', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${RUNWARE_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify([{
+        taskType: 'imageInference',
+        taskUUID,
+        model: RUNWARE_MODEL,
+        positivePrompt: prompt,
+        negativePrompt: 'cartoon, anime, deformed, blurry, low quality',
+        width: 512,
+        height: 512,
+        numberResults: 1,
+        outputFormat: 'WEBP',
+      }])
+    });
+    const data = await resp.json();
+    const result = data?.data?.[0];
+    if (result?.imageURL) {
+      imgCache[memberId] = result.imageURL;
+      return result.imageURL;
+    }
+  } catch(e) {
+    console.warn('Runware error:', e);
+  }
+  return null;
+}
+
+async function handleGenPortrait(memberId, btn) {
+  const container = document.getElementById('img-area-' + memberId);
+  if (!container) return;
+  btn.textContent = '⏳';
+  btn.disabled = true;
+  container.querySelector('.img-emoji') && (container.querySelector('.img-emoji').style.opacity = '0.3');
+  const spinner = document.createElement('div');
+  spinner.className = 'img-loading';
+  spinner.innerHTML = '<div class="img-spinner"></div><div style="font-size:11px;color:#6b7280;margin-top:4px;">Generating portrait…</div>';
+  container.appendChild(spinner);
+
+  const url = await generatePortrait(memberId);
+  spinner.remove();
+  if (url) {
+    container.innerHTML = `<img src="${url}" alt="${MEMBERS.find(x=>x.id===memberId)?.name}" style="width:100%;height:100%;object-fit:cover;">`;
+  } else {
+    btn.textContent = '🎨 Portrait';
+    btn.disabled = false;
+    container.querySelector('.img-emoji') && (container.querySelector('.img-emoji').style.opacity = '1');
+  }
+}
+
+// ════════════════════════════════════════════════════
+//  FUNNY LOADING SCENES
+// ════════════════════════════════════════════════════
+const LOADING_SCENES = [
+  { icon:'🎤', text:'Napoleon is warming up the microphone...', sub:'He requested "My Way" by Sinatra. The DJ is terrified.' },
+  { icon:'🏷️', text:'Cleopatra is haggling at a garage sale...', sub:'"I ruled an empire. I\'m not paying $4 for this lamp."' },
+  { icon:'🚭', text:'Churchill is staring at a no-smoking sign...', sub:'He\'s read it 12 times. He refuses to believe it applies to him.' },
+  { icon:'📱', text:'Darwin is scrolling through Instagram...', sub:'"Survival of the most followed. This changes everything."' },
+  { icon:'🚗', text:'Einstein is stuck in traffic...', sub:'He\'s trying to calculate if he can age slower by driving faster.' },
+  { icon:'📋', text:'Sun Tzu is filling out TPS reports...', sub:'"Know your enemy. Know your manager. Also know the cover sheet format."' },
+  { icon:'📞', text:'Socrates is on hold with customer service...', sub:'"I only know one thing — this hold music is eternal."' },
+  { icon:'🎫', text:'Caesar just got a parking ticket...', sub:'"Et tu, meter maid?"' },
+  { icon:'🤳', text:'Genghis Khan is taking a selfie at the Eiffel Tower...', sub:'He\'s already written a 1-star Yelp review of Paris. "Conquered better places."' },
+  { icon:'🛒', text:'Steve Jobs is at Costco...', sub:'"I want one product. Just one. Why is everything in bulk?"' },
+];
+
+let loadingSceneIdx = 0;
+let loadingInterval = null;
+
+function showLoadingScreen() {
+  const overlay = document.getElementById('loading-overlay');
+  overlay.classList.remove('hidden');
+  loadingSceneIdx = Math.floor(Math.random() * LOADING_SCENES.length);
+  updateLoadingScene();
+  loadingInterval = setInterval(() => {
+    loadingSceneIdx = (loadingSceneIdx + 1) % LOADING_SCENES.length;
+    updateLoadingScene();
+  }, 3500);
+  animateLoadingBar();
+}
+
+function updateLoadingScene() {
+  const s = LOADING_SCENES[loadingSceneIdx];
+  const icon = document.getElementById('loading-icon');
+  const text = document.getElementById('loading-text');
+  const sub = document.getElementById('loading-sub');
+  if (icon) { icon.style.opacity = '0'; setTimeout(() => { icon.textContent = s.icon; icon.style.opacity = '1'; }, 200); }
+  if (text) text.textContent = s.text;
+  if (sub) sub.textContent = s.sub;
+}
+
+function animateLoadingBar() {
+  const bar = document.getElementById('loading-bar-fill');
+  if (!bar) return;
+  bar.style.width = '0%';
+  setTimeout(() => { bar.style.width = '100%'; bar.style.transition = 'width 2.5s ease'; }, 100);
+}
+
+function hideLoadingScreen() {
+  clearInterval(loadingInterval);
+  loadingInterval = null;
+  document.getElementById('loading-overlay').classList.add('hidden');
+  const bar = document.getElementById('loading-bar-fill');
+  if (bar) { bar.style.width = '0%'; bar.style.transition = 'none'; }
+}
+
+function launchArena() {
+  const q = document.getElementById('question-input')?.value?.trim();
+  if (!q) {
+    document.getElementById('question-input').focus();
+    document.getElementById('question-input').style.borderColor = '#ef4444';
+    setTimeout(() => document.getElementById('question-input').style.borderColor = '#374151', 1500);
+    return;
+  }
+  showLoadingScreen();
+  // Simulate processing (Arena is future feature — for now, demo the loading then show a result)
+  setTimeout(() => {
+    hideLoadingScreen();
+    alert(`Your BrainTrust of ${assembled.filter(s=>s.member).length} minds is deliberating on:\n\n"${q.substring(0,120)}${q.length>120?'…':''}"\n\n(Full Arena battle system coming next!)`);
+  }, 7000);
+}
+
+// ════════════════════════════════════════════════════
+//  UPDATED MEMBER CARD HTML (Sports Card with Flip)
+// ════════════════════════════════════════════════════
+function memberCardHTML(m) {
+  const isSelected = manualSelected.has(m.id);
+  const catClass = {
+    BUSINESS:'cat-business', HISTORICAL:'cat-historical', PHILOSOPHER:'cat-philosopher',
+    SCIENTIST:'cat-scientist', FICTIONAL:'cat-fictional', COMEDIAN:'cat-comedian'
+  }[m.category] || 'cat-business';
+  const catLabel = {
+    BUSINESS:'💼 Business', HISTORICAL:'⚔️ Historical', PHILOSOPHER:'🧠 Philosopher',
+    SCIENTIST:'🔬 Scientist', FICTIONAL:'🎭 Fictional', COMEDIAN:'😂 Comedian'
+  }[m.category];
+
+  const roleChips = m.roles.map(r =>
+    `<span class="role-chip tag-${r}">${ROLE_DEFS[r].icon} ${ROLE_DEFS[r].label}</span>`
+  ).join('');
+
+  const traitBars = Object.entries({
+    'Boldness': m.traits.boldness,
+    'Analytical': m.traits.analyticalDepth,
+    'Emotional IQ': m.traits.emotionalIQ,
+    'Contrarian': m.traits.contrarian,
+    'Comm Power': m.traits.communicationPower
+  }).map(([name, val]) => `
+    <div class="trait-row">
+      <div class="trait-name">${name}</div>
+      <div class="trait-bar"><div class="trait-fill" style="width:${val*10}%"></div></div>
+    </div>`).join('');
+
+  const stats = getStatDisplay(m.id);
+  const cachedImg = imgCache[m.id];
+
+  const frontFace = `
+  <div class="sc-front member-card" id="card-${m.id}">
+    <div class="card-banner ${catClass}" style="height:auto;padding:10px 12px;display:flex;align-items:center;justify-content:space-between;">
+      <span class="card-cat-tag" style="background:rgba(0,0,0,0.4);color:#d1d5db;">${catLabel}</span>
+      <button class="flip-btn" onclick="flipCard(${m.id})">Stats ▶</button>
+    </div>
+    <div class="card-img-area" id="img-area-${m.id}">
+      ${cachedImg
+        ? `<img src="${cachedImg}" alt="${m.name}">`
+        : `<div class="img-emoji">${m.avatar}</div>
+           <button class="gen-btn" onclick="handleGenPortrait(${m.id}, this)">🎨 Portrait</button>`
+      }
+    </div>
+    <div class="card-body">
+      <div class="card-name">${m.name}</div>
+      <div class="card-era">${m.era} · ${m.origin}</div>
+      <div class="card-quote">"${m.quote}"</div>
+      <div class="role-chips">${roleChips}</div>
+      <div class="power-box">
+        <div class="power-title">⚡ Debate Superpower</div>
+        <div class="power-text">${m.debateSuperpower}</div>
+      </div>
+      <div class="power-box" style="margin-bottom:12px;">
+        <div class="power-title">🎯 Signature Move</div>
+        <div class="power-text">${m.signatureMove}</div>
+      </div>
+      <button class="traits-toggle" onclick="toggleTraits(${m.id})">
+        <span id="traits-arrow-${m.id}">▶</span> Trait Profile
+      </button>
+      <div class="traits-panel" id="traits-${m.id}">${traitBars}</div>
+      <div class="card-tags">${m.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>
+      <button class="card-add-btn ${isSelected ? 'remove' : 'add'}" onclick="toggleMember(${m.id})">
+        ${isSelected ? '✕ Remove from BrainTrust' : '+ Add to BrainTrust'}
+      </button>
+    </div>
+  </div>`;
+
+  const backFace = `
+  <div class="sc-back">
+    <div class="sc-back-title">📊 ${m.name} — Career Stats</div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Times Picked</span><span class="sc-stat-val gold">${stats.picked}</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Group Wins</span><span class="sc-stat-val">${stats.groupWins} <span style="color:#6b7280;font-size:10px;">(${stats.groupWinPct}%)</span></span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Final Wins</span><span class="sc-stat-val">${stats.finalWins} <span style="color:#6b7280;font-size:10px;">(${stats.finalWinPct}%)</span></span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Championships 🏆</span><span class="sc-stat-val gold">${stats.champs}</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Devil's Advocate 😈</span><span class="sc-stat-val">${stats.devil}</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">MVP Awards ⭐</span><span class="sc-stat-val gold">${stats.mvp}</span></div>
+    <div class="sc-stat-row" style="margin-top:6px;"><span class="sc-stat-label">Boldness</span><span class="sc-stat-val">${m.traits.boldness}/10</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Analytical Depth</span><span class="sc-stat-val">${m.traits.analyticalDepth}/10</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Emotional IQ</span><span class="sc-stat-val">${m.traits.emotionalIQ}/10</span></div>
+    <div class="sc-stat-row"><span class="sc-stat-label">Contrarian</span><span class="sc-stat-val">${m.traits.contrarian}/10</span></div>
+    <div class="sc-flip-hint">Click to flip back ◀</div>
+  </div>`;
+
+  return `
+  <div class="sc-wrapper" id="sc-${m.id}" onclick="handleCardAreaClick(event, ${m.id})">
+    <div class="sc-inner" style="min-height:520px;">
+      ${frontFace}
+      ${backFace}
+    </div>
+  </div>`;
+}
+
+function flipCard(memberId) {
+  const wrapper = document.getElementById('sc-' + memberId);
+  if (wrapper) wrapper.classList.toggle('flipped');
+}
+
+function handleCardAreaClick(e, memberId) {
+  // Only flip if clicking on the back face
+  const wrapper = document.getElementById('sc-' + memberId);
+  if (wrapper && wrapper.classList.contains('flipped')) {
+    // click on back face → flip back
+    wrapper.classList.remove('flipped');
+  }
+  // clicks on front face are handled by individual buttons
+}
+
+// Close swap modal on overlay click
+document.getElementById('swap-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeSwapModal();
+});
+
+// Close loading overlay on click (for demo purposes)
+document.getElementById('loading-overlay').addEventListener('click', function(e) {
+  if (e.target === this) hideLoadingScreen();
+});
+
+// ════════════════════════════════════════════════════
+//  INIT
+// ════════════════════════════════════════════════════
+(function init() {
+  // Render a placeholder board on load
+  const board = document.getElementById('board');
+  board.innerHTML = `
+    <div style="grid-column:1/-1;text-align:center;padding:48px 24px;color:#374151;">
+      <div style="font-size:48px;margin-bottom:12px;">🎲</div>
+      <div style="font-size:16px;font-weight:700;margin-bottom:8px;">Your BrainTrust awaits</div>
+      <div style="font-size:13px;">Choose a size, set your focus, then hit <strong style="color:#9ca3af;">Auto-Assemble</strong> — or pick members manually from the Roster tab.</div>
+    </div>`;
+})();
+</script>
+</body>
+</html>

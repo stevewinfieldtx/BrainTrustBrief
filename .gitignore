@@ -1,0 +1,41 @@
+# ── Dependencies ───────────────────────────
+node_modules/
+frontend/node_modules/
+
+# ── Build outputs ──────────────────────────
+dist/
+frontend/dist/
+build/
+frontend/build/
+.vite/
+frontend/.vite/
+
+# ── Environment / Secrets ──────────────────
+.env
+.env.local
+.env.development
+.env.development.local
+.env.production
+.env.production.local
+.env.staging
+*.env
+
+# ── Editor / OS junk ───────────────────────
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# ── Logs ───────────────────────────────────
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# ── Misc ───────────────────────────────────
+*.backup.html
+.cache/
