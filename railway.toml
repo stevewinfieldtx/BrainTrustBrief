@@ -1,0 +1,5 @@
+[build]
+buildCommand = "cd frontend && npm install --legacy-peer-deps && npm run build"
+
+[deploy]
+startCommand = "npx serve frontend/dist -l $PORT"
