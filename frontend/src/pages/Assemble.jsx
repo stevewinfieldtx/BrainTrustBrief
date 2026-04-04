@@ -435,8 +435,14 @@ export default function Assemble({ selectedMembers, setSelectedMembers }) {
                 }
               </div>
 
-              <div className="px-4 py-2 border-t border-gray-800 text-center">
+              <div className="px-4 py-2 border-t border-gray-800 flex items-center justify-between">
                 <p className="text-xs text-gray-600">{availableMembers.length} available · {assignedIds.size} seated</p>
+                <Link
+                  to="/roster"
+                  className="text-xs text-amber-400 hover:text-amber-300 font-semibold transition"
+                >
+                  Browse all →
+                </Link>
               </div>
             </div>
           </div>

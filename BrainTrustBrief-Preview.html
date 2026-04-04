@@ -149,6 +149,36 @@ nav{position:sticky;top:0;z-index:50;background:rgba(3,7,18,0.95);backdrop-filte
 .launch-btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,0.4)}
 .launch-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none}
 
+/* ── QUESTION FORM ────────────────────────── */
+.qform{background:#111827;border:1px solid #1f2937;border-radius:20px;padding:28px;margin-bottom:20px}
+.qform-label{font-size:11px;font-weight:800;color:#9ca3af;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px;display:block}
+.qform-required{color:#f59e0b;margin-left:2px}
+.qform-input{width:100%;padding:11px 14px;background:#0d1117;border:1.5px solid #374151;border-radius:12px;
+  color:#f9fafb;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;box-sizing:border-box}
+.qform-input:focus{border-color:#fbbf24}
+.qform-input::placeholder{color:#374151}
+.qform-select{width:100%;padding:11px 14px;background:#0d1117;border:1.5px solid #374151;border-radius:12px;
+  color:#f9fafb;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;
+  appearance:none;-webkit-appearance:none;cursor:pointer}
+.qform-select:focus{border-color:#fbbf24}
+.qform-textarea{width:100%;padding:11px 14px;background:#0d1117;border:1.5px solid #374151;border-radius:12px;
+  color:#f9fafb;font-size:14px;font-family:inherit;outline:none;transition:border-color 0.2s;
+  resize:vertical;min-height:80px;box-sizing:border-box}
+.qform-textarea:focus{border-color:#fbbf24}
+.qform-textarea::placeholder{color:#374151}
+.qform-row{margin-bottom:18px}
+.qform-row:last-child{margin-bottom:0}
+.size-pills{display:flex;flex-wrap:wrap;gap:8px}
+.size-pill{padding:7px 14px;border-radius:10px;font-size:12px;font-weight:700;border:1.5px solid #374151;
+  background:#0d1117;color:#6b7280;cursor:pointer;transition:all 0.15s}
+.size-pill:hover{border-color:#6b7280;color:#d1d5db}
+.size-pill.active{background:#fbbf24;color:#111827;border-color:#fbbf24}
+.qtype-tabs{display:flex;gap:6px;margin-bottom:20px;flex-wrap:wrap}
+.qtype-tab{padding:8px 16px;border-radius:10px;font-size:12px;font-weight:800;border:1.5px solid #374151;
+  background:#111827;color:#6b7280;cursor:pointer;transition:all 0.15s;letter-spacing:0.02em}
+.qtype-tab:hover{border-color:#6b7280;color:#d1d5db}
+.qtype-tab.active{background:#1d2d3f;color:#fbbf24;border-color:#fbbf24}
+
 /* ── ARENA ────────────────────────────────── */
 .arena-phase{margin-bottom:36px}
 .arena-phase-title{font-size:16px;font-weight:900;margin-bottom:16px;display:flex;align-items:center;gap:10px}
@@ -319,39 +349,84 @@ nav{position:sticky;top:0;z-index:50;background:rgba(3,7,18,0.95);backdrop-filte
 
 .hidden{display:none!important}
 
-/* ── JUDGE PANEL ──────────────────────────────────── */
-.judge-panel-wrap{margin-top:14px;border-top:1px solid #1f2937;padding-top:12px}
+/* ── JUDGE DOTS ──────────────────────────────────── */
+.judge-panel-wrap{margin-top:14px;border-top:1px solid #1f2937;padding-top:14px}
 .judge-panel-label{font-size:10px;font-weight:800;color:#6b7280;text-transform:uppercase;
-  letter-spacing:0.08em;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+  letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .judge-count-badge{background:#1f2937;padding:2px 8px;border-radius:6px;color:#9ca3af}
-.judge-chips-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
-.judge-chip{width:36px;height:36px;border-radius:8px;border:1.5px solid;display:flex;
-  flex-direction:column;align-items:center;justify-content:center;cursor:help;
-  position:relative;transition:transform 0.15s,box-shadow 0.15s;font-size:9px}
-.judge-chip:hover{transform:scale(1.15);box-shadow:0 4px 12px rgba(0,0,0,0.4);z-index:5}
-/* Compact chips for large panels (49 or 99 judges) */
-.judge-chips-row.compact{gap:3px}
-.judge-chips-row.compact .judge-chip{width:24px;height:24px;border-radius:5px;border-width:1px}
-.judge-chips-row.compact .judge-initials{font-size:7px}
-.judge-chips-row.compact .judge-vote{font-size:6px;margin-top:0}
-.judge-chips-row.compact .judge-changed-dot{width:9px;height:9px;font-size:5px;top:-2px;right:-2px}
-.judge-initials{font-size:9px;font-weight:900;line-height:1}
-.judge-vote{font-size:8px;font-weight:900;margin-top:1px}
-.judge-changed-dot{position:absolute;top:-3px;right:-3px;background:#f59e0b;color:#111;
-  font-size:7px;font-weight:900;border-radius:50%;width:12px;height:12px;
-  display:flex;align-items:center;justify-content:center}
-.judge-chip.judged{animation:popIn 0.3s ease}
-.judge-chip.changed{animation:popIn 0.3s ease, glow 1s ease}
-@keyframes popIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
-@keyframes glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(245,158,11,0.6)}}
-.panel-summary{background:#0d1117;border-radius:10px;padding:10px 12px;margin-top:6px}
-.panel-vote-bar{display:flex;border-radius:8px;overflow:hidden;margin-bottom:8px;min-height:28px}
+
+/* dot legend */
+.jlegend{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;align-items:center}
+.jleg-item{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#6b7280}
+.jleg-dot{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.jleg-a{background:#3b82f6}
+.jleg-b{background:#f472b6}
+.jleg-u{background:#fbbf24;opacity:0.85}
+.jleg-p{background:#374151}
+
+/* dot grid */
+.jdots{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.jdots.compact{gap:3px}    /* playoffs 49 */
+.jdots.mini{gap:2px}       /* finals 99   */
+
+/* individual dot */
+.jdot{border-radius:50%;cursor:help;position:relative;flex-shrink:0;
+  transition:background-color 0.45s ease, box-shadow 0.3s ease, transform 0.15s}
+.jdot:hover{transform:scale(1.5);z-index:10}
+/* size tiers */
+.jdots      .jdot{width:20px;height:20px}  /* RR  9  */
+.jdots.compact .jdot{width:14px;height:14px} /* Semi 49 */
+.jdots.mini    .jdot{width:10px;height:10px} /* Final 99 */
+
+/* state colors */
+.jdot-a{background:#3b82f6}
+.jdot-b{background:#f472b6}
+.jdot-u{background:#fbbf24}
+.jdot-pending{background:#1f2937;border:1px solid #374151}
+
+/* flip animation: initial color → final color */
+@keyframes dotFlipA{
+  0%,38%{background-color:var(--ic,#fbbf24)}
+  62%,100%{background-color:#3b82f6}
+}
+@keyframes dotFlipB{
+  0%,38%{background-color:var(--ic,#fbbf24)}
+  62%,100%{background-color:#f472b6}
+}
+@keyframes dotPop{0%{transform:scale(0.4);opacity:0}60%{transform:scale(1.3)}100%{transform:scale(1);opacity:1}}
+@keyframes dotGlow{0%,100%{box-shadow:none}40%{box-shadow:0 0 10px 3px rgba(251,191,36,0.75)}}
+
+.jdot.judged{animation:dotPop 0.28s ease both}
+.jdot.changed-to-a{animation:dotFlipA 0.75s ease forwards,dotGlow 1.2s ease 0.7s}
+.jdot.changed-to-b{animation:dotFlipB 0.75s ease forwards,dotGlow 1.2s ease 0.7s}
+
+/* persuader legend */
+.persuader-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;padding:9px 12px;
+  background:#0d1117;border-radius:10px;align-items:center}
+.persuader-label{font-size:10px;font-weight:800;color:#4b5563;text-transform:uppercase;
+  letter-spacing:0.07em;margin-right:4px}
+.persuader-item{display:flex;align-items:center;gap:5px;font-size:11px}
+.pbadge{font-weight:900;padding:2px 8px;border-radius:6px;font-size:11px}
+.pbadge-a{background:rgba(59,130,246,0.18);color:#60a5fa}
+.pbadge-b{background:rgba(244,114,182,0.18);color:#f472b6}
+.pbadge-n{background:#1f2937;color:#6b7280}
+.pmoved{font-size:10px;color:#6b7280}
+
+/* vote bar */
+.panel-summary{background:#0d1117;border-radius:10px;padding:10px 14px;margin-top:8px}
+.panel-vote-bar{display:flex;border-radius:8px;overflow:hidden;margin-bottom:8px;min-height:30px}
 .panel-vote-seg{display:flex;align-items:center;justify-content:center;gap:4px;
-  padding:4px 8px;min-width:28px;transition:width 0.6s ease;font-size:13px}
-.panel-meta{font-size:11px;color:#6b7280;line-height:1.6}
+  padding:4px 8px;min-width:32px;transition:width 0.7s ease;font-size:13px}
+.panel-meta{font-size:11px;color:#6b7280;line-height:1.7}
 .floater-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;
   background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3);border-radius:8px;
   font-size:11px;font-weight:700;color:#fbbf24;margin-top:8px}
+
+/* keep old class name as alias so non-updated spots don't break */
+.judge-chips-row{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px}
+.judge-chip{width:20px;height:20px;border-radius:50%;cursor:help;background:#1f2937}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}60%{transform:scale(1.2)}100%{transform:scale(1);opacity:1}}
+@keyframes glow{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(245,158,11,0.6)}}
 </style>
 </head>
 <body>
@@ -452,14 +527,86 @@ nav{position:sticky;top:0;z-index:50;background:rgba(3,7,18,0.95);backdrop-filte
   <div class="step-header">
     <div class="step-label">Step 2 of 5</div>
     <div class="step-title">What's Your Challenge?</div>
-    <div class="step-sub">These minds will debate it. Be specific — context produces better arguments.</div>
+    <div class="step-sub">Your BrainTrust will debate it and generate 8 distinct answers.</div>
   </div>
   <div class="assembled-strip" id="assembled-strip"></div>
-  <textarea class="question-box" id="question-input" placeholder="Example: Should we pivot our B2B SaaS to serve SMBs instead of enterprise? We're at $1.2M ARR but our enterprise sales cycles are 9 months and killing us…"></textarea>
+
+  <!-- Question type tabs -->
+  <div class="qtype-tabs">
+    <button class="qtype-tab active" id="qtab-sales"    onclick="setQType('sales')">💼 Sales</button>
+    <button class="qtype-tab"        id="qtab-strategy" onclick="setQType('strategy')">♟️ Strategy</button>
+    <button class="qtype-tab"        id="qtab-finance"  onclick="setQType('finance')">📊 Finance</button>
+    <button class="qtype-tab"        id="qtab-product"  onclick="setQType('product')">🔧 Product</button>
+    <button class="qtype-tab"        id="qtab-custom"   onclick="setQType('custom')">✍️ Custom</button>
+  </div>
+
+  <!-- ── SALES FORM ── -->
+  <div id="qform-sales" class="qform">
+    <div class="qform-row">
+      <label class="qform-label">What is your solution / product?<span class="qform-required">*</span></label>
+      <input  id="sf-solution" class="qform-input" type="text"
+              placeholder="e.g. AI-powered revenue intelligence platform, enterprise HR software…"/>
+    </div>
+    <div class="qform-row">
+      <label class="qform-label">What industry are you selling into?</label>
+      <select id="sf-industry" class="qform-select">
+        <option value="">Select an industry…</option>
+        <option>SaaS / Software</option>
+        <option>Financial Services</option>
+        <option>Healthcare &amp; Life Sciences</option>
+        <option>Manufacturing</option>
+        <option>Retail &amp; E-commerce</option>
+        <option>Real Estate</option>
+        <option>Media &amp; Entertainment</option>
+        <option>Professional Services</option>
+        <option>Government / Public Sector</option>
+        <option>Education</option>
+        <option>Energy &amp; Utilities</option>
+        <option>Logistics &amp; Supply Chain</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="qform-row">
+      <label class="qform-label">What size of customer?</label>
+      <div class="size-pills">
+        <button class="size-pill" onclick="togglePill(this,'sf-size')">Startup / Pre-revenue</button>
+        <button class="size-pill" onclick="togglePill(this,'sf-size')">SMB (1–99)</button>
+        <button class="size-pill" onclick="togglePill(this,'sf-size')">Mid-Market (100–999)</button>
+        <button class="size-pill" onclick="togglePill(this,'sf-size')">Enterprise (1K–9.9K)</button>
+        <button class="size-pill" onclick="togglePill(this,'sf-size')">Large Enterprise (10K+)</button>
+      </div>
+    </div>
+    <div class="qform-row">
+      <label class="qform-label">Who are you talking to? (title / role)</label>
+      <input  id="sf-title" class="qform-input" type="text"
+              placeholder="e.g. VP of Sales, CTO, CFO, Head of People…"/>
+    </div>
+    <div class="qform-row">
+      <label class="qform-label">Anything else we should know? <span style="color:#4b5563;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <textarea id="sf-context" class="qform-textarea"
+                placeholder="e.g. They already use a competitor, deal size ~$200K, ghosting us for 2 weeks…"></textarea>
+    </div>
+  </div>
+
+  <!-- ── GENERIC FORM (Strategy / Finance / Product / Custom) ── -->
+  <div id="qform-generic" class="qform" style="display:none">
+    <div class="qform-row">
+      <label class="qform-label">Your Question<span class="qform-required">*</span></label>
+      <textarea id="gf-question" class="qform-textarea" rows="4"
+                placeholder="Be specific — context produces better arguments…" style="min-height:110px"></textarea>
+    </div>
+    <div class="qform-row">
+      <label class="qform-label">Additional Context <span style="color:#4b5563;font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+      <textarea id="gf-context" class="qform-textarea"
+                placeholder="Stage of company, constraints, relevant background…"></textarea>
+    </div>
+  </div>
+
+  <div id="qform-error" style="display:none;margin-bottom:14px;padding:10px 16px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);border-radius:10px;font-size:13px;color:#f87171"></div>
+
   <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap">
     <button class="launch-btn" id="launch-btn" onclick="launchArena()">⚔️ Take It to the BrainTrust →</button>
     <button onclick="goToStep(1)" style="padding:12px 18px;background:#1f2937;color:#9ca3af;font-size:13px;font-weight:700;border:none;border-radius:10px;cursor:pointer">← Change Team</button>
-    <div id="question-tip" style="font-size:12px;color:#374151;margin-left:auto"></div>
   </div>
 </div>
 
@@ -1772,15 +1919,16 @@ function tallyPanel(panelResults, memberA, memberB) {
     recordJudgeVote(r.id, !r.changed, r.changed ? winnerMember.id : null);
   });
 
-  const winner = votesA > votesB ? 'A' : 'B';
+  const winner    = votesA > votesB ? 'A' : 'B';
+  const movedToA  = changed.filter(r => r.persuaded_by === 'A' || r.final === 'A').length;
+  const movedToB  = changed.filter(r => r.persuaded_by === 'B' || r.final === 'B').length;
   const persuaderName = changed.length > 0
-    ? (changed.filter(r=>r.persuaded_by==='A').length >= changed.filter(r=>r.persuaded_by==='B').length
-        ? memberA.name : memberB.name)
+    ? (movedToA >= movedToB ? memberA.name : memberB.name)
     : null;
 
   return { votesA, votesB, winner, changed: changed.length, total: panelResults.length,
-    stayedA, stayedB, persuaderName, winnerMember: winner === 'A' ? memberA : memberB,
-    panelResults };
+    stayedA, stayedB, movedToA, movedToB, persuaderName,
+    winnerMember: winner === 'A' ? memberA : memberB, panelResults };
 }
 
 // ═══════════════════════════════════════
@@ -1792,46 +1940,132 @@ const BIAS_COLORS = {
   systemic:'#0891b2', creative:'#ec4899'
 };
 
-function judgeChipHTML(judge, result) {
-  const color = BIAS_COLORS[judge.bias] || '#6b7280';
-  const initials = judge.name.replace(/^(Dr\.|Prof\.|Gen\.|Col\.|Cmd\.|Judge|Gov\.|Amb\.)\s*/,'')
-    .split(' ').slice(0,2).map(n=>n[0]).join('');
+// ── Dot color helpers ────────────────────────────────────────────────────────
+const DOT_COLOR = { A: '#3b82f6', B: '#f472b6', none: '#fbbf24' };
+
+// Render a single judge dot (pre-judgment or post-judgment)
+// idx is used to stagger animation-delay for changed minds
+function judgeDotHTML(judge, result, idx) {
+  const name = judge.name;
+  const tip  = result
+    ? `${name}\n${judge.title}\n${result.reasoning}${result.changed ? '\n↺ CHANGED MIND' : ''}`
+    : `${name}\n${judge.title}\n${judge.focus}\nInitial lean: undecided`;
+
   if (!result) {
-    return `<div class="judge-chip" title="${judge.name}\n${judge.title}, ${judge.origin}\n${judge.focus}"
-      style="border-color:${color}22;background:${color}11;color:${color}">
-      <span class="judge-initials">${initials}</span>
-    </div>`;
+    // Pre-judgment: yellow (undecided) pending dot
+    return `<div class="jdot jdot-pending" title="${tip}" style="animation-delay:${idx*18}ms"></div>`;
   }
+
+  const init  = result.initial || 'none';   // 'A' | 'B' | 'none'
+  const final = result.final;               // 'A' | 'B'
   const changed = result.changed;
-  const finalVote = result.final;
-  return `<div class="judge-chip judged${changed?' changed':''}" title="${judge.name} (${judge.title})\n${result.reasoning}${changed?' ← CHANGED MIND':''}"
-    style="border-color:${changed?'#f59e0b':color};background:${changed?'rgba(245,158,11,0.15)':color+'22'};color:${changed?'#fbbf24':color}">
-    <span class="judge-initials">${initials}</span>
-    <span class="judge-vote">${finalVote}</span>
-    ${changed?'<span class="judge-changed-dot">↺</span>':''}
-  </div>`;
+  const ic    = DOT_COLOR[init]  || '#fbbf24';
+  const delay = `${(idx % 20) * 35}ms`;
+
+  if (changed) {
+    // Flip from initial color to final color
+    const flipClass = final === 'A' ? 'changed-to-a' : 'changed-to-b';
+    return `<div class="jdot judged ${flipClass}"
+      style="--ic:${ic};animation-delay:${delay}"
+      title="${tip}"></div>`;
+  } else {
+    // Same final as initial — just pop in with final color
+    const finalClass = final === 'A' ? 'jdot-a' : 'jdot-b';
+    return `<div class="jdot ${finalClass} judged"
+      style="animation-delay:${delay}"
+      title="${tip}"></div>`;
+  }
 }
 
+// Dot grid: legend + dots grid
+// mode: 'rr' (9) | 'semi' (49) | 'final' (99)  — determines compactness
+function judgeDotGrid(judges, results, memberA, memberB) {
+  const size = judges.length;
+  const gridClass = size > 60 ? 'jdots mini' : size > 15 ? 'jdots compact' : 'jdots';
+  const idToResult = {};
+  if (results) results.forEach(r => { idToResult[r.id] = r; });
+
+  // Count initial leans
+  let iA=0, iB=0, iU=0;
+  if (results) {
+    results.forEach(r => {
+      if (r.initial==='A') iA++;
+      else if (r.initial==='B') iB++;
+      else iU++;
+    });
+  }
+
+  const legendHTML = results
+    ? `<div class="jlegend">
+        <span class="jleg-item"><span class="jleg-dot jleg-a"></span>
+          <span>${memberA.name.split(' ')[0]} <strong>${iA}</strong> initial</span></span>
+        <span class="jleg-item"><span class="jleg-dot jleg-b"></span>
+          <span>${memberB.name.split(' ')[0]} <strong>${iB}</strong> initial</span></span>
+        ${iU > 0 ? `<span class="jleg-item"><span class="jleg-dot jleg-u"></span>
+          <span>Undecided <strong>${iU}</strong></span></span>` : ''}
+      </div>`
+    : `<div class="jlegend">
+        <span class="jleg-item"><span class="jleg-dot jleg-a"></span>
+          <span style="color:#3b82f6">${memberA ? memberA.name.split(' ')[0] : 'A'}</span></span>
+        <span class="jleg-item"><span class="jleg-dot jleg-b"></span>
+          <span style="color:#f472b6">${memberB ? memberB.name.split(' ')[0] : 'B'}</span></span>
+        <span class="jleg-item"><span class="jleg-dot jleg-u"></span>
+          <span>Undecided</span></span>
+        <span class="jleg-item"><span class="jleg-dot jleg-p"></span>
+          <span>Deliberating</span></span>
+      </div>`;
+
+  const dotsHTML = judges.map((j, i) =>
+    judgeDotHTML(j, results ? (idToResult[j.id] || null) : null, i)
+  ).join('');
+
+  return legendHTML + `<div class="${gridClass}">${dotsHTML}</div>`;
+}
+
+// Panel result bar + persuader breakdown
 function panelSummaryHTML(tally, memberA, memberB) {
-  const aColor = '#3b82f6', bColor = '#f59e0b';
-  const total = tally.total;
-  const pctA = Math.round(tally.votesA/total*100);
-  const pctB = Math.round(tally.votesB/total*100);
+  const aColor = '#3b82f6', bColor = '#f472b6';
+  const total  = tally.total;
+  const pctA   = Math.round(tally.votesA / total * 100);
+  const pctB   = 100 - pctA;
+
+  // Count how many each member persuaded
+  const movedToA = tally.movedToA || 0;
+  const movedToB = tally.movedToB || 0;
+  const totalMoved = tally.changed || 0;
+
+  const persuaderHTML = totalMoved > 0
+    ? `<div class="persuader-row">
+        <span class="persuader-label">Minds flipped</span>
+        ${movedToA > 0 ? `<span class="persuader-item">
+          <span class="pbadge pbadge-a">${memberA.name.split(' ')[0]}</span>
+          <span class="pmoved">convinced ${movedToA} judge${movedToA!==1?'s':''}</span>
+        </span>` : ''}
+        ${movedToB > 0 ? `<span class="persuader-item">
+          <span class="pbadge pbadge-b">${memberB.name.split(' ')[0]}</span>
+          <span class="pmoved">convinced ${movedToB} judge${movedToB!==1?'s':''}</span>
+        </span>` : ''}
+      </div>`
+    : `<div class="persuader-row">
+        <span class="pbadge pbadge-n">No minds changed</span>
+        <span class="pmoved">All ${total} judges held their initial position</span>
+      </div>`;
+
   return `<div class="panel-summary">
     <div class="panel-vote-bar">
       <div class="panel-vote-seg" style="width:${pctA}%;background:${aColor}22;border-right:2px solid ${aColor}">
         <span style="color:${aColor};font-weight:900">${tally.votesA}</span>
-        <span style="color:${aColor};font-size:10px"> votes</span>
+        <span style="color:${aColor};font-size:10px">&nbsp;${memberA.name.split(' ')[0]}</span>
       </div>
       <div class="panel-vote-seg" style="width:${pctB}%;background:${bColor}22;border-left:2px solid ${bColor}">
         <span style="color:${bColor};font-weight:900">${tally.votesB}</span>
-        <span style="color:${bColor};font-size:10px"> votes</span>
+        <span style="color:${bColor};font-size:10px">&nbsp;${memberB.name.split(' ')[0]}</span>
       </div>
     </div>
     <div class="panel-meta">
-      <span style="color:#10b981;font-weight:700">Winner: ${tally.winnerMember.name} (${tally.winner==='A'?pctA:pctB}%)</span>
-      ${tally.changed > 0 ? `<span style="color:#f59e0b">· ${tally.changed} mind${tally.changed!==1?'s':''} changed${tally.persuaderName ? ` · <strong>${tally.persuaderName}</strong> most persuasive` : ''}</span>` : '<span style="color:#6b7280">· All judges held their initial position</span>'}
+      <span style="color:#10b981;font-weight:700">🏆 ${tally.winnerMember.name} wins (${tally.winner==='A'?pctA:pctB}%)</span>
     </div>
+    ${persuaderHTML}
   </div>`;
 }
 
@@ -1849,12 +2083,71 @@ Respond ONLY as ${member.name.split(' ')[0]} would — in their authentic voice,
 // ═══════════════════════════════════════
 //  STEP 3 — OPENING STATEMENTS
 // ═══════════════════════════════════════
+// ── Question type state + helpers ────────────────────────────────────────────
+let currentQType = 'sales';
+
+function setQType(type) {
+  currentQType = type;
+  ['sales','strategy','finance','product','custom'].forEach(t => {
+    document.getElementById('qtab-'+t).classList.toggle('active', t === type);
+  });
+  document.getElementById('qform-sales').style.display   = type === 'sales' ? '' : 'none';
+  document.getElementById('qform-generic').style.display = type !== 'sales' ? '' : 'none';
+  // Update generic placeholder based on type
+  const placeholders = {
+    strategy: 'e.g. Should we expand internationally before dominating the US market?',
+    finance:  'e.g. We have $500K left in runway — cut burn or raise now?',
+    product:  'e.g. Should we build a freemium tier or stay fully paid?',
+    custom:   'Ask your BrainTrust anything…',
+  };
+  const el = document.getElementById('gf-question');
+  if (el && placeholders[type]) el.placeholder = placeholders[type];
+}
+
+function togglePill(btn, group) {
+  // Only one active at a time within a group
+  const container = btn.closest('.size-pills');
+  container.querySelectorAll('.size-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function buildQuestion() {
+  if (currentQType === 'sales') {
+    const solution  = (document.getElementById('sf-solution')?.value  || '').trim();
+    const industry  = (document.getElementById('sf-industry')?.value  || '').trim();
+    const title     = (document.getElementById('sf-title')?.value     || '').trim();
+    const context   = (document.getElementById('sf-context')?.value   || '').trim();
+    const sizeBtn   = document.querySelector('.size-pill.active');
+    const size      = sizeBtn ? sizeBtn.textContent.trim() : '';
+
+    if (!solution) return null; // required
+
+    const parts = ['SALES SITUATION:'];
+    parts.push(`Solution/Product: ${solution}`);
+    if (industry) parts.push(`Target Industry: ${industry}`);
+    if (size)     parts.push(`Customer Size: ${size}`);
+    if (title)    parts.push(`Decision-Maker: ${title}`);
+    if (context)  parts.push(`Additional Context: ${context}`);
+    return parts.join('\n');
+  } else {
+    const q = (document.getElementById('gf-question')?.value || '').trim();
+    if (!q || q.length < 6) return null;
+    const ctx = (document.getElementById('gf-context')?.value || '').trim();
+    return q + (ctx ? `\n\nContext: ${ctx}` : '');
+  }
+}
+
 async function launchArena() {
-  question = document.getElementById('question-input').value.trim();
+  const errorEl = document.getElementById('qform-error');
+  errorEl.style.display = 'none';
+
+  question = buildQuestion();
   if (!question) {
-    document.getElementById('question-input').focus();
-    document.getElementById('question-input').style.borderColor = '#ef4444';
-    setTimeout(() => document.getElementById('question-input').style.borderColor='#374151', 1500);
+    const msg = currentQType === 'sales'
+      ? 'Please describe your solution or product before continuing.'
+      : 'Please enter a question before continuing.';
+    errorEl.textContent = msg;
+    errorEl.style.display = 'block';
     return;
   }
   const btn = document.getElementById('launch-btn');
@@ -2009,27 +2302,24 @@ function matchCardHTML(m, idx) {
   const aWon = m.winnerIdx === 0;
   const bWon = m.winnerIdx === 1;
   const panelSize = m.judges ? m.judges.length : 9;
-  const label = panelSize === 99 ? 'FULL PANEL OF 99' : panelSize === 49 ? 'PANEL OF 49' : 'PANEL OF 9';
-  const chipsClass = panelSize > 15 ? 'judge-chips-row compact' : 'judge-chips-row';
+  const label = panelSize >= 99 ? 'GRAND PANEL · 99 JUDGES' : panelSize >= 49 ? 'SEMI-FINAL PANEL · 49 JUDGES' : 'ROUND ROBIN PANEL · 9 JUDGES';
 
-  // Build judge chips
+  // Build judge dot panel
   let judgeSection = '';
   if (m.judges) {
     if (!isDone) {
-      // Pre-judging: show unlit chips
+      // Pre-judging: pending dots
       judgeSection = `<div class="judge-panel-wrap" id="judge-panel-${idx}">
         <div class="judge-panel-label"><span>${label}</span>
           <span class="judge-count-badge">awaiting deliberation</span></div>
-        <div class="${chipsClass}">${m.judges.map(j => judgeChipHTML(j, null)).join('')}</div>
+        ${judgeDotGrid(m.judges, null, m.a.member, m.b.member)}
       </div>`;
     } else if (m.tally) {
-      // Post-judging: show voted chips + summary
-      const idToResult = {};
-      (m.tally.panelResults || []).forEach(r => { idToResult[r.id] = r; });
+      // Post-judging: colored dots + flip animation + persuader row
       judgeSection = `<div class="judge-panel-wrap" id="judge-panel-${idx}">
         <div class="judge-panel-label"><span>${label}</span>
-          <span class="judge-count-badge">${m.tally.votesA}–${m.tally.votesB} · ${m.tally.changed} changed</span></div>
-        <div class="${chipsClass}">${m.judges.map(j => judgeChipHTML(j, idToResult[j.id] || null)).join('')}</div>
+          <span class="judge-count-badge">${m.tally.votesA}–${m.tally.votesB} · ${m.tally.changed} flipped</span></div>
+        ${judgeDotGrid(m.judges, m.tally.panelResults, m.a.member, m.b.member)}
         ${panelSummaryHTML(m.tally, m.a.member, m.b.member)}
       </div>`;
     }
@@ -2090,8 +2380,8 @@ async function judgeSingleMatch(idx) {
     // Show placeholder chips while loading
     const panelWrap = document.getElementById('judge-panel-' + idx);
     if (panelWrap) panelWrap.innerHTML = `<div class="judge-panel-label">
-      <span>PANEL OF 9</span><span class="judge-count-badge">deliberating…</span></div>
-      <div class="judge-chips-row">${m.judges.map(j=>judgeChipHTML(j,null)).join('')}</div>`;
+      <span>ROUND ROBIN PANEL · 9 JUDGES</span><span class="judge-count-badge">deliberating…</span></div>
+      ${judgeDotGrid(m.judges, null, m.a.member, m.b.member)}`;
   }
 
   try {
@@ -2238,9 +2528,10 @@ async function judgeSingleMatch_playoff(matchArr, idx, container) {
     const statusEl = cardEl.querySelector('.match-status');
     if (statusEl) { statusEl.className='match-status judging'; statusEl.textContent='⏳ Panel deliberating…'; }
     const panelWrap = document.getElementById('judge-panel-' + idx);
+    const panelLabel = panelSize >= 99 ? 'GRAND PANEL · 99 JUDGES' : 'SEMI-FINAL PANEL · 49 JUDGES';
     if (panelWrap) panelWrap.innerHTML = `<div class="judge-panel-label">
-      <span>PANEL OF ${panelSize}</span><span class="judge-count-badge">deliberating…</span></div>
-      <div class="judge-chips-row">${judges.map(j=>judgeChipHTML(j,null)).join('')}</div>`;
+      <span>${panelLabel}</span><span class="judge-count-badge">deliberating…</span></div>
+      ${judgeDotGrid(judges, null, m.a.member, m.b.member)}`;
   }
 
   try {
@@ -2327,7 +2618,18 @@ function restartFromScratch() {
   question = '';
   statements = {};
   matches = [];
-  document.getElementById('question-input').value = '';
+  // Reset sales form
+  ['sf-solution','sf-title','sf-context'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  const sel = document.getElementById('sf-industry'); if (sel) sel.value = '';
+  document.querySelectorAll('.size-pill').forEach(p => p.classList.remove('active'));
+  // Reset generic form
+  ['gf-question','gf-context'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.getElementById('qform-error').style.display = 'none';
+  setQType('sales');
   goToStep(2);
 }
 

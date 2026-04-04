@@ -14,7 +14,15 @@ export default function App() {
   return (
     <Routes>
       <Route path="/" element={<Layout />}>
-        <Route index element={<Dashboard />} />
+        <Route
+          index
+          element={
+            <Assemble
+              selectedMembers={selectedMembers}
+              setSelectedMembers={setSelectedMembers}
+            />
+          }
+        />
         <Route
           path="roster"
           element={
@@ -24,15 +32,7 @@ export default function App() {
             />
           }
         />
-        <Route
-          path="assemble"
-          element={
-            <Assemble
-              selectedMembers={selectedMembers}
-              setSelectedMembers={setSelectedMembers}
-            />
-          }
-        />
+        <Route path="dashboard" element={<Dashboard />} />
         <Route
           path="arena"
           element={

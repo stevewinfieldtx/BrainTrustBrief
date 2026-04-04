@@ -1,15 +1,14 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Brain, Users, MessageSquare, Trophy, Home } from 'lucide-react';
+import { Brain, Users, MessageSquare, Trophy } from 'lucide-react';
 
 export default function Layout() {
   const location = useLocation();
 
   const navItems = [
-    { path: '/',         label: 'Home',        icon: Home },
-    { path: '/roster',   label: 'Roster',      icon: Users },
-    { path: '/assemble', label: 'Assemble',    icon: Brain },
-    { path: '/arena',    label: 'Arena',       icon: MessageSquare },
-    { path: '/bracket',  label: 'Tournament',  icon: Trophy },
+    { path: '/',        label: 'BrainTrust',  icon: Brain },
+    { path: '/roster',  label: 'All Members', icon: Users },
+    { path: '/arena',   label: 'Arena',       icon: MessageSquare },
+    { path: '/bracket', label: 'Tournament',  icon: Trophy },
   ];
 
   return (
