@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Trophy, Swords, Star, Crown, FileText, ChevronRight, X, Zap, AlertTriangle, Shield, Brain, Flame } from 'lucide-react';
+import { Trophy, Swords, Star, Crown, FileText, ChevronRight, X, Zap, AlertTriangle, Shield, Brain, Flame, TrendingUp, Target, CheckCircle, DollarSign, Award, BookOpen, Lightbulb, ArrowRight, BarChart2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 // ─── OpenRouter ────────────────────────────────────────────────────────────────
@@ -30,21 +30,24 @@ function computeStandings(answers, matchups) {
   return scores.sort((a, b) => b.wins - a.wins || a.losses - b.losses);
 }
 
-async function judgeMatchup(question, a, b) {
-  const trimA = (a.content || a.summary || '').slice(0, 300);
-  const trimB = (b.content || b.summary || '').slice(0, 300);
-  const prompt = `Panel of 9 judges evaluating two strategies for: "${question}"
+async function judgeMatchup(question, a, b, panelSize = 9) {
+  const trimA    = (a.content || a.summary || '').slice(0, 300);
+  const trimB    = (b.content || b.summary || '').slice(0, 300);
+  const champA   = a.champion || a.championName || 'Advisor A';
+  const champB   = b.champion || b.championName || 'Advisor B';
+  const majority = Math.floor(panelSize / 2) + 1;
+  const prompt = `Panel of ${panelSize} judges evaluating two strategies for: "${question}"
 
-STRATEGY A: ${a.title}
+STRATEGY A (championed by ${champA}): ${a.title}
 ${trimA}
 
-STRATEGY B: ${b.title}
+STRATEGY B (championed by ${champB}): ${b.title}
 ${trimB}
 
-Vote on which strategy is stronger. Return ONLY JSON:
-{"winner":"A","forWinner":6,"reasoning":"One decisive sentence on the key differentiator."}
+Vote on which strategy is stronger AND pick one MVP — the single advisor who made the most compelling argument (can be from either side). Return ONLY JSON:
+{"winner":"A","forWinner":${majority + 2},"reasoning":"One decisive sentence on the key differentiator.","mvp":"${champA}","mvpReason":"One sentence on what made their case exceptional."}
 
-forWinner = how many of 9 voted for the winner (5–9).`;
+forWinner = how many of ${panelSize} voted for the winner (${majority}–${panelSize}).`;
 
   const res = await fetch(OPENROUTER_URL, {
     method: 'POST',
@@ -58,7 +61,7 @@ forWinner = how many of 9 voted for the winner (5–9).`;
       model: OPENROUTER_MODEL,
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
-      max_tokens: 100,
+      max_tokens: 180,
     }),
   });
   if (!res.ok) throw new Error(`API ${res.status}`);
@@ -66,10 +69,14 @@ forWinner = how many of 9 voted for the winner (5–9).`;
   let raw = data.choices?.[0]?.message?.content?.trim() || '';
   if (raw.startsWith('```')) raw = raw.replace(/^```[a-z]*\n?/, '').replace(/```$/, '').trim();
   const parsed = JSON.parse(raw);
+  const forWinner = Math.min(panelSize, Math.max(majority, Number(parsed.forWinner) || majority + 1));
   return {
     winner: parsed.winner === 'B' ? 'B' : 'A',
-    forWinner: Math.min(9, Math.max(5, Number(parsed.forWinner) || 6)),
+    forWinner,
     reasoning: parsed.reasoning || '',
+    mvp: parsed.mvp || '',
+    mvpReason: parsed.mvpReason || '',
+    panelSize,
   };
 }
 
@@ -242,6 +249,7 @@ function MatchCard({ match, answers, matchIdx, onSelect, isDone }) {
       </div>
       <div className="flex gap-1 flex-wrap">{dots}</div>
       {revealed && result.reasoning && <p className="text-xs text-gray-500 italic mt-2 leading-relaxed">"{result.reasoning}"</p>}
+      {revealed && result.mvp && <p className="text-xs text-amber-400/70 mt-1.5 font-semibold">⭐ MVP: {result.mvp}</p>}
       {clickable && <p className="text-xs text-gray-700 mt-2 text-right">tap for breakdown →</p>}
     </div>
   );
@@ -249,17 +257,36 @@ function MatchCard({ match, answers, matchIdx, onSelect, isDone }) {
 
 // ─── Bracket Match Card — bigger, for playoffs/finals ─────────────────────────
 function BracketCard({ label, seedA, seedB, stratA, stratB, result, isRunning, isActive, onSelect }) {
-  const [dotCount, setDotCount]   = useState(result ? 9 : 0);
   const [revealed, setRevealed]   = useState(!!result);
+  const [barWidth, setBarWidth]   = useState(0);
   const prevResultRef             = useRef(result);
+  const panelSize = result?.panelSize || 9;
+  const useDots   = panelSize <= 9;
 
   useEffect(() => {
     if (result && !prevResultRef.current) {
       prevResultRef.current = result;
-      setDotCount(0); setRevealed(false);
-      for (let d = 1; d <= 9; d++) setTimeout(() => setDotCount(d), d * 80);
-      setTimeout(() => setRevealed(true), 9 * 80 + 400);
+      setRevealed(false); setBarWidth(0);
+      if (useDots) {
+        setTimeout(() => setRevealed(true), 9 * 80 + 400);
+      } else {
+        setTimeout(() => {
+          setRevealed(true);
+          setTimeout(() => setBarWidth(Math.round((result.forWinner / panelSize) * 100)), 200);
+        }, 800);
+      }
+    } else if (result && prevResultRef.current) {
+      setRevealed(true);
+      setBarWidth(Math.round((result.forWinner / panelSize) * 100));
     }
+  }, [result]);
+
+  const [dotCount, setDotCount] = useState(result ? 9 : 0);
+  useEffect(() => {
+    if (result && !prevResultRef.current && useDots) {
+      setDotCount(0);
+      for (let d = 1; d <= 9; d++) setTimeout(() => setDotCount(d), d * 80);
+    } else if (result) setDotCount(9);
   }, [result]);
 
   const winnerA   = revealed && result?.winner === 'A';
@@ -268,12 +295,12 @@ function BracketCard({ label, seedA, seedB, stratA, stratB, result, isRunning, i
   const isJudging = isActive && !result;
   const clickable = revealed;
 
-  const dots = Array.from({ length: 9 }, (_, i) => {
+  const dots = useDots ? Array.from({ length: 9 }, (_, i) => {
     if (i >= dotCount) return <div key={i} className="w-3 h-3 rounded-full bg-gray-800" />;
     if (!revealed)     return <div key={i} className="w-3 h-3 rounded-full bg-gray-500 animate-pulse" style={{ animationDelay: `${i * 60}ms` }} />;
     const isWin = result.winner === 'A' ? i < result.forWinner : i >= (9 - result.forWinner);
     return <div key={i} className={`w-3 h-3 rounded-full transition-all duration-300 ${isWin ? 'bg-amber-400 scale-125' : 'bg-gray-600'}`} style={{ transitionDelay: `${i * 50}ms` }} />;
-  });
+  }) : null;
 
   return (
     <div onClick={clickable && onSelect ? onSelect : undefined}
@@ -302,13 +329,34 @@ function BracketCard({ label, seedA, seedB, stratA, stratB, result, isRunning, i
         ))}
       </div>
 
-      {/* Judge dots */}
-      <div className="flex gap-1.5 flex-wrap mb-3">{dots}</div>
+      {/* Judge vote visualization */}
+      {useDots ? (
+        <div className="flex gap-1.5 flex-wrap mb-3">{dots}</div>
+      ) : revealed ? (
+        <div className="mb-3">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-xs font-black text-amber-400">{result.forWinner} votes</span>
+            <span className="text-xs text-gray-500 font-bold">{panelSize - result.forWinner} votes</span>
+          </div>
+          <div className="h-4 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-400 rounded-full transition-all duration-700 ease-out" style={{ width: `${barWidth}%` }} />
+          </div>
+          <p className="text-xs text-gray-500 text-center mt-1">{result.forWinner}–{panelSize - result.forWinner} out of {panelSize} judges</p>
+        </div>
+      ) : isJudging ? (
+        <div className="mb-3">
+          <div className="h-4 bg-gray-800 rounded-full overflow-hidden">
+            <div className="h-full bg-amber-400/40 rounded-full animate-pulse" style={{ width: '60%' }} />
+          </div>
+          <p className="text-xs text-gray-600 text-center mt-1 animate-pulse">{panelSize} judges deliberating…</p>
+        </div>
+      ) : null}
 
       {/* Verdict */}
       {revealed && result.reasoning && (
         <div className="bg-gray-800 rounded-xl px-4 py-3 border-l-2 border-amber-400">
           <p className="text-xs text-gray-500 italic leading-relaxed">"{result.reasoning}"</p>
+          {result.mvp && <p className="text-xs text-amber-400/80 mt-2 font-bold">⭐ MVP: {result.mvp}{result.mvpReason ? ` — ${result.mvpReason}` : ''}</p>}
         </div>
       )}
 
@@ -453,9 +501,12 @@ function BracketMatchupDetail({ label, stratA, stratB, seedA, seedB, result, que
   const [learning, setLearning]       = useState('');
   const [loadingLearning, setLoading] = useState(false);
 
+  const panelSize   = result?.panelSize || 9;
   const winnerVotes = result?.forWinner || 0;
-  const loserVotes  = 9 - winnerVotes;
-  const closeness   = winnerVotes === 5 ? 'Razor-thin (5–4)' : winnerVotes === 6 ? 'Narrow (6–3)' : winnerVotes === 7 ? 'Clear win (7–2)' : winnerVotes === 8 ? 'Dominant (8–1)' : 'Unanimous (9–0)';
+  const loserVotes  = panelSize - winnerVotes;
+  const winPct      = Math.round((winnerVotes / panelSize) * 100);
+  const majority    = Math.floor(panelSize / 2) + 1;
+  const closeness   = winnerVotes === majority ? `Razor-thin (${winnerVotes}–${loserVotes})` : winPct < 60 ? `Narrow (${winnerVotes}–${loserVotes})` : winPct < 70 ? `Clear win (${winnerVotes}–${loserVotes})` : winPct < 85 ? `Dominant (${winnerVotes}–${loserVotes})` : `Overwhelming (${winnerVotes}–${loserVotes})`;
 
   useEffect(() => {
     if (result && OPENROUTER_KEY) {
@@ -494,15 +545,34 @@ function BracketMatchupDetail({ label, stratA, stratB, seedA, seedB, result, que
           {/* Judge votes */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Judge Panel · 9 Votes</p>
-              <span className={`text-xs font-bold px-2 py-0.5 rounded-full ${winnerVotes >= 8 ? 'bg-amber-400/20 text-amber-400' : winnerVotes >= 6 ? 'bg-gray-700 text-gray-300' : 'bg-red-500/10 text-red-400'}`}>{closeness}</span>
+              <p className="text-xs font-bold text-gray-400 uppercase tracking-wider">Judge Panel · {panelSize} Votes</p>
+              <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-400/15 text-amber-400">{closeness}</span>
             </div>
-            <div className="flex gap-1.5 mb-2">
-              {Array.from({ length: 9 }, (_, i) => {
-                const isWin = result?.winner === 'A' ? i < result.forWinner : i >= (9 - result.forWinner);
-                return <div key={i} className={`flex-1 h-8 rounded-lg flex items-center justify-center text-xs font-black ${isWin ? 'bg-amber-400 text-gray-900' : 'bg-gray-800 text-gray-600'}`}>{i + 1}</div>;
-              })}
-            </div>
+            {panelSize <= 9 ? (
+              <div className="flex gap-1.5 mb-2">
+                {Array.from({ length: panelSize }, (_, i) => {
+                  const isWin = result?.winner === 'A' ? i < result.forWinner : i >= (panelSize - result.forWinner);
+                  return <div key={i} className={`flex-1 h-8 rounded-lg flex items-center justify-center text-xs font-black ${isWin ? 'bg-amber-400 text-gray-900' : 'bg-gray-800 text-gray-600'}`}>{i + 1}</div>;
+                })}
+              </div>
+            ) : (
+              <div className="mb-3">
+                <div className="flex justify-between text-sm font-black mb-1.5">
+                  <span className={result?.winner === 'A' ? 'text-amber-400' : 'text-gray-500'}>{result?.winner === 'A' ? winnerVotes : loserVotes} votes</span>
+                  <span className={result?.winner === 'B' ? 'text-amber-400' : 'text-gray-500'}>{result?.winner === 'B' ? winnerVotes : loserVotes} votes</span>
+                </div>
+                <div className="h-10 bg-gray-800 rounded-xl overflow-hidden flex">
+                  <div className="bg-amber-400 h-full flex items-center justify-center text-xs font-black text-gray-900 transition-all duration-700"
+                    style={{ width: `${result?.winner === 'A' ? winPct : 100 - winPct}%` }}>
+                    {result?.winner === 'A' && winPct > 15 ? `${winPct}%` : ''}
+                  </div>
+                  <div className="flex-1 flex items-center justify-center text-xs font-black text-gray-600">
+                    {result?.winner === 'B' && (100 - winPct) > 15 ? `${100 - winPct}%` : ''}
+                  </div>
+                </div>
+                <p className="text-xs text-gray-500 text-center mt-1">{winnerVotes}–{loserVotes} out of {panelSize} judges</p>
+              </div>
+            )}
             <div className="flex justify-between text-xs">
               <span className={`font-semibold ${result?.winner === 'A' ? 'text-amber-400' : 'text-gray-500'}`}>{stratA?.title?.split(' ').slice(0,3).join(' ')}: {result?.winner === 'A' ? winnerVotes : loserVotes} votes</span>
               <span className={`font-semibold ${result?.winner === 'B' ? 'text-amber-400' : 'text-gray-500'}`}>{stratB?.title?.split(' ').slice(0,3).join(' ')}: {result?.winner === 'B' ? winnerVotes : loserVotes} votes</span>
@@ -669,6 +739,11 @@ export default function Tournament() {
   const [improvedSeedings, setImprovedSeedings] = useState([]); // refined strategy objects
   const [refiningStates, setRefiningStates]     = useState([]); // 'pending'|'refining'|'done' per slot
 
+  // Final Report state
+  const [reportData, setReportData]         = useState(null);
+  const [reportLoading, setReportLoading]   = useState(false);
+  const [reportError, setReportError]       = useState(null);
+
   useEffect(() => {
     try {
       const a = JSON.parse(localStorage.getItem('btb_answers') || '[]');
@@ -676,6 +751,32 @@ export default function Tournament() {
       if (a.length > 0) { setAnswers(a); setQuestion(q); setMatchups(buildMatchups(a)); }
     } catch (e) { /* ignore */ }
   }, []);
+
+  // Auto-generate report when report tab is opened after finals
+  useEffect(() => {
+    if (activeTab !== 'report' || finalsPhase !== 'done' || !finalsResult || !playoffSeedings.length) return;
+    const f1 = playoffSF1?.winner === 'A' ? playoffSeedings[0] : playoffSeedings[3];
+    const f2 = playoffSF2?.winner === 'A' ? playoffSeedings[1] : playoffSeedings[2];
+    if (!f1 || !f2) return;
+    const champ = finalsResult.winner === 'A' ? f1 : f2;
+    const runner = finalsResult.winner === 'A' ? f2 : f1;
+    if (!reportData && !reportLoading) generateFullReport(champ, runner);
+  }, [activeTab, finalsPhase, finalsResult]);
+
+  // Track pick counts in localStorage when round-robin completes
+  const picksSavedRef = useRef(false);
+  useEffect(() => {
+    if (phase !== 'done' || answers.length === 0 || picksSavedRef.current) return;
+    picksSavedRef.current = true;
+    try {
+      const stored = JSON.parse(localStorage.getItem('btb_member_picks') || '{}');
+      answers.forEach(a => {
+        const champ = a.champion || a.championName || '';
+        if (champ) stored[champ] = (stored[champ] || 0) + 1;
+      });
+      localStorage.setItem('btb_member_picks', JSON.stringify(stored));
+    } catch { /* ignore */ }
+  }, [phase]);
 
   // ─── Round-robin ─────────────────────────────────────────────────────────────
   const startTournament = async () => {
@@ -712,18 +813,18 @@ export default function Tournament() {
     await Promise.all([
       (async () => {
         try {
-          const r = await judgeMatchup(question, seedings[0], seedings[3]);
+          const r = await judgeMatchup(question, seedings[0], seedings[3], 49);
           setPlayoffSF1(r);
         } catch {
-          setPlayoffSF1({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 5, reasoning: '(judges unavailable)' });
+          setPlayoffSF1({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 25, reasoning: '(judges unavailable)', panelSize: 49 });
         }
       })(),
       (async () => {
         try {
-          const r = await judgeMatchup(question, seedings[1], seedings[2]);
+          const r = await judgeMatchup(question, seedings[1], seedings[2], 49);
           setPlayoffSF2(r);
         } catch {
-          setPlayoffSF2({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 5, reasoning: '(judges unavailable)' });
+          setPlayoffSF2({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 25, reasoning: '(judges unavailable)', panelSize: 49 });
         }
       })(),
     ]);
@@ -821,12 +922,72 @@ Return ONLY valid JSON (no markdown):
     const finalist2 = playoffSF2?.winner === 'A' ? playoffSeedings[1] : playoffSeedings[2];
     setFinalsPhase('running'); setFinalsResult(null);
     try {
-      const r = await judgeMatchup(question, finalist1, finalist2);
+      const r = await judgeMatchup(question, finalist1, finalist2, 99);
       setFinalsResult(r);
     } catch {
-      setFinalsResult({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 5, reasoning: '(judges unavailable)' });
+      setFinalsResult({ winner: Math.random() > 0.5 ? 'A' : 'B', forWinner: 50, reasoning: '(judges unavailable)', panelSize: 99 });
     }
     setFinalsPhase('done');
+  };
+
+  // ─── Final Report Generation ──────────────────────────────────────────────────
+  const generateFullReport = async (champStrategy, runnerUpStrategy) => {
+    if (!champStrategy || !runnerUpStrategy) return;
+    setReportLoading(true);
+    setReportError(null);
+    setReportData(null);
+
+    const champStanding = standings.find(s => s.answer?.title === champStrategy.title);
+    const ruStanding    = standings.find(s => s.answer?.title === runnerUpStrategy.title);
+    const champTotal = (champStanding?.wins || 0) + (champStanding?.losses || 0);
+    const champRate  = champTotal > 0 ? Math.round((champStanding.wins / champTotal) * 100) : 0;
+
+    const champPrompt = `You are a world-class McKinsey-level strategy consultant writing a definitive tournament report.
+
+CHALLENGE: "${question}"
+TOURNAMENT CHAMPION: "${champStrategy.title}"
+Strategy: ${(champStrategy.content || champStrategy.summary || '').slice(0, 600)}
+Tournament Record: ${champStanding?.wins || 0}W – ${champStanding?.losses || 0}L (${champRate}% win rate)
+
+Produce an in-depth champion analysis. Return ONLY valid JSON (no markdown, no code fences):
+{"executiveSummary":"2-3 sentence high-impact summary of why this strategy won and what it unlocks","whyItWon":["specific advantage 1","specific advantage 2","specific advantage 3","specific advantage 4"],"implementationPlan":[{"phase":"Phase 1: Foundation (Weeks 1–4)","actions":["specific action 1","specific action 2","specific action 3"],"milestone":"Measurable outcome"},{"phase":"Phase 2: Build Momentum (Months 2–6)","actions":["specific action 1","specific action 2","specific action 3"],"milestone":"Measurable outcome"},{"phase":"Phase 3: Scale & Sustain (Months 7–18)","actions":["specific action 1","specific action 2","specific action 3"],"milestone":"Measurable outcome"}],"financials":{"assumptions":"Core assumption driving these numbers","year1":{"investment":"$X","projectedReturn":"$Y","roi":"Z%","breakeven":"Month X"},"year3":{"investment":"$X","projectedReturn":"$Y","roi":"Z%"},"year5":{"investment":"$X","projectedReturn":"$Y","roi":"Z%"}},"evidence":[{"claim":"Bold evidence claim","data":"Specific stat, study, or benchmark","implication":"What this means for execution"},{"claim":"Bold evidence claim","data":"Specific stat, study, or benchmark","implication":"What this means for execution"},{"claim":"Bold evidence claim","data":"Specific stat, study, or benchmark","implication":"What this means for execution"}],"risks":[{"risk":"Risk title","severity":"High","impact":"Consequence if realized","mitigation":"Specific countermeasure"},{"risk":"Risk title","severity":"Medium","impact":"Consequence if realized","mitigation":"Specific countermeasure"},{"risk":"Risk title","severity":"Low","impact":"Consequence if realized","mitigation":"Specific countermeasure"}],"successMetrics":["KPI 1 with specific target","KPI 2 with specific target","KPI 3 with specific target","KPI 4 with specific target"],"verdict":"The single most important insight explaining why this strategy wins — make it memorable and powerful"}`;
+
+    const ruTotal = (ruStanding?.wins || 0) + (ruStanding?.losses || 0);
+    const runnerUpPrompt = `You are a world-class strategy consultant presenting the strongest possible dissenting opinion.
+
+CHALLENGE: "${question}"
+RUNNER-UP STRATEGY: "${runnerUpStrategy.title}"
+Strategy: ${(runnerUpStrategy.content || runnerUpStrategy.summary || '').slice(0, 600)}
+Tournament Record: ${ruStanding?.wins || 0}W – ${ruStanding?.losses || 0}L
+
+This strategy NEARLY won the championship. Produce a compelling case for it. Return ONLY valid JSON (no markdown, no code fences):
+{"executiveSummary":"2-3 sentence compelling case for this strategy's merit and near-miss","uniqueStrengths":["strength 1","strength 2","strength 3","strength 4"],"whereItExcels":"Specific scenarios or contexts where this beats the champion — be very concrete","implementationPlan":[{"phase":"Phase 1 (Month 1–3)","actions":["specific action 1","specific action 2","specific action 3"],"milestone":"Measurable outcome"},{"phase":"Phase 2 (Month 4–12)","actions":["specific action 1","specific action 2","specific action 3"],"milestone":"Measurable outcome"}],"financials":{"year1":{"investment":"$X","projectedReturn":"$Y","roi":"Z%"},"year3":{"investment":"$X","projectedReturn":"$Y","roi":"Z%"}},"keyDifference":"The single critical factor that distinguishes this approach from the champion","dissentingOpinion":"The most powerful argument for why the judges may have gotten this wrong — advocate strongly and specifically","whenToChooseThis":"Three concrete scenarios where this strategy beats the champion","riskIfIgnored":"What you are concretely giving up by not pursuing this approach"}`;
+
+    try {
+      const [champRes, runnerRes] = await Promise.all([
+        fetch(OPENROUTER_URL, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${OPENROUTER_KEY}`, 'Content-Type': 'application/json', 'HTTP-Referer': 'https://braintrustbrief.local', 'X-Title': 'BrainTrust Brief' },
+          body: JSON.stringify({ model: OPENROUTER_MODEL, messages: [{ role: 'user', content: champPrompt }], temperature: 0.7, max_tokens: 2000 }),
+        }),
+        fetch(OPENROUTER_URL, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${OPENROUTER_KEY}`, 'Content-Type': 'application/json', 'HTTP-Referer': 'https://braintrustbrief.local', 'X-Title': 'BrainTrust Brief' },
+          body: JSON.stringify({ model: OPENROUTER_MODEL, messages: [{ role: 'user', content: runnerUpPrompt }], temperature: 0.7, max_tokens: 1500 }),
+        }),
+      ]);
+      const [champJson, runnerJson] = await Promise.all([champRes.json(), runnerRes.json()]);
+      const parseRaw = (data) => {
+        let raw = data.choices?.[0]?.message?.content?.trim() || '{}';
+        if (raw.startsWith('```')) raw = raw.replace(/^```[a-z]*\n?/, '').replace(/```$/, '').trim();
+        try { return JSON.parse(raw); } catch { return {}; }
+      };
+      setReportData({ champion: parseRaw(champJson), runnerUp: parseRaw(runnerJson), champStrategy, runnerUpStrategy });
+    } catch (err) {
+      setReportError('Report generation failed. Check your API key and try again.');
+    } finally {
+      setReportLoading(false);
+    }
   };
 
   const standings    = computeStandings(answers, matchups);
@@ -840,6 +1001,37 @@ Return ONLY valid JSON (no markdown):
   const finalist2 = playoffSeedings.length >= 4 && playoffSF2 ? (playoffSF2.winner === 'A' ? playoffSeedings[1] : playoffSeedings[2]) : null;
   const champion  = finalist1 && finalist2 && finalsResult ? (finalsResult.winner === 'A' ? finalist1 : finalist2) : null;
   const runnerUp  = finalist1 && finalist2 && finalsResult ? (finalsResult.winner === 'A' ? finalist2 : finalist1) : null;
+
+  // ─── BrainTrust Member Stats (computed from current session) ──────────────────
+  const memberStats = (() => {
+    const storedPicks = (() => { try { return JSON.parse(localStorage.getItem('btb_member_picks') || '{}'); } catch { return {}; } })();
+    const stats = {};
+    answers.forEach((answer) => {
+      const name = answer.champion || answer.championName || '—';
+      if (!stats[name]) stats[name] = { name, pickCount: storedPicks[name] || 0, judgeVotes: 0, poolWins: 0, poolLosses: 0, mvpCount: 0, playoffAppearance: false, sfWin: false, finalsAppearance: false, isChampion: false };
+      const standing = standings.find(s => s.answer?.title === answer.title);
+      if (standing) {
+        stats[name].poolWins   += standing.wins;
+        stats[name].poolLosses += standing.losses;
+        standing.record.forEach(r => {
+          const m = matchups[r.matchIdx];
+          if (!m?.result) return;
+          const ps = m.result.panelSize || 9;
+          stats[name].judgeVotes += r.outcome === 'W' ? m.result.forWinner : ps - m.result.forWinner;
+          if (m.result.mvp === name) stats[name].mvpCount++;
+        });
+      }
+      if (playoffSeedings.some(s => s.title === answer.title)) {
+        stats[name].playoffAppearance = true;
+        const sf1W = playoffSF1 ? (playoffSF1.winner === 'A' ? playoffSeedings[0] : playoffSeedings[3]) : null;
+        const sf2W = playoffSF2 ? (playoffSF2.winner === 'A' ? playoffSeedings[1] : playoffSeedings[2]) : null;
+        if (sf1W?.title === answer.title || sf2W?.title === answer.title) stats[name].sfWin = true;
+        if (finalist1?.title === answer.title || finalist2?.title === answer.title) stats[name].finalsAppearance = true;
+        if (champion?.title === answer.title) stats[name].isChampion = true;
+      }
+    });
+    return Object.values(stats).sort((a, b) => b.judgeVotes - a.judgeVotes);
+  })();
 
   if (answers.length === 0) {
     return (
@@ -1309,38 +1501,453 @@ Return ONLY valid JSON (no markdown):
 
           {/* ── Final Report Tab ── */}
           {isDone && activeTab === 'report' && (
-            <div className="max-w-2xl">
-              <div className="bg-gray-900 border border-amber-500/30 rounded-3xl p-8 shadow-xl shadow-amber-500/10 mb-6">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-12 h-12 rounded-2xl bg-amber-400 flex items-center justify-center">
-                    <Trophy className="w-6 h-6 text-gray-900" />
+            <div className="max-w-4xl">
+
+              {/* Champion Header */}
+              <div className="bg-gradient-to-br from-amber-500/10 to-amber-400/5 border border-amber-500/30 rounded-3xl p-8 mb-6 shadow-xl shadow-amber-500/10">
+                <div className="flex items-start gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-2xl bg-amber-400 flex items-center justify-center flex-shrink-0 shadow-lg shadow-amber-400/30">
+                    <Trophy className="w-8 h-8 text-gray-900" />
                   </div>
-                  <div>
-                    <p className="text-xs text-amber-400 font-bold uppercase tracking-wider">
-                      {finalsPhase === 'done' && champion ? 'Tournament Champion' : 'Round Robin Leader'}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs text-amber-400 font-black uppercase tracking-widest mb-1">
+                      {finalsPhase === 'done' && champion ? '🏆 Tournament Champion' : '🥇 Round Robin Leader'}
                     </p>
-                    <h2 className="text-2xl font-black text-white">{champion?.title || standings[0]?.answer?.title}</h2>
+                    <h2 className="text-3xl font-black text-white leading-tight mb-3">{champion?.title || standings[0]?.answer?.title}</h2>
+                    {(() => {
+                      const champ = champion || standings[0]?.answer;
+                      const s = standings.find(st => st.answer?.title === champ?.title);
+                      const t = (s?.wins || 0) + (s?.losses || 0);
+                      const r = t > 0 ? Math.round((s.wins / t) * 100) : 0;
+                      return (
+                        <div className="flex flex-wrap gap-2">
+                          <span className="px-3 py-1 bg-green-500/15 border border-green-500/30 rounded-full text-xs font-bold text-green-400">{s?.wins || 0}W – {s?.losses || 0}L Round Robin</span>
+                          <span className="px-3 py-1 bg-amber-400/15 border border-amber-400/30 rounded-full text-xs font-bold text-amber-400">{r}% Win Rate</span>
+                          {finalsResult && <span className="px-3 py-1 bg-purple-500/15 border border-purple-500/30 rounded-full text-xs font-bold text-purple-400">Finals: {finalsResult.forWinner}–{9 - finalsResult.forWinner}</span>}
+                        </div>
+                      );
+                    })()}
                   </div>
-                </div>
-                <div className="bg-gray-800 rounded-2xl p-5 mb-4">
-                  <p className="text-xs font-bold text-gray-400 uppercase mb-2">Winning Strategy</p>
-                  <p className="text-sm text-gray-300 leading-relaxed">{(champion || standings[0]?.answer)?.content || (champion || standings[0]?.answer)?.summary || '(see strategy detail)'}</p>
-                </div>
-                {(champion || standings[0]?.answer)?.rationale && (
-                  <div className="bg-blue-400/5 border border-blue-400/15 rounded-xl px-4 py-3 mb-4">
-                    <p className="text-xs font-bold text-blue-400 uppercase mb-1">Rationale</p>
-                    <p className="text-sm text-gray-300 italic">"{(champion || standings[0]?.answer).rationale}"</p>
-                  </div>
-                )}
-                <div className="bg-gray-800 rounded-2xl p-5">
-                  <p className="text-xs font-bold text-gray-400 uppercase mb-2">Runner-Up</p>
-                  <p className="text-sm font-bold text-white">{runnerUp?.title || standings[1]?.answer?.title}</p>
-                  {!finalsPhase === 'done' && <p className="text-xs text-gray-500 mt-1">{standings[1]?.wins}W – {standings[1]?.losses}L · {Math.round((standings[1]?.wins / (standings[1]?.wins + standings[1]?.losses || 1)) * 100)}%</p>}
                 </div>
               </div>
-              <div className="text-center">
-                <Link to="/arena" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-gray-900 font-black rounded-xl hover:bg-amber-300 transition">
-                  <Star className="w-4 h-4" /> Run Another Session
+
+              {/* Loading State */}
+              {reportLoading && (
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-12 mb-6 text-center">
+                  <div className="flex justify-center gap-2 mb-5">
+                    {[0,1,2,3,4].map(i => (
+                      <div key={i} className="w-2.5 h-2.5 rounded-full bg-amber-400 animate-bounce" style={{ animationDelay: `${i * 100}ms` }} />
+                    ))}
+                  </div>
+                  <p className="text-xl font-black text-white mb-2">Compiling Your Report</p>
+                  <p className="text-sm text-gray-400 mb-6">AI consultants are building implementation plans, running financial models, and stress-testing every assumption…</p>
+                  <div className="space-y-2 max-w-xs mx-auto text-left">
+                    {['Analyzing tournament data…','Building implementation roadmap…','Running financial projections…','Sourcing research evidence…','Writing dissenting opinion…'].map((step, i) => (
+                      <div key={i} className="flex items-center gap-2 text-xs text-gray-500">
+                        <div className="w-1.5 h-1.5 rounded-full bg-amber-400/50 animate-pulse" style={{ animationDelay: `${i * 200}ms` }} />
+                        {step}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Error State */}
+              {reportError && !reportLoading && (
+                <div className="bg-red-500/5 border border-red-500/20 rounded-2xl p-6 mb-6 text-center">
+                  <AlertTriangle className="w-8 h-8 text-red-400 mx-auto mb-3" />
+                  <p className="text-sm font-bold text-red-400 mb-4">{reportError}</p>
+                  <button onClick={() => generateFullReport(champion, runnerUp)} className="px-4 py-2 bg-red-500/20 border border-red-500/30 text-red-400 rounded-xl text-sm font-bold hover:bg-red-500/30 transition">
+                    Retry Report →
+                  </button>
+                </div>
+              )}
+
+              {/* No finals yet — show brief summary */}
+              {!reportLoading && !reportError && !reportData && !champion && (
+                <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-6">
+                  <p className="text-sm text-gray-400 mb-4">Complete the playoffs and finals to unlock the full AI-generated report.</p>
+                  <div className="bg-gray-800 rounded-xl p-4">
+                    <p className="text-xs font-bold text-gray-400 uppercase mb-2">Round Robin Leader</p>
+                    <p className="text-base font-bold text-white">{standings[0]?.answer?.title}</p>
+                    <p className="text-xs text-gray-500 mt-1">{standings[0]?.wins}W – {standings[0]?.losses}L</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Full Report */}
+              {reportData && !reportLoading && (
+                <>
+                  {/* Executive Summary */}
+                  {reportData.champion.executiveSummary && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-3 flex items-center gap-2"><Lightbulb className="w-3.5 h-3.5" /> Executive Summary</p>
+                      <p className="text-base text-gray-200 leading-relaxed font-medium">{reportData.champion.executiveSummary}</p>
+                    </div>
+                  )}
+
+                  {/* Why It Won */}
+                  {reportData.champion.whyItWon?.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Zap className="w-3.5 h-3.5" /> Why It Won</p>
+                      <div className="grid grid-cols-2 gap-3">
+                        {reportData.champion.whyItWon.map((reason, i) => (
+                          <div key={i} className="flex items-start gap-3 bg-gray-800 rounded-xl p-3">
+                            <div className="w-6 h-6 rounded-lg bg-amber-400 flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <span className="text-xs font-black text-gray-900">{i + 1}</span>
+                            </div>
+                            <p className="text-sm text-gray-300 leading-snug">{reason}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Implementation Roadmap */}
+                  {reportData.champion.implementationPlan?.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-5 flex items-center gap-2"><Target className="w-3.5 h-3.5" /> Implementation Roadmap</p>
+                      <div className="relative">
+                        <div className="absolute left-4 top-4 bottom-4 w-px bg-amber-400/20" />
+                        <div className="space-y-5">
+                          {reportData.champion.implementationPlan.map((ph, i) => (
+                            <div key={i} className="relative pl-10">
+                              <div className="absolute left-2.5 top-2 w-3 h-3 rounded-full bg-amber-400 border-2 border-gray-900 z-10" />
+                              <div className="bg-gray-800 rounded-xl p-4">
+                                <p className="text-sm font-black text-white mb-3">{ph.phase}</p>
+                                <div className="space-y-1.5 mb-3">
+                                  {ph.actions?.map((action, j) => (
+                                    <div key={j} className="flex items-start gap-2 text-sm text-gray-300">
+                                      <CheckCircle className="w-3.5 h-3.5 text-green-400 flex-shrink-0 mt-0.5" />
+                                      {action}
+                                    </div>
+                                  ))}
+                                </div>
+                                {ph.milestone && (
+                                  <div className="flex items-center gap-2 text-xs text-amber-400 bg-amber-400/8 border border-amber-400/15 rounded-lg px-3 py-2">
+                                    <Award className="w-3 h-3 flex-shrink-0" />
+                                    <span className="font-semibold">Milestone: {ph.milestone}</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Financial Projections */}
+                  {reportData.champion.financials && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-1 flex items-center gap-2"><DollarSign className="w-3.5 h-3.5" /> Financial Projections</p>
+                      {reportData.champion.financials.assumptions && (
+                        <p className="text-xs text-gray-500 italic mb-4">Assumption: {reportData.champion.financials.assumptions}</p>
+                      )}
+                      <div className="grid grid-cols-3 gap-3">
+                        {[
+                          { label: 'Year 1', data: reportData.champion.financials.year1, cls: 'border-blue-500/30 bg-blue-500/5' },
+                          { label: 'Year 3', data: reportData.champion.financials.year3, cls: 'border-amber-500/30 bg-amber-500/5' },
+                          { label: 'Year 5', data: reportData.champion.financials.year5, cls: 'border-green-500/30 bg-green-500/5' },
+                        ].filter(y => y.data).map(({ label, data, cls }) => (
+                          <div key={label} className={`border rounded-xl p-4 ${cls}`}>
+                            <p className="text-xs font-black text-gray-400 uppercase mb-3">{label}</p>
+                            {data.investment && <div className="mb-2"><p className="text-xs text-gray-500 mb-0.5">Investment</p><p className="text-sm font-bold text-white">{data.investment}</p></div>}
+                            {data.projectedReturn && <div className="mb-2"><p className="text-xs text-gray-500 mb-0.5">Projected Return</p><p className="text-sm font-bold text-white">{data.projectedReturn}</p></div>}
+                            {data.roi && <div className="mb-1"><p className="text-xs text-gray-500 mb-0.5">ROI</p><p className="text-base font-black text-green-400">{data.roi}</p></div>}
+                            {data.breakeven && <p className="text-xs text-gray-500 mt-2">Break-even: {data.breakeven}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Research & Evidence */}
+                  {reportData.champion.evidence?.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2"><BookOpen className="w-3.5 h-3.5" /> Research & Evidence</p>
+                      <div className="space-y-3">
+                        {reportData.champion.evidence.map((item, i) => (
+                          <div key={i} className="bg-gray-800 rounded-xl p-4 border-l-2 border-blue-400">
+                            <p className="text-sm font-bold text-white mb-1">{item.claim}</p>
+                            {item.data && <p className="text-xs text-blue-300 mb-2 font-mono bg-blue-400/8 rounded px-2 py-1">{item.data}</p>}
+                            {item.implication && <p className="text-xs text-gray-400">{item.implication}</p>}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Risk Analysis */}
+                  {reportData.champion.risks?.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2"><Shield className="w-3.5 h-3.5" /> Risk Analysis</p>
+                      <div className="space-y-3">
+                        {reportData.champion.risks.map((item, i) => {
+                          const sev = (item.severity || '').toLowerCase();
+                          const sevCls = sev === 'high' ? 'border-red-500/30 bg-red-500/5' : sev === 'medium' ? 'border-yellow-500/30 bg-yellow-500/5' : 'border-green-500/30 bg-green-500/5';
+                          const textCls = sev === 'high' ? 'text-red-400 bg-red-500/15' : sev === 'medium' ? 'text-yellow-400 bg-yellow-500/15' : 'text-green-400 bg-green-500/15';
+                          return (
+                            <div key={i} className={`rounded-xl p-4 border ${sevCls}`}>
+                              <div className="flex items-center gap-2 mb-2">
+                                <span className={`text-xs font-black uppercase px-2 py-0.5 rounded ${textCls}`}>{item.severity}</span>
+                                <p className="text-sm font-bold text-white">{item.risk}</p>
+                              </div>
+                              {item.impact && <p className="text-xs text-gray-400 mb-2">{item.impact}</p>}
+                              {item.mitigation && (
+                                <div className="flex items-start gap-2 text-xs text-gray-300">
+                                  <CheckCircle className="w-3 h-3 text-green-400 flex-shrink-0 mt-0.5" />
+                                  <span>{item.mitigation}</span>
+                                </div>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Success Metrics */}
+                  {reportData.champion.successMetrics?.length > 0 && (
+                    <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2"><TrendingUp className="w-3.5 h-3.5" /> Success Metrics</p>
+                      <div className="grid grid-cols-2 gap-2">
+                        {reportData.champion.successMetrics.map((metric, i) => (
+                          <div key={i} className="flex items-center gap-2 bg-gray-800 rounded-xl px-3 py-2.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-amber-400 flex-shrink-0" />
+                            <p className="text-sm text-gray-300">{metric}</p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Tournament Performance Chart */}
+                  <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 mb-4">
+                    <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-4 flex items-center gap-2"><BarChart2 className="w-3.5 h-3.5" /> Tournament Performance</p>
+                    <div className="space-y-2.5">
+                      {standings.slice(0, 8).map((s, i) => {
+                        const t = s.wins + s.losses;
+                        const r = t > 0 ? Math.round((s.wins / t) * 100) : 0;
+                        const isChamp = s.answer?.title === (champion || standings[0]?.answer)?.title;
+                        const isRunner = s.answer?.title === runnerUp?.title;
+                        return (
+                          <div key={i} className="flex items-center gap-3">
+                            <span className={`text-xs font-black w-5 text-right flex-shrink-0 ${i === 0 ? 'text-amber-400' : 'text-gray-600'}`}>#{i + 1}</span>
+                            <div className="w-36 flex-shrink-0">
+                              <p className="text-xs text-gray-300 truncate font-medium">
+                                {s.answer?.title}{isChamp ? ' 🏆' : isRunner ? ' 🥈' : ''}
+                              </p>
+                            </div>
+                            <div className="flex-1 h-5 bg-gray-800 rounded-full overflow-hidden">
+                              <div className={`h-full rounded-full transition-all duration-500 ${isChamp ? 'bg-amber-400' : isRunner ? 'bg-blue-400' : 'bg-gray-600'}`} style={{ width: `${r}%` }} />
+                            </div>
+                            <span className={`text-xs font-bold tabular-nums w-8 text-right flex-shrink-0 ${isChamp ? 'text-amber-400' : 'text-gray-500'}`}>{r}%</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Verdict */}
+                  {reportData.champion.verdict && (
+                    <div className="bg-gradient-to-r from-amber-500/10 to-amber-400/5 border border-amber-500/40 rounded-2xl p-6 mb-8">
+                      <p className="text-xs font-black text-amber-400 uppercase tracking-widest mb-3">The Verdict</p>
+                      <p className="text-lg font-black text-white leading-snug italic">"{reportData.champion.verdict}"</p>
+                    </div>
+                  )}
+
+                  {/* ─── Dissenting Opinion ─────────────────── */}
+                  <div className="border-t border-gray-800 pt-8 mb-4">
+                    <div className="flex items-start gap-4 mb-6">
+                      <div className="w-14 h-14 rounded-2xl bg-blue-500/15 border border-blue-500/30 flex items-center justify-center flex-shrink-0">
+                        <Brain className="w-7 h-7 text-blue-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-blue-400 font-black uppercase tracking-widest mb-1">⚖️ Dissenting Opinion — Runner-Up</p>
+                        <h3 className="text-2xl font-black text-white leading-tight mb-3">{runnerUp?.title || standings[1]?.answer?.title}</h3>
+                        {(() => {
+                          const rus = standings.find(st => st.answer?.title === (runnerUp || standings[1]?.answer)?.title);
+                          const rut = (rus?.wins || 0) + (rus?.losses || 0);
+                          const rur = rut > 0 ? Math.round((rus.wins / rut) * 100) : 0;
+                          return (
+                            <div className="flex flex-wrap gap-2">
+                              <span className="px-3 py-1 bg-blue-500/15 border border-blue-500/30 rounded-full text-xs font-bold text-blue-400">{rus?.wins || 0}W – {rus?.losses || 0}L Round Robin</span>
+                              <span className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-full text-xs font-bold text-gray-400">{rur}% Win Rate</span>
+                              {finalsResult && <span className="px-3 py-1 bg-gray-800 border border-gray-700 rounded-full text-xs font-bold text-gray-400">Finals: {9 - finalsResult.forWinner}–{finalsResult.forWinner}</span>}
+                            </div>
+                          );
+                        })()}
+                      </div>
+                    </div>
+
+                    {reportData.runnerUp.executiveSummary && (
+                      <div className="bg-gray-900 border border-blue-500/20 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-3">The Case For This Strategy</p>
+                        <p className="text-sm text-gray-200 leading-relaxed">{reportData.runnerUp.executiveSummary}</p>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.uniqueStrengths?.length > 0 && (
+                      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-4">Unique Strengths</p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {reportData.runnerUp.uniqueStrengths.map((s, i) => (
+                            <div key={i} className="flex items-start gap-2.5 bg-gray-800 rounded-xl p-3">
+                              <div className="w-5 h-5 rounded-lg bg-blue-500/25 border border-blue-500/40 flex items-center justify-center flex-shrink-0 mt-0.5">
+                                <span className="text-xs font-black text-blue-400">{i + 1}</span>
+                              </div>
+                              <p className="text-xs text-gray-300 leading-snug">{s}</p>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.implementationPlan?.length > 0 && (
+                      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-4">Implementation Path</p>
+                        <div className="space-y-4">
+                          {reportData.runnerUp.implementationPlan.map((ph, i) => (
+                            <div key={i} className="bg-gray-800 rounded-xl p-4">
+                              <p className="text-sm font-bold text-white mb-2">{ph.phase}</p>
+                              <div className="space-y-1.5 mb-3">
+                                {ph.actions?.map((action, j) => (
+                                  <div key={j} className="flex items-start gap-2 text-sm text-gray-300">
+                                    <ArrowRight className="w-3.5 h-3.5 text-blue-400 flex-shrink-0 mt-0.5" />
+                                    {action}
+                                  </div>
+                                ))}
+                              </div>
+                              {ph.milestone && <p className="text-xs text-blue-400/70 border-t border-gray-700 pt-2">Target: {ph.milestone}</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.financials && (
+                      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-4">Financial Outlook</p>
+                        <div className="grid grid-cols-2 gap-3">
+                          {[
+                            { label: 'Year 1', data: reportData.runnerUp.financials.year1 },
+                            { label: 'Year 3', data: reportData.runnerUp.financials.year3 },
+                          ].filter(y => y.data).map(({ label, data }) => (
+                            <div key={label} className="bg-gray-800 rounded-xl p-4">
+                              <p className="text-xs font-black text-gray-400 uppercase mb-2">{label}</p>
+                              {data.investment && <div className="mb-1.5"><p className="text-xs text-gray-500">Investment</p><p className="text-sm font-bold text-white">{data.investment}</p></div>}
+                              {data.projectedReturn && <div className="mb-1.5"><p className="text-xs text-gray-500">Return</p><p className="text-sm font-bold text-white">{data.projectedReturn}</p></div>}
+                              {data.roi && <p className="text-base font-black text-blue-400">{data.roi} ROI</p>}
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.whereItExcels && (
+                      <div className="bg-blue-500/5 border border-blue-500/20 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">Where This Beats The Champion</p>
+                        <p className="text-sm text-gray-300 leading-relaxed">{reportData.runnerUp.whereItExcels}</p>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.dissentingOpinion && (
+                      <div className="bg-gray-900 border-l-4 border-blue-500 rounded-r-2xl rounded-l-sm p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-3">The Dissent — Why The Judges May Have Gotten It Wrong</p>
+                        <p className="text-sm text-gray-200 leading-relaxed italic">"{reportData.runnerUp.dissentingOpinion}"</p>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.whenToChooseThis && (
+                      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-blue-400 uppercase tracking-widest mb-2">When To Choose This Instead</p>
+                        <p className="text-sm text-gray-300 leading-relaxed">{reportData.runnerUp.whenToChooseThis}</p>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.riskIfIgnored && (
+                      <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-2xl p-5 mb-4">
+                        <p className="text-xs font-black text-yellow-400 uppercase tracking-widest mb-2 flex items-center gap-2"><AlertTriangle className="w-3.5 h-3.5" /> Risk If You Ignore This</p>
+                        <p className="text-sm text-gray-300 leading-relaxed">{reportData.runnerUp.riskIfIgnored}</p>
+                      </div>
+                    )}
+
+                    {reportData.runnerUp.keyDifference && (
+                      <div className="bg-gray-800 rounded-2xl p-5 mb-6">
+                        <p className="text-xs font-black text-gray-400 uppercase tracking-widest mb-2">Key Difference</p>
+                        <p className="text-sm text-gray-200 font-medium leading-relaxed">{reportData.runnerUp.keyDifference}</p>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* ─── BrainTrust Scorecard ─────────────────── */}
+              {isDone && memberStats.length > 0 && (
+                <div className="border-t border-gray-800 pt-8 mb-8">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center">
+                      <Crown className="w-5 h-5 text-purple-400" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-purple-400 font-black uppercase tracking-widest">BrainTrust Scorecard</p>
+                      <p className="text-xs text-gray-500 mt-0.5">How each advisor performed this session</p>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    {memberStats.map((m, i) => {
+                      const poolTotal = m.poolWins + m.poolLosses;
+                      const poolRate = poolTotal > 0 ? Math.round((m.poolWins / poolTotal) * 100) : 0;
+                      return (
+                        <div key={m.name} className={`rounded-xl p-4 border ${m.isChampion ? 'border-amber-500/40 bg-amber-500/5' : m.finalsAppearance ? 'border-blue-500/30 bg-blue-500/5' : 'border-gray-800 bg-gray-900'}`}>
+                          <div className="flex items-start gap-3">
+                            <div className={`w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black ${m.isChampion ? 'bg-amber-400 text-gray-900' : 'bg-gray-800 text-gray-400'}`}>
+                              {i + 1}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap mb-2">
+                                <p className="text-sm font-black text-white">{m.name}</p>
+                                {m.isChampion && <span className="text-xs px-2 py-0.5 bg-amber-400/20 text-amber-400 rounded-full font-bold">🏆 Champion's Advisor</span>}
+                                {m.finalsAppearance && !m.isChampion && <span className="text-xs px-2 py-0.5 bg-blue-500/20 text-blue-400 rounded-full font-bold">🥈 Finalist</span>}
+                                {m.sfWin && !m.finalsAppearance && <span className="text-xs px-2 py-0.5 bg-purple-500/20 text-purple-400 rounded-full font-bold">SF Win</span>}
+                                {m.playoffAppearance && !m.sfWin && <span className="text-xs px-2 py-0.5 bg-gray-700 text-gray-400 rounded-full font-bold">Playoffs</span>}
+                              </div>
+                              <div className="flex flex-wrap gap-3 text-xs">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-gray-500">Pool:</span>
+                                  <span className={`font-bold ${m.poolWins > m.poolLosses ? 'text-green-400' : 'text-gray-400'}`}>{m.poolWins}W–{m.poolLosses}L</span>
+                                  <span className="text-gray-600">({poolRate}%)</span>
+                                </div>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-gray-500">Judge Votes:</span>
+                                  <span className="font-bold text-amber-400">{m.judgeVotes}</span>
+                                </div>
+                                {m.mvpCount > 0 && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-gray-500">MVP Awards:</span>
+                                    <span className="font-bold text-yellow-400">⭐ {m.mvpCount}</span>
+                                  </div>
+                                )}
+                                {m.pickCount > 0 && (
+                                  <div className="flex items-center gap-1.5">
+                                    <span className="text-gray-500">All-time picks:</span>
+                                    <span className="font-bold text-gray-300">{m.pickCount}×</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="text-center pt-2 pb-8">
+                <Link to="/arena" className="inline-flex items-center gap-2 px-8 py-4 bg-amber-400 text-gray-900 font-black rounded-2xl hover:bg-amber-300 transition shadow-lg shadow-amber-400/20 text-base">
+                  <Star className="w-5 h-5" /> Run Another Session
                 </Link>
               </div>
             </div>
