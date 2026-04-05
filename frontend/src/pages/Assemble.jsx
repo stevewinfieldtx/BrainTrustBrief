@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
-import { Link } from 'react-router-dom';
-import { Search, X, ArrowRight, Trash2, ChevronDown, Check, Users, Zap } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Search, X, ArrowRight, Trash2, ChevronDown, Check, Users, Zap, Shuffle } from 'lucide-react';
 import { MEMBERS, CATEGORIES } from '../data/members';
 
 // ─── Seat Roles ──────────────────────────────────────────────────────────────
@@ -64,6 +64,7 @@ function MemberRow({ member, onSelect }) {
 
 // ─── Main Component ───────────────────────────────────────────────────────────
 export default function Assemble({ selectedMembers, setSelectedMembers }) {
+  const navigate = useNavigate();
   const [trustSize, setTrustSize]         = useState(null);   // 3 | 5 | 7 | 9
   const [seats, setSeats]                 = useState({});     // { idx: { member, role } }
   const [activeSeat, setActiveSeat]       = useState(null);   // seat panel open
@@ -151,6 +152,42 @@ export default function Assemble({ selectedMembers, setSelectedMembers }) {
     setRolePickerSeat(null);
   };
 
+  // Quick-fill: pick n members, mode = 'random' | 'balanced'
+  // Balanced spreads across all 6 categories as evenly as possible
+  const quickFill = (size, mode) => {
+    let picks = [];
+
+    if (mode === 'random') {
+      picks = [...MEMBERS].sort(() => Math.random() - 0.5).slice(0, size);
+    } else {
+      // Balanced — round-robin across categories
+      const cats = Object.keys(CATEGORIES);
+      const pools = {};
+      cats.forEach(c => { pools[c] = MEMBERS.filter(m => m.category === c).sort(() => Math.random() - 0.5); });
+      const pointers = {};
+      cats.forEach(c => { pointers[c] = 0; });
+      let ci = 0;
+      while (picks.length < size) {
+        const cat = cats[ci % cats.length];
+        if (pointers[cat] < pools[cat].length) {
+          picks.push(pools[cat][pointers[cat]++]);
+        }
+        ci++;
+        if (ci > size * cats.length) break; // safety exit
+      }
+    }
+
+    const newSeats = {};
+    picks.forEach((m, i) => { newSeats[i] = { member: m }; });
+    setTrustSize(size);
+    setSeats(newSeats);
+    setActiveSeat(null);
+    setRolePickerSeat(null);
+    // Immediately send to Arena
+    setSelectedMembers(picks);
+    navigate('/arena');
+  };
+
   const sendToArena = () => {
     const members = Array.from({ length: trustSize }, (_, i) => seats[i]?.member).filter(Boolean);
     setSelectedMembers(members);
@@ -200,6 +237,51 @@ export default function Assemble({ selectedMembers, setSelectedMembers }) {
             </button>
           ))}
         </div>
+
+        {/* ── Quick Start — skip manual selection ───────────────────────────── */}
+        <div className="mt-8 border-t border-gray-800 pt-8">
+          <div className="flex items-center gap-2 mb-4">
+            <Shuffle className="w-4 h-4 text-gray-500" />
+            <p className="text-sm font-bold text-gray-400 uppercase tracking-wider">Quick Start — Skip the Selection</p>
+          </div>
+          <p className="text-xs text-gray-600 mb-5">
+            Pick a size, choose a fill mode, and jump straight to the Arena — great for testing or when you just want to get going.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            {/* Random */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Shuffle className="w-3.5 h-3.5 text-amber-400" />
+                <p className="text-sm font-black text-white">Random</p>
+                <p className="text-xs text-gray-500 ml-1">— any N members, totally random</p>
+              </div>
+              <div className="flex gap-2">
+                {SIZE_OPTIONS.map(size => (
+                  <button key={size} onClick={() => quickFill(size, 'random')}
+                    className="flex-1 py-2 rounded-xl bg-gray-800 hover:bg-amber-400 hover:text-gray-900 text-gray-300 text-sm font-black transition-all border border-gray-700 hover:border-amber-400">
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+            {/* Balanced */}
+            <div className="bg-gray-900 border border-gray-800 rounded-2xl p-4">
+              <div className="flex items-center gap-2 mb-3">
+                <Users className="w-3.5 h-3.5 text-blue-400" />
+                <p className="text-sm font-black text-white">Balanced</p>
+                <p className="text-xs text-gray-500 ml-1">— one from each category</p>
+              </div>
+              <div className="flex gap-2">
+                {SIZE_OPTIONS.map(size => (
+                  <button key={size} onClick={() => quickFill(size, 'balanced')}
+                    className="flex-1 py-2 rounded-xl bg-gray-800 hover:bg-blue-400 hover:text-gray-900 text-gray-300 text-sm font-black transition-all border border-gray-700 hover:border-blue-400">
+                    {size}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -240,6 +322,16 @@ export default function Assemble({ selectedMembers, setSelectedMembers }) {
               Enter the Arena <ArrowRight className="w-4 h-4" />
             </Link>
           )}
+          {/* Quick-fill shortcuts inside the round table */}
+          <div className="flex gap-1 bg-gray-900 rounded-xl p-1 border border-gray-800" title="Quick fill with random members">
+            <span className="px-2 py-1.5 text-xs text-gray-600 font-bold flex items-center"><Shuffle className="w-3 h-3 mr-1" />Quick:</span>
+            <button onClick={() => quickFill(trustSize, 'random')} className="px-2.5 py-1.5 rounded-lg text-xs font-black text-gray-400 hover:bg-amber-400 hover:text-gray-900 transition" title="Random fill">
+              Random
+            </button>
+            <button onClick={() => quickFill(trustSize, 'balanced')} className="px-2.5 py-1.5 rounded-lg text-xs font-black text-gray-400 hover:bg-blue-400 hover:text-gray-900 transition" title="Balanced fill">
+              Balanced
+            </button>
+          </div>
           <button
             onClick={disbandAll}
             className="p-2 text-gray-600 hover:text-red-400 transition rounded-lg hover:bg-red-400/10"

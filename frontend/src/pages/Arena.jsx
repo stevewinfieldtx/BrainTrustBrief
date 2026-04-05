@@ -309,7 +309,7 @@ export default function Arena({ selectedMembers }) {
         <AlertCircle className="w-16 h-16 mx-auto mb-4 text-amber-400" />
         <h1 className="text-3xl font-black mb-3">BrainTrust Not Ready</h1>
         <p className="text-gray-400 mb-6">You need at least 3 members assembled before entering the Arena.</p>
-        <Link to="/assemble" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-gray-900 font-black rounded-2xl hover:bg-amber-300 transition">
+        <Link to="/" className="inline-flex items-center gap-2 px-6 py-3 bg-amber-400 text-gray-900 font-black rounded-2xl hover:bg-amber-300 transition">
           <Brain className="w-5 h-5" /> Assemble Your BrainTrust
         </Link>
       </div>
