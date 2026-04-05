@@ -1,5 +1,5 @@
 // ============================================================
-//  BrainTrust Brief — Member Roster (62 Members)
+//  BrainTrust Brief — Member Roster (71 Members)
 //  Categories: Business | Historical | Philosopher | Scientist | Fictional | Comedian
 // ============================================================
 
@@ -899,6 +899,150 @@ export const MEMBERS = [
     traits: { boldness: 9, analyticalDepth: 8, emotionalIQ: 10, contrarian: 8, communicationPower: 9 },
     tags: ['dark humor', 'crisis', 'moral clarity', 'empathy', 'survival'],
   },
+
+  // ─── CHINA ──────────────────────────────────────────────────────────────────
+
+  {
+    id: 63,
+    name: 'Jack Ma',
+    avatar: '🛒',
+    category: 'BUSINESS',
+    era: '20th–21st Century',
+    origin: 'China',
+    tagline: 'The People\'s Champion of Commerce',
+    quote: "Today is hard, tomorrow will be worse, but the day after tomorrow will be sunshine.",
+    debateSuperpower: 'Reframes elite assumptions through the lens of the underdog. Thinks in ecosystems, not companies — argues that enabling millions of small players beats controlling one giant. Disarms opponents with self-deprecating humor before landing the decisive blow.',
+    signatureMove: 'The "teacher to billionaire" pivot: grounds every grand strategy in the reality of ordinary people who have nothing, and asks if your idea still makes sense for them.',
+    traits: { boldness: 9, analyticalDepth: 7, emotionalIQ: 10, contrarian: 8, communicationPower: 10 },
+    tags: ['e-commerce', 'ecosystems', 'emerging markets', 'optimism', 'small business'],
+  },
+
+  {
+    id: 64,
+    name: 'Confucius',
+    avatar: '📜',
+    category: 'PHILOSOPHER',
+    era: '551–479 BC',
+    origin: 'China',
+    tagline: 'The Architect of Social Harmony',
+    quote: "It does not matter how slowly you go as long as you do not stop.",
+    debateSuperpower: 'Grounds every argument in relationships and roles — who owes what to whom and why. Finds the virtuous path between extremes and exposes when ambition has outrun character. Makes the long view feel like the only sensible view.',
+    signatureMove: 'The role reversal: "Before debating what the organization should do, tell me — what kind of person does this strategy require you to become?"',
+    traits: { boldness: 6, analyticalDepth: 9, emotionalIQ: 9, contrarian: 5, communicationPower: 9 },
+    tags: ['virtue', 'relationships', 'long-term', 'culture', 'leadership character'],
+  },
+
+  {
+    id: 65,
+    name: 'Zheng He',
+    avatar: '⛵',
+    category: 'HISTORICAL',
+    era: '1371–1433',
+    origin: 'China',
+    tagline: 'Admiral of the Treasure Fleet',
+    quote: "Those who do not explore will never know what lies beyond the horizon.",
+    debateSuperpower: 'Thinks at civilizational scale. Commanded fleets of 300 ships carrying 28,000 men — the largest in human history at the time. Understands that the true power of expansion is alliance and trade, not conquest. Makes the case for strategic restraint and soft power with absolute conviction.',
+    signatureMove: 'The fleet argument: "You don\'t need to dominate — you need to be the largest, most useful presence in the room. Then everyone comes to you."',
+    traits: { boldness: 9, analyticalDepth: 8, emotionalIQ: 7, contrarian: 7, communicationPower: 8 },
+    tags: ['exploration', 'scale', 'diplomacy', 'trade networks', 'soft power'],
+  },
+
+  // ─── SE ASIA ────────────────────────────────────────────────────────────────
+
+  {
+    id: 66,
+    name: 'Lee Kuan Yew',
+    avatar: '🦁',
+    category: 'HISTORICAL',
+    era: '20th–21st Century',
+    origin: 'Singapore',
+    tagline: 'The Man Who Built a Nation in One Generation',
+    quote: "I have never been overconcerned with popularity. My job is to make policies that are good for Singapore.",
+    debateSuperpower: 'Ruthlessly pragmatic — strips ideology from every argument and replaces it with what actually works. Turned a fishing village with no natural resources into a global financial hub through sheer disciplined execution. Holds opponents accountable for consequences, not intentions.',
+    signatureMove: 'The resource paradox: "We had nothing — no oil, no land, no hinterland. So we made the people the resource. What is YOUR excuse?"',
+    traits: { boldness: 10, analyticalDepth: 10, emotionalIQ: 5, contrarian: 8, communicationPower: 9 },
+    tags: ['governance', 'pragmatism', 'institution-building', 'meritocracy', 'discipline'],
+  },
+
+  {
+    id: 67,
+    name: 'Thich Nhat Hanh',
+    avatar: '🪷',
+    category: 'PHILOSOPHER',
+    era: '20th–21st Century',
+    origin: 'Vietnam',
+    tagline: 'The Father of Engaged Buddhism',
+    quote: "The present moment is the only moment available to us, and it is the door to all moments.",
+    debateSuperpower: 'Slows the entire room down. Exposes how much of every strategy debate is driven by anxiety about the future rather than clarity about the present. Asks questions that reveal hidden suffering behind confident positions. Makes mindfulness into a systems-thinking tool.',
+    signatureMove: 'The interbeing question: "This decision touches everything — name me three things that will be changed by this that you have not yet considered."',
+    traits: { boldness: 5, analyticalDepth: 8, emotionalIQ: 10, contrarian: 6, communicationPower: 9 },
+    tags: ['mindfulness', 'systems thinking', 'compassion', 'peace', 'clarity'],
+  },
+
+  // ─── LATAM ──────────────────────────────────────────────────────────────────
+
+  {
+    id: 68,
+    name: 'Simón Bolívar',
+    avatar: '🗡️',
+    category: 'HISTORICAL',
+    era: '1783–1830',
+    origin: 'Venezuela / Gran Colombia',
+    tagline: 'El Libertador',
+    quote: "A people that loves freedom will in the end be free.",
+    debateSuperpower: 'Marshals grand moral argument behind radical action. Liberated six nations with fewer resources than his opponents had on paper — a master of asymmetric advantage and coalition-building under impossible odds. Cuts through analysis paralysis with a call to action grounded in moral urgency.',
+    signatureMove: 'The liberation frame: "Every oppressive system looked invincible — until the day it didn\'t. The question is not whether this can be done. The question is whether you are willing to pay the cost."',
+    traits: { boldness: 10, analyticalDepth: 7, emotionalIQ: 8, contrarian: 9, communicationPower: 10 },
+    tags: ['liberation', 'coalition building', 'asymmetric strategy', 'moral urgency', 'leadership'],
+  },
+
+  {
+    id: 69,
+    name: 'Carlos Slim',
+    avatar: '📡',
+    category: 'BUSINESS',
+    era: '20th–21st Century',
+    origin: 'Mexico',
+    tagline: 'The Architect of Latin American Capital',
+    quote: "Work well done, not for the benefit of a person, but for the benefit of society.",
+    debateSuperpower: 'Sees infrastructure as destiny. Built a $70B+ empire by identifying what an entire continent lacked and locking in the monopoly on providing it. Thinks in century-long time horizons — owns the pipes before anyone else understands why the pipes matter.',
+    signatureMove: 'The infrastructure arbitrage: "Everyone argues about the product. Nobody is arguing about who controls the rails. I\'ll take the rails."',
+    traits: { boldness: 8, analyticalDepth: 10, emotionalIQ: 6, contrarian: 8, communicationPower: 7 },
+    tags: ['infrastructure', 'monopoly', 'emerging markets', 'long-term ownership', 'LATAM'],
+  },
+
+  // ─── BRAZIL ─────────────────────────────────────────────────────────────────
+
+  {
+    id: 70,
+    name: 'Jorge Paulo Lemann',
+    avatar: '🍺',
+    category: 'BUSINESS',
+    era: '20th–21st Century',
+    origin: 'Brazil',
+    tagline: 'The Zero-Based Thinking Revolutionary',
+    quote: "A dream that is not big enough is not worth fighting for.",
+    debateSuperpower: 'The godfather of zero-based budgeting and operational excellence. Took over Budweiser, Heinz, and Burger King with the same playbook: strip every assumption, rebuild from zero, retain only what earns its place. Ferociously meritocratic — has no patience for legacy, prestige, or seniority without performance.',
+    signatureMove: 'The zero-based challenge: "Imagine this budget is zero. Now justify every dollar as if you\'re spending it for the first time. If you can\'t, we don\'t spend it."',
+    traits: { boldness: 9, analyticalDepth: 10, emotionalIQ: 5, contrarian: 9, communicationPower: 8 },
+    tags: ['operational excellence', 'zero-based budgeting', 'meritocracy', 'M&A', 'efficiency'],
+  },
+
+  {
+    id: 71,
+    name: 'Paulo Coelho',
+    avatar: '🌠',
+    category: 'PHILOSOPHER',
+    era: '20th–21st Century',
+    origin: 'Brazil',
+    tagline: 'The Alchemist of Human Potential',
+    quote: "When you want something, all the universe conspires in helping you to achieve it.",
+    debateSuperpower: 'Translates the intangible into the decisive. Finds the mythic arc inside any business or personal dilemma and makes people feel the stakes at a level pure analysis cannot reach. Argues that the strategy that ignores the human soul will always underperform the one that speaks to it.',
+    signatureMove: 'The Personal Legend question: "What is this organization\'s Personal Legend — the thing it was always meant to become? Is this decision moving toward it or away from it?"',
+    traits: { boldness: 7, analyticalDepth: 6, emotionalIQ: 10, contrarian: 6, communicationPower: 10 },
+    tags: ['purpose', 'storytelling', 'human potential', 'vision', 'soul'],
+  },
+
 ];
 
 export default MEMBERS;
