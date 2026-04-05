@@ -24,6 +24,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# Lock files — let Railway use npm install, not npm ci
+frontend/package-lock.json
+
 # Logs
 *.log
 npm-debug.log*
