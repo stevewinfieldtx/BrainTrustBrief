@@ -1,8 +1,37 @@
+import { useState } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Brain, Users, MessageSquare, Trophy } from 'lucide-react';
+import { Brain, Users, MessageSquare, Trophy, Lightbulb, X } from 'lucide-react';
+
+const FILLOUT_FORM_ID = '51kACJFmacus';
+
+function FeedbackModal({ onClose }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4 bg-black/70 backdrop-blur-sm" onClick={onClose}>
+      <div className="bg-gray-900 border border-gray-700 rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-800">
+          <div className="flex items-center gap-2">
+            <Lightbulb className="w-4 h-4 text-amber-400" />
+            <h3 className="font-black text-white">Share Your Thoughts</h3>
+          </div>
+          <button onClick={onClose} className="w-7 h-7 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition">
+            <X className="w-3.5 h-3.5 text-gray-400" />
+          </button>
+        </div>
+
+        <iframe
+          src={`https://forms.fillout.com/t/${FILLOUT_FORM_ID}?embed=1`}
+          style={{ width: '100%', height: '520px', border: 'none' }}
+          title="Feedback Form"
+          allow="clipboard-write"
+        />
+      </div>
+    </div>
+  );
+}
 
 export default function Layout() {
   const location = useLocation();
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const navItems = [
     { path: '/',        label: 'BrainTrust',  icon: Brain },
@@ -58,6 +87,18 @@ export default function Layout() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Outlet />
       </main>
+
+      {/* Floating Feedback Button */}
+      <button
+        onClick={() => setFeedbackOpen(true)}
+        className="fixed bottom-6 right-6 z-40 flex items-center gap-2 px-4 py-2.5 bg-gray-900 border border-gray-700 text-gray-400 hover:text-amber-400 hover:border-amber-400/40 rounded-full text-xs font-bold shadow-xl transition-all hover:shadow-amber-400/10 group"
+      >
+        <Lightbulb className="w-3.5 h-3.5 group-hover:text-amber-400 transition-colors" />
+        Suggestions?
+      </button>
+
+      {/* Feedback Modal */}
+      {feedbackOpen && <FeedbackModal onClose={() => setFeedbackOpen(false)} />}
     </div>
   );
 }
